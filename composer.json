@@ -1,0 +1,33 @@
+{
+    "name": "hubleto/framework",
+    "license": "MIT",
+    "description": "Framework for Hubleto.",
+    "homepage": "https://www.hubleto.com",
+    "support": {
+        "issues": "https://github.com/hubleto/main/issues",
+        "source": "https://github.com/hubleto/main"
+    },
+    "keywords": ["hubleto", "crm", "erp", "application", "hub"],
+    "require": {
+        "illuminate/database": "^12",
+        "illuminate/pagination": "^12",
+        "laravel/serializable-closure": "^2",
+        "monolog/monolog": "^3",
+        "php": "^8.2",
+        "symfony/yaml": "^7",
+        "twig/twig": "^3",
+        "phpmailer/phpmailer": "^6"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2",
+        "phpstan/phpstan-deprecation-rules": "^2",
+        "friendsofphp/php-cs-fixer": "^3",
+        "stichoza/google-translate-php": "^5"
+    },
+    "autoload": {
+        "psr-4": {
+            "ADIOS\\": "src/Adios",
+            "HubletoMain\\Core\\": "src"
+        }
+    }
+}
