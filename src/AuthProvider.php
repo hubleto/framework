@@ -28,10 +28,10 @@ class AuthProvider extends \Hubleto\Legacy\Auth\DefaultProvider
   /**
    * Class constructor.
    *
-   * @param \HubletoMain\Loader $main
+   * @param \Hubleto\Framework\Loader $main
    * 
    */
-  public function __construct(\HubletoMain\Loader $main)
+  public function __construct(\Hubleto\Framework\Loader $main)
   {
     parent::__construct($main);
     $this->main = $main;

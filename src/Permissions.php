@@ -8,11 +8,11 @@ use HubletoApp\Community\Settings\Models\UserRole;
 
 class Permissions extends \Hubleto\Legacy\Core\Permissions
 {
-  public \HubletoMain\Loader $main;
+  public \Hubleto\Framework\Loader $main;
 
   protected bool $grantAllPermissions = false;
 
-  public function __construct(\HubletoMain\Loader $main)
+  public function __construct(\Hubleto\Framework\Loader $main)
   {
     $this->main = $main;
     parent::__construct($main);

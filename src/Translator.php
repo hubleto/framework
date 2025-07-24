@@ -4,9 +4,9 @@ namespace Hubleto\Framework;
 
 class Translator extends \Hubleto\Legacy\Core\Translator
 {
-  public \HubletoMain\Loader $main;
+  public \Hubleto\Framework\Loader $main;
 
-  public function __construct(\HubletoMain\Loader $app)
+  public function __construct(\Hubleto\Framework\Loader $app)
   {
     $this->main = $app;
     parent::__construct($app);

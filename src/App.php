@@ -12,7 +12,7 @@ class App
   public const APP_TYPE_PREMIUM = 2;
   public const APP_TYPE_EXTERNAL = 3;
 
-  public \HubletoMain\Loader $main;
+  public \Hubleto\Framework\Loader $main;
   public \HubletoMain\Cli\Agent\Loader|null $cli;
 
   /**
@@ -37,12 +37,12 @@ class App
   public bool $isActivated = false;
   public bool $hasCustomSettings = false;
 
-  public static function canBeAdded(\HubletoMain\Loader $main): bool
+  public static function canBeAdded(\Hubleto\Framework\Loader $main): bool
   {
     return true;
   }
 
-  public function __construct(\HubletoMain\Loader $main)
+  public function __construct(\Hubleto\Framework\Loader $main)
   {
     $reflection = new \ReflectionClass($this);
 

@@ -6,7 +6,7 @@ use HubletoApp\Community\Settings\Models\UserRole;
 
 class Model extends \Hubleto\Legacy\Core\Model
 {
-  public \HubletoMain\Loader $main;
+  public \Hubleto\Framework\Loader $main;
 
   public bool $isExtendableByCustomColumns = false;
 
@@ -14,7 +14,7 @@ class Model extends \Hubleto\Legacy\Core\Model
   public string $permission = '';
   public array $rolePermissions = []; // example: [ [UserRole::ROLE_CHIEF_OFFICER => [true, true, true, true]] ]
 
-  public function __construct(\HubletoMain\Loader $main)
+  public function __construct(\Hubleto\Framework\Loader $main)
   {
     $this->main = $main;
 

@@ -4,7 +4,7 @@ namespace Hubleto\Framework\Controllers;
 
 class Controller extends \Hubleto\Legacy\Core\Controller
 {
-  public \HubletoMain\Loader $main;
+  public \Hubleto\Framework\Loader $main;
 
   public bool $disableLogUsage = false;
   public bool $permittedForAllUsers = false;
@@ -12,7 +12,7 @@ class Controller extends \Hubleto\Legacy\Core\Controller
   public string $appNamespace = '';
   public \Hubleto\Framework\App $hubletoApp;
 
-  public function __construct(\HubletoMain\Loader $main)
+  public function __construct(\Hubleto\Framework\Loader $main)
   {
     $this->main = $main;
 

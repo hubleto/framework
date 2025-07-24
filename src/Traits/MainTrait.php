@@ -7,5 +7,5 @@ namespace Hubleto\Framework\Traits;
  */
 trait MainTrait
 {
-  public \HubletoMain\Loader $main;
+  public \Hubleto\Framework\Loader $main;
 }

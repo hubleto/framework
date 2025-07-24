@@ -4,10 +4,10 @@ namespace Hubleto\Framework;
 
 class Helper
 {
-  public \HubletoMain\Loader $main;
+  public \Hubleto\Framework\Loader $main;
   public \Hubleto\Legacy\Core\Loader $app;
 
-  public function __construct(\HubletoMain\Loader $main, \Hubleto\Legacy\Core\Loader $app)
+  public function __construct(\Hubleto\Framework\Loader $main, \Hubleto\Legacy\Core\Loader $app)
   {
     $this->main = $main;
     $this->app = $app;

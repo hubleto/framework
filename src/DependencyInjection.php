@@ -6,7 +6,7 @@ class DependencyInjection extends \Hubleto\Legacy\Core\DependencyInjection {
 
   use \Hubleto\Framework\Traits\MainTrait;
 
-  public function __construct(\HubletoMain\Loader $main) {
+  public function __construct(\Hubleto\Framework\Loader $main) {
     parent::__construct($main);
     $this->main = $main;
 

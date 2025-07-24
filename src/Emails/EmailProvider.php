@@ -8,7 +8,7 @@ use PHPMailer\PHPMailer\Exception;
 
 class EmailProvider
 {
-  public \HubletoMain\Loader $main;
+  public \Hubleto\Framework\Loader $main;
 
   private string $defaultEmailTemplate = "@hubleto/layouts/Email.twig";
 
@@ -18,7 +18,7 @@ class EmailProvider
   private $smtpUsername;
   private $smtpPassword;
 
-  public function __construct(\HubletoMain\Loader $main)
+  public function __construct(\Hubleto\Framework\Loader $main)
   {
     $this->main = $main;
   }
