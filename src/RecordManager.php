@@ -18,7 +18,7 @@ class RecordManager extends \Hubleto\Legacy\Core\EloquentRecordManager
 
     // prepare some variables
 
-    $main = \Hubleto\Legacy\Core\Helper::getGlobalApp();
+    $main = \Hubleto\Framework\Loader::getGlobalApp();
     $idUser = $main->auth->getUserId();
 
     $hasIdOwner = isset($record['id_owner']);
@@ -118,7 +118,7 @@ class RecordManager extends \Hubleto\Legacy\Core\EloquentRecordManager
 
   public function prepareReadQuery(mixed $query = null, int $level = 0): mixed
   {
-    $main = \Hubleto\Legacy\Core\Helper::getGlobalApp();
+    $main = \Hubleto\Framework\Loader::getGlobalApp();
 
     $query = parent::prepareReadQuery($query, $level);
 

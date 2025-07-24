@@ -192,7 +192,7 @@ class App
 
     $dict = static::loadDictionary($language);
 
-    $main = \Hubleto\Legacy\Core\Helper::getGlobalApp();
+    $main = \Hubleto\Framework\Loader::getGlobalApp();
 
     if ($main->config->getAsBool('autoTranslate')) {
       $tr = new \Stichoza\GoogleTranslate\GoogleTranslate();

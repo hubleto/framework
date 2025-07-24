@@ -16,16 +16,6 @@ namespace Hubleto\Legacy\Core;
 class Helper {
   static $loadUrlError = '';
 
-  public static function setGlobalApp(\Hubleto\Legacy\Core\Loader $app) {
-    global $__APP__;
-    $__APP__ = $app;
-  }
-
-  public static function getGlobalApp() {
-    global $__APP__;
-    return $__APP__;
-  }
-
   /**
    * Minifies HTML
    *
@@ -285,7 +275,7 @@ class Helper {
   }
 
   public static function encrypt(string $value, string $seed = '', $force = false) {
-    global $__APP__;
+    $__APP__ = \Hubleto\Framework\Loader::getGlobalApp();
     if ($force || ($__APP__->config->getAsBool('encryptRecordIds'))) {
       if (empty($seed)) $seed = $__APP__->session->getSalt();
       return base64_encode(@openssl_encrypt($value, 'AES-256-CBC', $seed, 0, $seed));
@@ -295,7 +285,7 @@ class Helper {
   }
 
   public static function decrypt(string $value, string $seed = '', $force = false) {
-    global $__APP__;
+    $__APP__ = \Hubleto\Framework\Loader::getGlobalApp();
     if ($force || ($__APP__->config->getAsBool('encryptRecordIds'))) {
       if (empty($seed)) $seed = $__APP__->session->getSalt();
       return @openssl_decrypt(base64_decode($value), 'AES-256-CBC', $seed, 0, $seed);

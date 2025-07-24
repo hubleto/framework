@@ -10,23 +10,6 @@
 
 namespace Hubleto\Legacy\Core;
 
-// Autoloader function
-
-// spl_autoload_register(function ($class) {
-//   $class = trim(str_replace("\\", "/", $class), "/");
-//   $app = Helper::getGlobalApp();
-//   $appNamespace = $app->config->getAsString('appNamespace');
-
-//   if (preg_match('/ADIOS\/([\w\/]+)/', $class, $m)) {
-//     @include(__DIR__ . "/../{$m[1]}.php");
-//   }
-
-//   if (str_starts_with($class, $appNamespace . '/')) {
-//     @include($app->config->getAsString('srcFolder') . '/' . str_replace($appNamespace . '/', '', $class) . '.php');
-//   }
-
-// });
-
 register_shutdown_function(function() {
   $error = error_get_last();
   if ($error !== null && $error['type'] == E_ERROR) {
@@ -66,6 +49,8 @@ class Loader
   public PDO $pdo;
 
   public \Illuminate\Database\Capsule\Manager $eloquent;
+
+  public \Twig\Loader\FilesystemLoader $twigLoader;
   public \Twig\Environment $twig;
 
   public string $translationContext = '';
@@ -80,74 +65,91 @@ class Loader
   public function __construct(array $config = [], int $mode = self::ADIOS_MODE_FULL)
   {
 
-    $this->params = $this->extractParamsFromRequest();
+    // $this->params = $this->extractParamsFromRequest();
 
-    $this->mode = $mode;
+    // $this->mode = $mode;
 
-    try {
+    // try {
 
-      Helper::setGlobalApp($this);
+    //   Helper::setGlobalApp($this);
 
-      $this->config = $this->createConfigManager($config);
+    //   $this->config = $this->createConfigManager($config);
 
-      if (php_sapi_name() !== 'cli') {
-        if (!empty($_GET['route'])) {
-          $this->requestedUri = $_GET['route'];
-        } else if ($this->config->getAsString('rewriteBase') == "/") {
-          $this->requestedUri = ltrim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), "/");
-        } else {
-          $this->requestedUri = str_replace(
-            $this->config->getAsString('rewriteBase'),
-            "",
-            parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
-          );
-        }
+    //   if (php_sapi_name() !== 'cli') {
+    //     if (!empty($_GET['route'])) {
+    //       $this->requestedUri = $_GET['route'];
+    //     } else if ($this->config->getAsString('rewriteBase') == "/") {
+    //       $this->requestedUri = ltrim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), "/");
+    //     } else {
+    //       $this->requestedUri = str_replace(
+    //         $this->config->getAsString('rewriteBase'),
+    //         "",
+    //         parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
+    //       );
+    //     }
 
-        // render static assets, if requested
-        $this->renderAssets();
-      }
+    //     // render static assets, if requested
+    //     $this->renderAssets();
+    //   }
 
-      // inicializacia dependency injection
-      $this->di = $this->createDependencyInjection();
+    //   // inicializacia dependency injection
+    //   $this->di = $this->createDependencyInjection();
 
-      // inicializacia session managementu
-      $this->session = $this->createSessionManager();
+    //   // inicializacia session managementu
+    //   $this->session = $this->createSessionManager();
 
-      // inicializacia debug konzoly
-      $this->logger = $this->createLogger();
+    //   // inicializacia debug konzoly
+    //   $this->logger = $this->createLogger();
 
-      // translator
-      $this->translator = $this->createTranslator();
+    //   // translator
+    //   $this->translator = $this->createTranslator();
 
-      // inicializacia routera
-      $this->router = $this->createRouter();
+    //   // inicializacia routera
+    //   $this->router = $this->createRouter();
 
-      // inicializacia locale objektu
-      $this->locale = $this->createLocale();
+    //   // inicializacia locale objektu
+    //   $this->locale = $this->createLocale();
 
-      // object pre kontrolu permissions
-      $this->permissions = $this->createPermissionsManager();
+    //   // object pre kontrolu permissions
+    //   $this->permissions = $this->createPermissionsManager();
 
-      // auth provider
-      $this->auth = $this->createAuthProvider();
+    //   // auth provider
+    //   $this->auth = $this->createAuthProvider();
 
-      // test provider
-      $this->test = $this->createTestProvider();
+    //   // test provider
+    //   $this->test = $this->createTestProvider();
 
-      // Twig renderer
-      $this->createTwig();
+    //   // Twig renderer
+    //   $this->createRenderer();
 
-      // PDO
-      $this->pdo = new PDO($this);
+    //   // PDO
+    //   $this->pdo = new PDO($this);
 
-    } catch (\Exception $e) {
-      echo "ADIOS BOOT failed: [".get_class($e)."] ".$e->getMessage() . "\n";
-      echo $e->getTraceAsString() . "\n";
-      exit;
-    }
+    // } catch (\Exception $e) {
+    //   echo "ADIOS BOOT failed: [".get_class($e)."] ".$e->getMessage() . "\n";
+    //   echo $e->getTraceAsString() . "\n";
+    //   exit;
+    // }
 
-    return $this;
+    // return $this;
   }
+
+  /**
+   * Set $this as the global instance of Hubleto.
+   *
+   * @return void
+   * 
+   */
+  public function setAsGlobal(): void
+  {
+    $GLOBALS['hubleto'] = $this;
+  }
+
+  public static function getGlobalApp(): \HubletoMain\Loader
+  {
+    return $GLOBALS['hubleto'];
+  }
+
 
   public function init(): void
   {
@@ -261,95 +263,59 @@ class Loader
     return $this->di->create(Translator::class);
   }
   
-  public function createTwig()
+  public function createRenderer()
   {
-    if (class_exists('\\Twig\\Environment')) {
-      $twigLoader = new \Twig\Loader\FilesystemLoader();
-      $twigLoader->addPath($this->config->getAsString('srcFolder'));
-      $twigLoader->addPath($this->config->getAsString('srcFolder'), 'app');
+    $this->twigLoader = new \Twig\Loader\FilesystemLoader();
+    $this->twig = new \Twig\Environment($this->twigLoader, array(
+      'cache' => false,
+      'debug' => true,
+    ));
 
-      $this->twig = new \Twig\Environment($twigLoader, array(
-        'cache' => false,
-        'debug' => true,
-      ));
-
-      $this->configureTwig();
-    }
+    $this->configureRenderer();
   }
 
-  public function configureTwig()
-  {
+  // public function configureRenderer()
+  // {
 
-    $this->twig->addGlobal('config', $this->config->get());
-    $this->twig->addExtension(new \Twig\Extension\StringLoaderExtension());
-    $this->twig->addExtension(new \Twig\Extension\DebugExtension());
+  //   $this->twigLoader->addPath($this->config->getAsString('srcFolder'));
+  //   $this->twigLoader->addPath($this->config->getAsString('srcFolder'), 'app');
 
-    $this->twig->addFunction(new \Twig\TwigFunction(
-      'adiosModel',
-      function (string $model) {
-        return $this->getModel($model);
-      }
-    ));
+  //   $this->twig->addGlobal('config', $this->config->get());
+  //   $this->twig->addExtension(new \Twig\Extension\StringLoaderExtension());
+  //   $this->twig->addExtension(new \Twig\Extension\DebugExtension());
 
-    $this->twig->addFunction(new \Twig\TwigFunction(
-      'adiosHtmlAttributes',
-      function (?array $attributes) {
-        if (!is_array($attributes)) {
-          return '';
-        } else {
-          $attrsStr = join(
-            ' ',
-            array_map(
-              function($key) use ($attributes) {
-                if (is_bool($attributes[$key])){
-                  return $attributes[$key] ? $key : '';
-                } else if (is_array($attributes[$key])) {
-                  return Helper::camelToKebab($key)."='".json_encode($attributes[$key])."'";
-                } else {
-                  return Helper::camelToKebab($key)."='{$attributes[$key]}'";
-                }
-              },
-              array_keys($attributes)
-            )
-          );
-
-          return $attrsStr;
-        }
-      }
-    ));
-
-    $this->twig->addFunction(new \Twig\TwigFunction(
-      'str2url',
-      function ($string) {
-        return Helper::str2url($string ?? '');
-      }
-    ));
-    $this->twig->addFunction(new \Twig\TwigFunction(
-      'hasPermission',
-      function (string $permission, array $idUserRoles = []) {
-        return $this->permissions->granted($permission, $idUserRoles);
-      }
-    ));
-    $this->twig->addFunction(new \Twig\TwigFunction(
-      'hasRole',
-      function (int|string $role) {
-        return $this->permissions->hasRole($role);
-      }
-    ));
-    $this->twig->addFunction(new \Twig\TwigFunction(
-      'setTranslationContext',
-      function ($context) {
-        $this->translationContext = $context;
-      }
-    ));
-    $this->twig->addFunction(new \Twig\TwigFunction(
-      'translate',
-      function ($string, $context = '') {
-        if (empty($context)) $context = $this->translationContext;
-        return $this->translate($string, [], $context);
-      }
-    ));
-  }
+  //   $this->twig->addFunction(new \Twig\TwigFunction(
+  //     'str2url',
+  //     function ($string) {
+  //       return Helper::str2url($string ?? '');
+  //     }
+  //   ));
+  //   $this->twig->addFunction(new \Twig\TwigFunction(
+  //     'hasPermission',
+  //     function (string $permission, array $idUserRoles = []) {
+  //       return $this->permissions->granted($permission, $idUserRoles);
+  //     }
+  //   ));
+  //   $this->twig->addFunction(new \Twig\TwigFunction(
+  //     'hasRole',
+  //     function (int|string $role) {
+  //       return $this->permissions->hasRole($role);
+  //     }
+  //   ));
+  //   $this->twig->addFunction(new \Twig\TwigFunction(
+  //     'setTranslationContext',
+  //     function ($context) {
+  //       $this->translationContext = $context;
+  //     }
+  //   ));
+  //   $this->twig->addFunction(new \Twig\TwigFunction(
+  //     'translate',
+  //     function ($string, $context = '') {
+  //       if (empty($context)) $context = $this->translationContext;
+  //       return $this->translate($string, [], $context);
+  //     }
+  //   ));
+  // }
 
   //////////////////////////////////////////////////////////////////////////////
   // MODELS
