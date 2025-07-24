@@ -1,10 +1,10 @@
 <?php
 
-namespace HubletoMain\Core;
+namespace Hubleto\Framework;
 
-class DependencyInjection extends \ADIOS\Core\DependencyInjection {
+class DependencyInjection extends \Hubleto\Legacy\Core\DependencyInjection {
 
-  use \HubletoMain\Core\Traits\MainTrait;
+  use \Hubleto\Framework\Traits\MainTrait;
 
   public function __construct(\HubletoMain\Loader $main) {
     parent::__construct($main);

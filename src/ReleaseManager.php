@@ -1,6 +1,6 @@
 <?php
 
-namespace HubletoMain\Core;
+namespace Hubleto\Framework;
 
 /**
  * Class managing Hubleto releases.
@@ -8,7 +8,7 @@ namespace HubletoMain\Core;
 class ReleaseManager
 {
 
-  use \HubletoMain\Core\Traits\MainTrait;
+  use \Hubleto\Framework\Traits\MainTrait;
 
   /**
    * @var array{version: string, codename: string}

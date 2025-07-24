@@ -1,11 +1,11 @@
 <?php
 
-namespace HubletoMain\Core;
+namespace Hubleto\Framework;
 
 class Report
 {
   public \HubletoMain\Loader $main;
-  public \HubletoMain\Core\App $hubletoApp;
+  public \Hubleto\Framework\App $hubletoApp;
 
   public const OPERATIONS = [
     1 => "=",
@@ -45,7 +45,7 @@ class Report
     return []; // to be overriden
   }
 
-  public function loadDataDefault(\HubletoMain\Core\Models\Model $model): array
+  public function loadDataDefault(\Hubleto\Framework\Models\Model $model): array
   {
     $config = $this->main->urlParamAsArray("config");
 

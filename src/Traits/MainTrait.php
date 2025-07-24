@@ -1,6 +1,6 @@
 <?php
 
-namespace HubletoMain\Core\Traits;
+namespace Hubleto\Framework\Traits;
 
 /**
  * Trait storing properties for referencing the main class.

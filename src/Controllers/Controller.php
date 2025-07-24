@@ -1,8 +1,8 @@
 <?php
 
-namespace HubletoMain\Core\Controllers;
+namespace Hubleto\Framework\Controllers;
 
-class Controller extends \ADIOS\Core\Controller
+class Controller extends \Hubleto\Legacy\Core\Controller
 {
   public \HubletoMain\Loader $main;
 
@@ -10,7 +10,7 @@ class Controller extends \ADIOS\Core\Controller
   public bool $permittedForAllUsers = false;
 
   public string $appNamespace = '';
-  public \HubletoMain\Core\App $hubletoApp;
+  public \Hubleto\Framework\App $hubletoApp;
 
   public function __construct(\HubletoMain\Loader $main)
   {
@@ -40,7 +40,7 @@ class Controller extends \ADIOS\Core\Controller
       && !$this->permittedForAllUsers
       && !$this->main->permissions->isAppPermittedForActiveUser($this->hubletoApp)
     ) {
-      // throw new \ADIOS\Core\Exceptions\NotEnoughPermissionsException("You have no access neither to {$this->hubletoApp->manifest['name']} nor {$this->shortName}.");
+      // throw new \Hubleto\Legacy\Core\Exceptions\NotEnoughPermissionsException("You have no access neither to {$this->hubletoApp->manifest['name']} nor {$this->shortName}.");
       return false;
     }
 

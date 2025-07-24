@@ -1,8 +1,8 @@
 <?php
 
-namespace HubletoMain\Core\Controllers;
+namespace Hubleto\Framework\Controllers;
 
-use HubletoMain\Core\Controllers\Controller;
+use Hubleto\Framework\Controllers\Controller;
 
 class ControllerNotFound extends Controller
 {

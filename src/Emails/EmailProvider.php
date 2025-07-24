@@ -1,8 +1,8 @@
 <?php
 
-namespace HubletoMain\Core\Emails;
+namespace Hubleto\Framework\Emails;
 
-use ADIOS\Core\Exceptions\GeneralException;
+use Hubleto\Legacy\Core\Exceptions\GeneralException;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 

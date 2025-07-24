@@ -1,10 +1,10 @@
 <?php
 
-namespace HubletoMain\Core\Api;
+namespace Hubleto\Framework\Api;
 
-use ADIOS\Core\Helper;
+use Hubleto\Legacy\Core\Helper;
 
-class Dictionary extends \HubletoMain\Core\Controllers\ApiController
+class Dictionary extends \Hubleto\Framework\Controllers\ApiController
 {
   public \HubletoMain\Loader $main;
 

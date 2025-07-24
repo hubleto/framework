@@ -1,6 +1,6 @@
 <?php
 
-namespace HubletoMain\Core;
+namespace Hubleto\Framework;
 
 class Cron
 {

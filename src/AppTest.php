@@ -1,14 +1,14 @@
 <?php
 
-namespace HubletoMain\Core;
+namespace Hubleto\Framework;
 
-class AppTest implements \ADIOS\Core\Testable
+class AppTest implements \Hubleto\Legacy\Core\Testable
 {
   public \HubletoMain\Loader $main;
   public \HubletoMain\Cli\Agent\Loader $cli;
-  public \HubletoMain\Core\App $app;
+  public \Hubleto\Framework\App $app;
 
-  public function __construct(\HubletoMain\Core\App $app, \HubletoMain\Cli\Agent\Loader $cli)
+  public function __construct(\Hubleto\Framework\App $app, \HubletoMain\Cli\Agent\Loader $cli)
   {
     $this->cli = $cli;
     $this->app = $app;

@@ -1,6 +1,6 @@
 <?php
 
-namespace HubletoMain\Core\Emails;
+namespace Hubleto\Framework\Emails;
 
 class EmailWrapper
 {

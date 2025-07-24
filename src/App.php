@@ -1,6 +1,6 @@
 <?php
 
-namespace HubletoMain\Core;
+namespace Hubleto\Framework;
 
 class App
 {
@@ -132,7 +132,7 @@ class App
     return 0;
   }
 
-  public function createTestInstance(string $test): \HubletoMain\Core\AppTest
+  public function createTestInstance(string $test): \Hubleto\Framework\AppTest
   {
     $reflection = new \ReflectionClass($this);
     $testClass = $reflection->getNamespaceName() . '\\Tests\\' . $test;
@@ -192,7 +192,7 @@ class App
 
     $dict = static::loadDictionary($language);
 
-    $main = \ADIOS\Core\Helper::getGlobalApp();
+    $main = \Hubleto\Legacy\Core\Helper::getGlobalApp();
 
     if ($main->config->getAsBool('autoTranslate')) {
       $tr = new \Stichoza\GoogleTranslate\GoogleTranslate();
@@ -239,7 +239,7 @@ class App
 
     $controllersFolder = $this->rootFolder . '/Controllers';
     if (is_dir($controllersFolder)) {
-      $controllers = \ADIOS\Core\Helper::scanDirRecursively($controllersFolder);
+      $controllers = \Hubleto\Legacy\Core\Helper::scanDirRecursively($controllersFolder);
       foreach ($controllers as $controller) {
         $cClass = $this->namespace . '/Controllers/' . $controller;
         $cClass = str_replace('/', '\\', $cClass);
@@ -259,7 +259,7 @@ class App
 
     $modelsFolder = $this->rootFolder . '/Models';
     if (is_dir($modelsFolder)) {
-      $models = \ADIOS\Core\Helper::scanDirRecursively($modelsFolder);
+      $models = \Hubleto\Legacy\Core\Helper::scanDirRecursively($modelsFolder);
       foreach ($models as $model) {
         $mClass = $this->namespace . '/Models/' . $model;
         $mClass = str_replace('/', '\\', $mClass);
@@ -291,7 +291,7 @@ class App
 
     $controllersFolder = $this->rootFolder . '/Controllers';
     if (is_dir($controllersFolder)) {
-      $controllers = \ADIOS\Core\Helper::scanDirRecursively($controllersFolder);
+      $controllers = \Hubleto\Legacy\Core\Helper::scanDirRecursively($controllersFolder);
       foreach ($controllers as $controller) {
         $cClass = $this->namespace . '/Controllers/' . $controller;
         $cClass = str_replace('/', '\\', $cClass);
@@ -305,7 +305,7 @@ class App
 
     $modelsFolder = $this->rootFolder . '/Models';
     if (is_dir($modelsFolder)) {
-      $models = \ADIOS\Core\Helper::scanDirRecursively($modelsFolder);
+      $models = \Hubleto\Legacy\Core\Helper::scanDirRecursively($modelsFolder);
       foreach ($models as $model) {
         $mClass = $this->namespace . '/Models/' . $model;
         $mClass = str_replace('/', '\\', $mClass);

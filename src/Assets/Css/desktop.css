@@ -1,4 +1,4 @@
-@layer adios {
+@layer hubleto-framework {
 
   /* HTML tags */
   html { @apply !font-sans text-gray-800 dark:bg-gray-950; }

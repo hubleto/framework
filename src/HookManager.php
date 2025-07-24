@@ -1,12 +1,12 @@
 <?php
 
-namespace HubletoMain\Core;
+namespace Hubleto\Framework;
 
 class HookManager
 {
   public \HubletoMain\Loader $main;
 
-  /** @var array<\HubletoMain\Core\Controller\HookController> */
+  /** @var array<\Hubleto\Framework\Controller\HookController> */
   protected array $hooks = [];
 
   public function __construct(\HubletoMain\Loader $main)
@@ -16,7 +16,7 @@ class HookManager
 
   public function init(): void
   {
-    $hooks = @\ADIOS\Core\Helper::scanDirRecursively($this->main->config->getAsString('srcFolder') . '/hooks');
+    $hooks = @\Hubleto\Legacy\Core\Helper::scanDirRecursively($this->main->config->getAsString('srcFolder') . '/hooks');
     foreach ($hooks as $hook) {
       if (!\str_ends_with($hook, '.php')) continue;
       $hookClass = '\\HubletoMain\\Hook\\' . str_replace('/', '\\', $hook);
@@ -24,7 +24,7 @@ class HookManager
       $this->addHook($hookClass);
     }
 
-    $hooks = @\ADIOS\Core\Helper::scanDirRecursively($this->main->config->getAsString('rootFolder') . '/src/hooks');
+    $hooks = @\Hubleto\Legacy\Core\Helper::scanDirRecursively($this->main->config->getAsString('rootFolder') . '/src/hooks');
     foreach ($hooks as $hook) {
       if (!\str_ends_with($hook, '.php')) continue;
       $hookClass = '\\HubletoProject\\Hook\\' . str_replace('/', '\\', $hook);

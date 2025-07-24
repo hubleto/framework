@@ -1,8 +1,8 @@
 <?php
 
-namespace HubletoMain\Core;
+namespace Hubleto\Framework;
 
-class Translator extends \ADIOS\Core\Translator
+class Translator extends \Hubleto\Legacy\Core\Translator
 {
   public \HubletoMain\Loader $main;
 
@@ -51,7 +51,7 @@ class Translator extends \ADIOS\Core\Translator
       }
     }
 
-    $dictionary['ADIOS\\Core\\Loader'] = \ADIOS\Core\Loader::loadDictionary($language);
+    $dictionary['ADIOS\\Core\\Loader'] = \Hubleto\Legacy\Core\Loader::loadDictionary($language);
 
     return $dictionary;
   }

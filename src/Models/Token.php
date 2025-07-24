@@ -1,10 +1,10 @@
 <?php
 
-namespace HubletoMain\Core\Models;
+namespace Hubleto\Framework\Models;
 
-use ADIOS\Core\Exceptions\GeneralException;
+use Hubleto\Legacy\Core\Exceptions\GeneralException;
 
-class Token extends \ADIOS\Models\Token
+class Token extends \Hubleto\Legacy\Models\Token
 {
 
   /**
@@ -15,7 +15,7 @@ class Token extends \ADIOS\Models\Token
   public function describeColumns(): array
   {
     return array_merge(parent::describeColumns(), [
-      'login' => new \ADIOS\Core\Db\Column\Varchar($this, 'Login'),
+      'login' => new \Hubleto\Legacy\Core\Db\Column\Varchar($this, 'Login'),
     ]);
   }
 

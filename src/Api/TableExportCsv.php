@@ -1,10 +1,10 @@
 <?php
 
-namespace HubletoMain\Core\Api;
+namespace Hubleto\Framework\Api;
 
 use Exception;
 
-class TableExportCsv extends \HubletoMain\Core\Controllers\Controller
+class TableExportCsv extends \Hubleto\Framework\Controllers\Controller
 {
   public function render(array $params): string
   {
@@ -35,7 +35,7 @@ class TableExportCsv extends \HubletoMain\Core\Controllers\Controller
       foreach ($columns as $columnName => $column) {
         $valueStr = '';
 
-        if ($column instanceof \ADIOS\Core\Db\Column\Lookup) {
+        if ($column instanceof \Hubleto\Legacy\Core\Db\Column\Lookup) {
           $value = $row['_LOOKUP[' . $columnName . ']'] ?? '';
         } else {
           $value = $row[$columnName] ?? '';

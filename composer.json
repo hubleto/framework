@@ -26,8 +26,8 @@
     },
     "autoload": {
         "psr-4": {
-            "ADIOS\\": "src/Adios",
-            "HubletoMain\\Core\\": "src"
+            "Hubleto\\Legacy\\": "src/Legacy",
+            "Hubleto\\Framework\\": "src"
         }
     }
 }

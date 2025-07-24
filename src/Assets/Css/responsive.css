@@ -1,4 +1,4 @@
-@layer adios {
+@layer hubleto-framework {
 
   /* main table responsiveness */
   #app-main-content > * > .adios.component.table .table-body thead th:nth-child(n+4) { @apply hidden md:table-cell; }

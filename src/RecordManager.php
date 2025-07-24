@@ -1,10 +1,10 @@
 <?php
 
-namespace HubletoMain\Core;
+namespace Hubleto\Framework;
 
 use HubletoApp\Community\Settings\Models\UserRole;
 
-class RecordManager extends \ADIOS\Core\EloquentRecordManager
+class RecordManager extends \Hubleto\Legacy\Core\EloquentRecordManager
 {
 
   public array $joinManager = [];
@@ -18,7 +18,7 @@ class RecordManager extends \ADIOS\Core\EloquentRecordManager
 
     // prepare some variables
 
-    $main = \ADIOS\Core\Helper::getGlobalApp();
+    $main = \Hubleto\Legacy\Core\Helper::getGlobalApp();
     $idUser = $main->auth->getUserId();
 
     $hasIdOwner = isset($record['id_owner']);
@@ -118,7 +118,7 @@ class RecordManager extends \ADIOS\Core\EloquentRecordManager
 
   public function prepareReadQuery(mixed $query = null, int $level = 0): mixed
   {
-    $main = \ADIOS\Core\Helper::getGlobalApp();
+    $main = \Hubleto\Legacy\Core\Helper::getGlobalApp();
 
     $query = parent::prepareReadQuery($query, $level);
 

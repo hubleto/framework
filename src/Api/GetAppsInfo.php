@@ -1,8 +1,8 @@
 <?php
 
-namespace HubletoMain\Core\Api;
+namespace Hubleto\Framework\Api;
 
-class GetAppsInfo extends \HubletoMain\Core\Controllers\ApiController
+class GetAppsInfo extends \Hubleto\Framework\Controllers\ApiController
 {
   public function renderJson(): array
   {

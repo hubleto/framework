@@ -1,6 +1,6 @@
 <?php
 
-namespace HubletoMain\Core\Controllers;
+namespace Hubleto\Framework\Controllers;
 
 class ControllerSignIn extends Controller
 {

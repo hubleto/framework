@@ -1,17 +1,17 @@
 <?php
 
-namespace HubletoMain\Core;
+namespace Hubleto\Framework;
 
 class AppManager
 {
   public \HubletoMain\Loader $main;
   public \HubletoMain\Cli\Agent\Loader|null $cli;
-  public \HubletoMain\Core\App $activatedApp;
+  public \Hubleto\Framework\App $activatedApp;
 
-  /** @var array<\HubletoMain\Core\App> */
+  /** @var array<\Hubleto\Framework\App> */
   protected array $apps = [];
 
-  /** @var array<\HubletoMain\Core\App> */
+  /** @var array<\Hubleto\Framework\App> */
   protected array $disabledApps = [];
 
   /** @var array<string> */
@@ -86,7 +86,7 @@ class AppManager
         $manifestFile = $communityRepoFolder . '/' . $rootFolder . '/manifest.yaml';
         if (@is_file($manifestFile)) {
           $manifest = (array) \Symfony\Component\Yaml\Yaml::parse(file_get_contents($manifestFile));
-          $manifest['appType'] = \HubletoMain\Core\App::APP_TYPE_COMMUNITY;
+          $manifest['appType'] = \Hubleto\Framework\App::APP_TYPE_COMMUNITY;
           $appNamespaces['HubletoApp\\Community\\' . $rootFolder] = $manifest;
         }
       }
@@ -99,7 +99,7 @@ class AppManager
         $manifestFile = $premiumRepoFolder . '/' . $rootFolder . '/manifest.yaml';
         if (@is_file($manifestFile)) {
           $manifest = (array) \Symfony\Component\Yaml\Yaml::parse(file_get_contents($manifestFile));
-          $manifest['appType'] = \HubletoMain\Core\App::APP_TYPE_PREMIUM;
+          $manifest['appType'] = \Hubleto\Framework\App::APP_TYPE_PREMIUM;
           $appNamespaces['HubletoApp\\Premium\\' . $rootFolder] = $manifest;
         }
       }
@@ -132,7 +132,7 @@ class AppManager
     }
   }
 
-  public function createAppInstance(string $appNamespace): \HubletoMain\Core\App
+  public function createAppInstance(string $appNamespace): \Hubleto\Framework\App
   {
     $appClass = $appNamespace . '\Loader';
     $app = new $appClass($this->main);
@@ -143,7 +143,7 @@ class AppManager
   }
 
   /**
-  * @return array<\HubletoMain\Core\App>
+  * @return array<\Hubleto\Framework\App>
   */
   public function getEnabledApps(): array
   {
@@ -151,7 +151,7 @@ class AppManager
   }
 
   /**
-  * @return array<\HubletoMain\Core\App>
+  * @return array<\Hubleto\Framework\App>
   */
   public function getDisabledApps(): array
   {
@@ -159,14 +159,14 @@ class AppManager
   }
 
   /**
-  * @return array<\HubletoMain\Core\App>
+  * @return array<\Hubleto\Framework\App>
   */
   public function getInstalledApps(): array
   {
     return array_merge($this->apps, $this->disabledApps);
   }
 
-  public function getActivatedApp(): \HubletoMain\Core\App|null
+  public function getActivatedApp(): \Hubleto\Framework\App|null
   {
     $apps = $this->getEnabledApps();
     foreach ($apps as $app) {
@@ -177,7 +177,7 @@ class AppManager
     return null;
   }
 
-  public function getAppInstance(string $appNamespace): null|\HubletoMain\Core\App
+  public function getAppInstance(string $appNamespace): null|\Hubleto\Framework\App
   {
     if (isset($this->apps[$appNamespace])) {
       return $this->apps[$appNamespace];
@@ -192,12 +192,12 @@ class AppManager
     return isset($apps[$appNamespace]) && is_array($apps[$appNamespace]) && isset($apps[$appNamespace]['installedOn']);
   }
 
-  public function community(string $appName): null|\HubletoMain\Core\App
+  public function community(string $appName): null|\Hubleto\Framework\App
   {
     return $this->getAppInstance('HubletoApp\\Community\\' . $appName);
   }
 
-  public function custom(string $appName): null|\HubletoMain\Core\App
+  public function custom(string $appName): null|\Hubleto\Framework\App
   {
     return $this->getAppInstance('HubletoApp\\Custom\\' . $appName);
   }
@@ -301,7 +301,7 @@ class AppManager
     $tplVars = [
       'appNamespace' => $appNamespace,
       'appName' => $appName,
-      'appRootUrlSlug' => \ADIOS\Core\Helper::str2url($appName),
+      'appRootUrlSlug' => \Hubleto\Legacy\Core\Helper::str2url($appName),
       'appViewNamespace' => str_replace('\\', ':', $appNamespace),
       'appNamespaceForwardSlash' => str_replace('\\', '/', $appNamespace),
       'now' => date('Y-m-d H:i:s'),

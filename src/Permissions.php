@@ -1,12 +1,12 @@
 <?php
 
-namespace HubletoMain\Core;
+namespace Hubleto\Framework;
 
 use HubletoApp\Community\Settings\Models\Permission;
 use HubletoApp\Community\Settings\Models\RolePermission;
 use HubletoApp\Community\Settings\Models\UserRole;
 
-class Permissions extends \ADIOS\Core\Permissions
+class Permissions extends \Hubleto\Legacy\Core\Permissions
 {
   public \HubletoMain\Loader $main;
 
@@ -24,7 +24,7 @@ class Permissions extends \ADIOS\Core\Permissions
     $this->administratorRoles = $this->loadAdministratorRoles();
   }
 
-  public function createUserRoleModel(): \ADIOS\Core\Model
+  public function createUserRoleModel(): \Hubleto\Legacy\Core\Model
   {
     return new \HubletoApp\Community\Settings\Models\UserRole($this->app);
   }
@@ -45,7 +45,7 @@ class Permissions extends \ADIOS\Core\Permissions
       return [];
     }
     $mUserRole = $this->main->di->create(UserRole::class);
-    $administratorRoles = \ADIOS\Core\Helper::pluck('id', $this->app->pdo->fetchAll("select id from `{$mUserRole->table}` where grant_all = 1"));
+    $administratorRoles = \Hubleto\Legacy\Core\Helper::pluck('id', $this->app->pdo->fetchAll("select id from `{$mUserRole->table}` where grant_all = 1"));
     return $administratorRoles;
   }
 
@@ -59,7 +59,7 @@ class Permissions extends \ADIOS\Core\Permissions
     if (isset($this->app->pdo) && $this->app->pdo->isConnected) {
       $mUserRole = $this->main->di->create(UserRole::class);
 
-      $idCommonUserRoles = \ADIOS\Core\Helper::pluck('id', $this->app->pdo->fetchAll("select id from `{$mUserRole->table}` where grant_all = 0"));
+      $idCommonUserRoles = \Hubleto\Legacy\Core\Helper::pluck('id', $this->app->pdo->fetchAll("select id from `{$mUserRole->table}` where grant_all = 0"));
 
       foreach ($idCommonUserRoles as $idCommonRole) {
         $idCommonRole = (int) $idCommonRole;
@@ -93,7 +93,7 @@ class Permissions extends \ADIOS\Core\Permissions
     }
   }
 
-  public function isAppPermittedForActiveUser(\HubletoMain\Core\App $app)
+  public function isAppPermittedForActiveUser(\Hubleto\Framework\App $app)
   {
     $userRoles = $this->app->auth->getUserRoles();
 

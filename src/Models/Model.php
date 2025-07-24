@@ -1,10 +1,10 @@
 <?php
 
-namespace HubletoMain\Core\Models;
+namespace Hubleto\Framework\Models;
 
 use HubletoApp\Community\Settings\Models\UserRole;
 
-class Model extends \ADIOS\Core\Model
+class Model extends \Hubleto\Legacy\Core\Model
 {
   public \HubletoMain\Loader $main;
 
@@ -42,7 +42,7 @@ class Model extends \ADIOS\Core\Model
     return array_merge(parent::describeColumns(), $customColumns);
   }
 
-  public function describeForm(): \ADIOS\Core\Description\Form
+  public function describeForm(): \Hubleto\Legacy\Core\Description\Form
   {
     $description = parent::describeForm();
 
@@ -58,7 +58,7 @@ class Model extends \ADIOS\Core\Model
     return $description;
   }
 
-  public function describeTable(): \ADIOS\Core\Description\Table
+  public function describeTable(): \Hubleto\Legacy\Core\Description\Table
   {
     $description = parent::describeTable();
 

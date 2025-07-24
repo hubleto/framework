@@ -1,13 +1,13 @@
 <?php
 
-namespace HubletoMain\Core;
+namespace Hubleto\Framework;
 
-use HubletoMain\Core\Controllers\ControllerForgotPassword;
-use HubletoMain\Core\Controllers\ControllerResetPassword;
-use HubletoMain\Core\Controllers\ControllerSignIn;
-use HubletoMain\Core\Controllers\ControllerNotFound;
+use Hubleto\Framework\Controllers\ControllerForgotPassword;
+use Hubleto\Framework\Controllers\ControllerResetPassword;
+use Hubleto\Framework\Controllers\ControllerSignIn;
+use Hubleto\Framework\Controllers\ControllerNotFound;
 
-class Router extends \ADIOS\Core\Router
+class Router extends \Hubleto\Legacy\Core\Router
 {
 
   public \HubletoMain\Loader $main;
@@ -32,22 +32,22 @@ class Router extends \ADIOS\Core\Router
     ]);
   }
 
-  public function createSignInController(): \ADIOS\Core\Controller
+  public function createSignInController(): \Hubleto\Legacy\Core\Controller
   {
     return new ControllerSignIn($this->main);
   }
 
-  public function createNotFoundController(): \ADIOS\Core\Controller
+  public function createNotFoundController(): \Hubleto\Legacy\Core\Controller
   {
     return new ControllerNotFound($this->main);
   }
 
-  public function createResetPasswordController(): \ADIOS\Core\Controller
+  public function createResetPasswordController(): \Hubleto\Legacy\Core\Controller
   {
     return new ControllerResetPassword($this->main);
   }
 
-  public function createDesktopController(): \ADIOS\Core\Controller
+  public function createDesktopController(): \Hubleto\Legacy\Core\Controller
   {
     return $this->main->di->create(\HubletoApp\Community\Desktop\Controllers\Desktop::class);
   }

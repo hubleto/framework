@@ -1,9 +1,9 @@
 <?php
 
-namespace HubletoMain\Core;
+namespace Hubleto\Framework;
 
 use HubletoApp\Community\Settings\Models\User;
-use HubletoMain\Core\Models\Token;
+use Hubleto\Framework\Models\Token;
 
 /**
  * Default authentication provider class.
@@ -20,10 +20,10 @@ use HubletoMain\Core\Models\Token;
  *   DEFAULT_COMPANY: array<mixed>,
  * }
  */
-class AuthProvider extends \ADIOS\Auth\DefaultProvider
+class AuthProvider extends \Hubleto\Legacy\Auth\DefaultProvider
 {
 
-  use \HubletoMain\Core\Traits\MainTrait;
+  use \Hubleto\Framework\Traits\MainTrait;
 
   /**
    * Class constructor.

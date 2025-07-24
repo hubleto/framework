@@ -1,10 +1,10 @@
 <?php
 
-namespace HubletoMain\Core\Api;
+namespace Hubleto\Framework\Api;
 
 use Exception;
 
-class GetTemplateChartData extends \HubletoMain\Core\Controllers\ApiController
+class GetTemplateChartData extends \Hubleto\Framework\Controllers\ApiController
 {
   public const OPERATIONS = [
     1 => "=",

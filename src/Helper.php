@@ -1,13 +1,13 @@
 <?php
 
-namespace HubletoMain\Core;
+namespace Hubleto\Framework;
 
 class Helper
 {
   public \HubletoMain\Loader $main;
-  public \ADIOS\Core\Loader $app;
+  public \Hubleto\Legacy\Core\Loader $app;
 
-  public function __construct(\HubletoMain\Loader $main, \ADIOS\Core\Loader $app)
+  public function __construct(\HubletoMain\Loader $main, \Hubleto\Legacy\Core\Loader $app)
   {
     $this->main = $main;
     $this->app = $app;
