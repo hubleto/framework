@@ -4,7 +4,7 @@ namespace Hubleto\Framework\Models;
 
 use HubletoApp\Community\Settings\Models\UserRole;
 
-class Model extends \Hubleto\Legacy\Core\Model
+class Model extends \Hubleto\Framework\Model
 {
   public \Hubleto\Framework\Loader $main;
 
@@ -42,7 +42,7 @@ class Model extends \Hubleto\Legacy\Core\Model
     return array_merge(parent::describeColumns(), $customColumns);
   }
 
-  public function describeForm(): \Hubleto\Legacy\Core\Description\Form
+  public function describeForm(): \Hubleto\Framework\Description\Form
   {
     $description = parent::describeForm();
 
@@ -58,7 +58,7 @@ class Model extends \Hubleto\Legacy\Core\Model
     return $description;
   }
 
-  public function describeTable(): \Hubleto\Legacy\Core\Description\Table
+  public function describeTable(): \Hubleto\Framework\Description\Table
   {
     $description = parent::describeTable();
 

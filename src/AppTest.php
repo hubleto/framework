@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class AppTest implements \Hubleto\Legacy\Core\Testable
+class AppTest implements \Hubleto\Framework\Testable
 {
   public \Hubleto\Framework\Loader $main;
   public \HubletoMain\Cli\Agent\Loader $cli;

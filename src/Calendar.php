@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class Calendar implements \Hubleto\Legacy\Core\Testable
+class Calendar implements \Hubleto\Framework\Testable
 {
   public \Hubleto\Framework\Loader $main;
 
@@ -51,7 +51,7 @@ class Calendar implements \Hubleto\Legacy\Core\Testable
   public function assert(string $assertionName, bool $assertion): void
   {
     if ($this->main->testMode && !$assertion) {
-      throw new \Hubleto\Legacy\Core\Exceptions\TestAssertionFailedException('TEST FAILED: Assertion [' . $assertionName . '] not fulfilled in ' . get_parent_class($this));
+      throw new Exceptions\TestAssertionFailedException('TEST FAILED: Assertion [' . $assertionName . '] not fulfilled in ' . get_parent_class($this));
     }
   }
 

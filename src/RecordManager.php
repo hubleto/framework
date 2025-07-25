@@ -4,7 +4,7 @@ namespace Hubleto\Framework;
 
 use HubletoApp\Community\Settings\Models\UserRole;
 
-class RecordManager extends \Hubleto\Legacy\Core\EloquentRecordManager
+class RecordManager extends EloquentRecordManager
 {
 
   public array $joinManager = [];

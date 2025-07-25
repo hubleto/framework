@@ -239,7 +239,7 @@ class App
 
     $controllersFolder = $this->rootFolder . '/Controllers';
     if (is_dir($controllersFolder)) {
-      $controllers = \Hubleto\Legacy\Core\Helper::scanDirRecursively($controllersFolder);
+      $controllers = Helper::scanDirRecursively($controllersFolder);
       foreach ($controllers as $controller) {
         $cClass = $this->namespace . '/Controllers/' . $controller;
         $cClass = str_replace('/', '\\', $cClass);
@@ -259,7 +259,7 @@ class App
 
     $modelsFolder = $this->rootFolder . '/Models';
     if (is_dir($modelsFolder)) {
-      $models = \Hubleto\Legacy\Core\Helper::scanDirRecursively($modelsFolder);
+      $models = Helper::scanDirRecursively($modelsFolder);
       foreach ($models as $model) {
         $mClass = $this->namespace . '/Models/' . $model;
         $mClass = str_replace('/', '\\', $mClass);
@@ -291,7 +291,7 @@ class App
 
     $controllersFolder = $this->rootFolder . '/Controllers';
     if (is_dir($controllersFolder)) {
-      $controllers = \Hubleto\Legacy\Core\Helper::scanDirRecursively($controllersFolder);
+      $controllers = Helper::scanDirRecursively($controllersFolder);
       foreach ($controllers as $controller) {
         $cClass = $this->namespace . '/Controllers/' . $controller;
         $cClass = str_replace('/', '\\', $cClass);
@@ -305,7 +305,7 @@ class App
 
     $modelsFolder = $this->rootFolder . '/Models';
     if (is_dir($modelsFolder)) {
-      $models = \Hubleto\Legacy\Core\Helper::scanDirRecursively($modelsFolder);
+      $models = Helper::scanDirRecursively($modelsFolder);
       foreach ($models as $model) {
         $mClass = $this->namespace . '/Models/' . $model;
         $mClass = str_replace('/', '\\', $mClass);

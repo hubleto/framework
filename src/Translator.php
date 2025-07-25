@@ -2,15 +2,46 @@
 
 namespace Hubleto\Framework;
 
-class Translator extends \Hubleto\Legacy\Core\Translator
+class Translator
 {
   public \Hubleto\Framework\Loader $main;
 
-  public function __construct(\Hubleto\Framework\Loader $app)
+  public string $dictionaryFilename = "Core-Loader";
+  public array $dictionary = [];
+
+  public function __construct(\Hubleto\Framework\Loader $main)
   {
-    $this->main = $app;
-    parent::__construct($app);
+    $this->main = $main;
     $this->dictionary = [];
+  }
+
+  public function getDictionaryFilename(string $context, string $language = ''): string
+  {
+    $dictionaryFile = '';
+
+    if (empty($language)) $language = $this->main->config->getAsString('language', 'en');
+    if (empty($language)) $language = 'en';
+
+    if (strlen($language) == 2) {
+      $dictionaryFile = $this->main->config->getAsString('srcFolder') . "/Lang/{$language}.json";
+    }
+
+    return $dictionaryFile;
+  }
+
+  public function addToDictionary(string $string, string $context, string $toLanguage) {
+    $dictionaryFile = $this->getDictionaryFilename($context, $toLanguage);
+    $this->dictionary[$toLanguage][$context][$string] = '';
+
+    if (is_file($dictionaryFile)) {
+      file_put_contents(
+        $dictionaryFile,
+        json_encode(
+          $this->dictionary[$toLanguage],
+          JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
+        )
+      );
+    }
   }
 
   /**
@@ -51,7 +82,7 @@ class Translator extends \Hubleto\Legacy\Core\Translator
       }
     }
 
-    $dictionary['ADIOS\\Core\\Loader'] = \Hubleto\Legacy\Core\Loader::loadDictionary($language);
+    $dictionary['ADIOS\\Core\\Loader'] = Loader::loadDictionary($language);
 
     return $dictionary;
   }
