@@ -4,7 +4,7 @@ namespace Hubleto\Framework\Controllers\Api\Record;
 
 use Illuminate\Support\Str;
 
-class GetList extends \Hubleto\Framework\ApiController {
+class GetList extends \Hubleto\Framework\Controllers\ApiController {
   public \Hubleto\Framework\Model $model;
 
   function __construct(\Hubleto\Framework\Loader $main, array $params = []) {

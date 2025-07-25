@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Form, { FormDescription, FormProps, FormState } from "@adios/Form";
+import Form, { FormDescription, FormProps, FormState } from "@hubleto/ui/core/Form";
 import queryString from 'query-string';
 
 export interface HubletoTableExportCsvFormProps extends FormProps {}

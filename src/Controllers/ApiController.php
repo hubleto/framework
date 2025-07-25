@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Controllers;
 
-class ApiController extends Controller
+class ApiController extends \Hubleto\Framework\Controller
 {
   public int $returnType = self::RETURN_TYPE_JSON;
   public bool $permittedForAllUsers = true;

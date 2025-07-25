@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Controllers\Api\Record;
 
-class Delete extends \Hubleto\Framework\ApiController {
+class Delete extends \Hubleto\Framework\Controllers\ApiController {
 
   public \Hubleto\Framework\Model $model;
 

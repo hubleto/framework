@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import Form, { FormDescription, FormProps, FormState } from "@adios/Form";
+import Form, { FormDescription, FormProps, FormState } from "@hubleto/ui/core/Form";
 import { Bar, Doughnut, Pie, Line, Scatter } from "react-chartjs-2";
 import 'chartjs-adapter-date-fns';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Filler, BarController, BarElement, CategoryScale, LinearScale, PointElement, LineElement, LineController, TimeScale } from "chart.js";
-import request from "@adios/Request";
+import request from "@hubleto/ui/core/Request";
 import { ProgressBar } from 'primereact/progressbar';
 
 ChartJS.register(ArcElement, Tooltip, Legend, Filler, BarController, BarElement, CategoryScale, LinearScale, TimeScale, PointElement, LineElement, LineController);

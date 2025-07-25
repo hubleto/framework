@@ -1,6 +1,6 @@
 <?php
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Interfaces;
 
 /**
   * Record-management

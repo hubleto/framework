@@ -1,7 +1,7 @@
 <?php
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Interfaces;
 
-interface Testable {
+interface TestableInterface {
   public function assert(string $assertionName, bool $assertion);
 }

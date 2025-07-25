@@ -2,13 +2,13 @@
 
 namespace Hubleto\Framework;
 
-class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implements RecordManagerInterface {
+class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implements Interfaces\RecordManagerInterface {
   protected $primaryKey = 'id';
   protected $guarded = [];
   public $timestamps = false;
   public static $snakeAttributes = false;
   
-  public Loader $app;
+  public Loader $main;
   public Model $model;
 
   // /** What relations to be included in loaded record. If null, default relations will be selected. */
@@ -20,8 +20,6 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   public function __construct(array $attributes = [])
   {
     parent::__construct($attributes);
-    // $this->app = null;
-    // $this->model = null;
   }
 
   // public function getRelationsToRead(): array
@@ -92,7 +90,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     foreach ($this->model->getColumns() as $columnName => $column) {
       $colDefinition = $column->toArray();
       if ($colDefinition['type'] == 'lookup') {
-        $lookupModel = $this->app->getModel($colDefinition['model']);
+        $lookupModel = $this->main->getModel($colDefinition['model']);
         $lookupConnection = $lookupModel->record->getConnectionName();
         $lookupDatabase = $lookupModel->record->getConnection()->getDatabaseName();
         $lookupTableName = $lookupModel->getFullTableSqlName();
@@ -132,7 +130,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     foreach ($this->model->relations as $relName => $relDefinition) {
       // if (count($this->relationsToRead) > 0 && !in_array($relName, $this->relationsToRead)) continue;
 
-      $relModel = new $relDefinition[1]($this->app);
+      $relModel = new $relDefinition[1]($this->main);
 
       if ($level < $this->maxReadLevel) {
         $query->with([$relName => function($q) use($relModel, $level) {
@@ -347,7 +345,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       if (!isset($record[$relName]) || !is_array($record[$relName])) continue;
 
       list($relType, $relModelClass) = $relDefinition;
-      $relModel = new $relModelClass($this->app);
+      $relModel = new $relModelClass($this->main);
 
       switch ($relType) {
         case Model::HAS_MANY:
@@ -407,10 +405,6 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     $id = (int) ($record['id'] ?? 0);
     $isCreate = ($id <= 0);
 
-    // $this->app->permissions->check($this->model->fullName . ($isCreate ? ':Create' : ':Update'));
-
-    // $this->app->pdo->beginTransaction();
-
     $permissions = $this->getPermissions($record);
     if (
       ($id < 0 && !$permissions[0]) // cannot create
@@ -449,7 +443,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       foreach ($this->model->relations as $relName => $relDefinition) {
         if (isset($record[$relName]) && is_array($record[$relName])) {
           list($relType, $relModelClass) = $relDefinition;
-          $relModel = new $relModelClass($this->app);
+          $relModel = new $relModelClass($this->main);
           switch ($relType) {
             case Model::HAS_MANY:
               foreach ($record[$relName] as $subKey => $subRecord) {
@@ -521,12 +515,12 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
         $column->getRequired()
         && (!isset($record[$colName]) || $record[$colName] === null || $record[$colName] === '')
       ) {
-        $invalidInputs[] = $this->app->translate(
+        $invalidInputs[] = $this->main->translate(
           "`{{ colTitle }}` is required.",
           ['colTitle' => $column->getTitle()]
         );
       } else if (isset($record[$colName]) && !$column->validate($record[$colName])) {
-        $invalidInputs[] = $this->app->translate(
+        $invalidInputs[] = $this->main->translate(
           "`{{ colTitle }}` contains invalid value.",
           ['colTitle' => $column->getTitle()]
         );
@@ -540,7 +534,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     foreach ($this->model->relations as $relName => $relDefinition) {
       if (isset($record[$relName]) && is_array($record[$relName])) {
         list($relType, $relModelClass) = $relDefinition;
-        $relModel = new $relModelClass($this->app);
+        $relModel = new $relModelClass($this->main);
         switch ($relType) {
           case Model::HAS_MANY:
             foreach ($record[$relName] as $subKey => $subRecord) {

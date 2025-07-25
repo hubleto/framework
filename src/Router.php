@@ -24,14 +24,14 @@ class Router {
     $this->main = $main;
 
     $this->httpGet([
-      'about' => \Hubleto\Legacy\Controllers\About::class,
-      '/^api\/form\/describe\/?$/' => \Hubleto\Legacy\Controllers\Api\Form\Describe::class,
-      '/^api\/table\/describe\/?$/' => \Hubleto\Legacy\Controllers\Api\Table\Describe::class,
-      '/^api\/record\/get\/?$/' => \Hubleto\Legacy\Controllers\Api\Record\Get::class,
-      '/^api\/record\/get-list\/?$/' => \Hubleto\Legacy\Controllers\Api\Record\GetList::class,
-      '/^api\/record\/lookup\/?$/' => \Hubleto\Legacy\Controllers\Api\Record\Lookup::class,
-      '/^api\/record\/save\/?$/' => \Hubleto\Legacy\Controllers\Api\Record\Save::class,
-      '/^api\/record\/delete\/?$/' => \Hubleto\Legacy\Controllers\Api\Record\Delete::class,
+      'about' => \Hubleto\Framework\Controllers\About::class,
+      '/^api\/form\/describe\/?$/' => \Hubleto\Framework\Controllers\Api\Form\Describe::class,
+      '/^api\/table\/describe\/?$/' => \Hubleto\Framework\Controllers\Api\Table\Describe::class,
+      '/^api\/record\/get\/?$/' => \Hubleto\Framework\Controllers\Api\Record\Get::class,
+      '/^api\/record\/get-list\/?$/' => \Hubleto\Framework\Controllers\Api\Record\GetList::class,
+      '/^api\/record\/lookup\/?$/' => \Hubleto\Framework\Controllers\Api\Record\Lookup::class,
+      '/^api\/record\/save\/?$/' => \Hubleto\Framework\Controllers\Api\Record\Save::class,
+      '/^api\/record\/delete\/?$/' => \Hubleto\Framework\Controllers\Api\Record\Delete::class,
     ]);
   }
 

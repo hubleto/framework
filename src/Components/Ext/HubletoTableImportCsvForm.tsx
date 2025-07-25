@@ -1,7 +1,7 @@
 import React, { Component, createRef } from "react";
-import Form, { FormProps, FormState } from "@adios/Form";
-import InputFile from "@adios/Inputs/File";
-import request from "@adios/Request";
+import Form, { FormProps, FormState } from "@hubleto/ui/core/Form";
+import InputFile from "@hubleto/ui/core/Inputs/File";
+import request from "@hubleto/ui/core/Request";
 
 export interface HubletoTableImportCsvFormProps extends FormProps {}
 export interface HubletoTableImportCsvFormState extends FormState {

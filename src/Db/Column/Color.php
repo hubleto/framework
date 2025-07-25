@@ -1,6 +1,6 @@
 <?php
 
-namespace Hubleto\Framework\Core\Db\Column;
+namespace Hubleto\Framework\Db\Column;
 
 class Color extends \Hubleto\Framework\Db\Column
 {
