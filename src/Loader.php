@@ -327,7 +327,7 @@ class Loader
    * Returns the object of the model referenced by $modelName.
    * The returned object is cached into modelObjects property.
    *
-   * @param  string $modelName Reference of the model. E.g. 'Hubleto/Legacy/User'.
+   * @param  string $modelName Reference of the model. E.g. 'Hubleto/Framework/Models/User'.
    * @throws Exception If $modelName is not available.
    * @return object Instantiated object of the model.
    */

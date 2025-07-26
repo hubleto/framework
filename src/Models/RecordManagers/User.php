@@ -17,17 +17,4 @@ class User extends \Hubleto\Framework\EloquentRecordManager {
     'last_login_ip',
   ];
 
-  public function roles() {
-    return $this->belongsToMany(
-      \Hubleto\Legacy\Models\Eloquent\UserRole::class,
-      'user_has_roles',
-      'id_user',
-      'id_role'
-    );
-  }
-
-  public function id_token_reset_password(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
-    return $this->BelongsTo(\Hubleto\Legacy\Models\Eloquent\Token::class, 'id_token_reset_password');
-  }
-
 }

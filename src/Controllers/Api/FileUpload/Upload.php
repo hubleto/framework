@@ -8,7 +8,7 @@
   ADIOS Framework package.
 */
 
-namespace Hubleto\Legacy\Controllers\Components\Inputs\FileUpload;
+namespace Hubleto\Framework\Controllers\Components\Inputs\FileUpload;
 
 /**
  * @package Components\Controllers\FileUpload

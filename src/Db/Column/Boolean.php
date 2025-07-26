@@ -11,10 +11,10 @@ class Boolean extends \Hubleto\Framework\Db\Column
   protected mixed $noValue = false;
 
   public function getYesValue(): mixed { return $this->yesValue; }
-  public function setYesValue(mixed $yesValue): Boolean { $this->yesValue = $yesValue; return $this; }
+  public function setYesValue(mixed $yesValue): \Hubleto\Framework\Db\Column\Boolean { $this->yesValue = $yesValue; return $this; }
 
   public function getNoValue(): mixed { return $this->noValue; }
-  public function setNoValue(mixed $noValue): Boolean { $this->noValue = $noValue; return $this; }
+  public function setNoValue(mixed $noValue): \Hubleto\Framework\Db\Column\Boolean { $this->noValue = $noValue; return $this; }
 
   public function __construct(\Hubleto\Framework\Model $model, string $title)
   {

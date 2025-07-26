@@ -12,9 +12,9 @@ class DefaultProvider extends \Hubleto\Framework\Auth {
   {
     parent::__construct($main);
 
-    $this->main->registerModel(\Hubleto\Legacy\Models\User::class);
-    $this->main->registerModel(\Hubleto\Legacy\Models\UserRole::class);
-    $this->main->registerModel(\Hubleto\Legacy\Models\UserHasRole::class);
+    $this->main->registerModel(\Hubleto\Framework\Models\User::class);
+    $this->main->registerModel(\Hubleto\Framework\Models\UserRole::class);
+    $this->main->registerModel(\Hubleto\Framework\Models\UserHasRole::class);
   }
 
   public function init(): void

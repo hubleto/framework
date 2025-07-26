@@ -17,7 +17,7 @@ class DependencyInjection
   public function __construct(\Hubleto\Framework\Loader $main) {
     $this->main = $main;
 
-    $this->setDependency('model.user', \Hubleto\Legacy\Models\User::class);
+    $this->setDependency('model.user', \Hubleto\Framework\Models\User::class);
 
     $dependencies = $this->main->config->getAsArray('dependencies');
     foreach ($dependencies as $service => $class) {
