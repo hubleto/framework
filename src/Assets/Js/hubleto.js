@@ -1,5 +1,4 @@
-console.log('aDIOS bla');
-const ADIOS = {
+const Hubleto = {
 
   onAppLoaded: function(callback) {
     document.addEventListener('readystatechange', function() {
@@ -17,7 +16,7 @@ const ADIOS = {
     if (typeof params == 'undefined') params = {};
     if (typeof options == 'undefined') options = {};
 
-    $('.adios.main-content').css('opacity', 0.5);
+    $('.hubleto.main-content').css('opacity', 0.5);
 
     if (options.type == 'POST') {
       let paramsObj = _ajax_params(params);
@@ -41,26 +40,26 @@ const ADIOS = {
 
 
   modal: function(controllerUrl, params = {}, modalParams = null) {
-    $('#adios-modal-title-global').text("");
+    $('#hubleto-modal-title-global').text("");
 
     if (modalParams != null) {
-      $('#adios-modal-title-global').text(modalParams.title);
+      $('#hubleto-modal-title-global').text(modalParams.title);
     }
 
     _ajax_update(
       controllerUrl,
       params,
-      'adios-modal-body-global',
+      'hubleto-modal-body-global',
       {
         success: () => {
-          $('#adios-modal-global').modal();
+          $('#hubleto-modal-global').modal();
         }
       }
     );
   },
 
   modalToggle(uid) {
-    $('#adios-modal-' + uid).modal('toggle');
+    $('#hubleto-modal-' + uid).modal('toggle');
   },
 
 }

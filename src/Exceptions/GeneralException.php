@@ -3,7 +3,7 @@
 namespace Hubleto\Framework\Exceptions;
 
 /**
- * General purpose exception thrown inside ADIOS application.
+ * General purpose exception.
  *
  * @package Exceptions
  */

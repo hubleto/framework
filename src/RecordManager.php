@@ -53,7 +53,7 @@ class RecordManager extends EloquentRecordManager
       $canRead = true;
       $canModify = true;
 
-      if (str_starts_with($this->model->fullName, 'ADIOS/Core/Config')) {
+      if (str_starts_with($this->model->fullName, 'Hubleto/Core/Config')) {
         $canModify = false;
       }
     } elseif ($main->auth->userHasRole(UserRole::ROLE_MANAGER)) {

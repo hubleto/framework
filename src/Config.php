@@ -11,15 +11,7 @@ class Config
   public function __construct(\Hubleto\Framework\Loader $app, array $config)
   {
     $this->app = $app;
-
     $this->config = $config;
-
-    // if (empty($this->config['rewriteBase'])) $this->config['rewriteBase'] = "";
-    // if (empty($this->config['srcFolder'])) $this->config['srcFolder'] = $this->config['dir'];
-    // if (empty($this->config['srcUrl'])) $this->config['srcUrl'] = $this->config['url'];
-    // if (empty($this->config['appDir'])) $this->config['appDir'] = $this->config['dir'];
-    // if (empty($this->config['rootUrl'])) $this->config['rootUrl'] = $this->config['url'];
-    // if (empty($this->config['sessionSalt'])) $this->config['sessionSalt'] = $this->config['appNamespace'] ?? 'adios-session';
 
     $this->set('requestUri', $_SERVER['REQUEST_URI'] ?? "");
 
@@ -121,7 +113,7 @@ class Config
       if ($e->getCode() == '42S02') { // Base table not found
         // do nothing
       } else {
-        throw $e; // forward exception to be processed by ADIOS
+        throw $e; // forward exception to be processed by Hubleto framework
       }
     }
   }
@@ -147,7 +139,7 @@ class Config
       if ($e->getCode() == '42S02') { // Base table not found
         // do nothing
       } else {
-        throw $e; // forward exception to be processed by ADIOS
+        throw $e; // forward exception to be processed further
       }
     }
   }

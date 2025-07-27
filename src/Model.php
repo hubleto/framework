@@ -32,7 +32,7 @@ class Model
   public string $shortName = "";
 
   /**
-   * Reference to ADIOS object
+   * Reference to Hubleto Framework Loader object
    *
    * @var mixed
    */
@@ -162,7 +162,7 @@ class Model
 
 
   /**
-   * Shorthand for ADIOS core translate() function. Uses own language dictionary.
+   * Shorthand for core translate() function. Uses own language dictionary.
    *
    * @param string $string String to be translated
    * @param string $context Context where the string is used

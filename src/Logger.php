@@ -5,7 +5,7 @@ namespace Hubleto\Framework;
 use Monolog\Handler\RotatingFileHandler;
 
 /**
- * Debugger console for ADIOS application.
+ * Debugger console.
  */
 class Logger {
   public \Hubleto\Framework\Loader $app;

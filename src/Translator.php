@@ -82,7 +82,7 @@ class Translator
       }
     }
 
-    $dictionary['ADIOS\\Core\\Loader'] = Loader::loadDictionary($language);
+    $dictionary['Hubleto\\Core\\Loader'] = Loader::loadDictionary($language);
 
     return $dictionary;
   }

@@ -11,8 +11,8 @@ register_shutdown_function(function() {
 
 class Loader
 {
-  const ADIOS_MODE_FULL = 1;
-  const ADIOS_MODE_LITE = 2;
+  const HUBLETO_MODE_FULL = 1;
+  const HUBLETO_MODE_LITE = 2;
 
   const RELATIVE_DICTIONARY_PATH = '../Lang';
 
@@ -53,76 +53,9 @@ class Loader
 
   public int $mode = 0;
 
-  public function __construct(array $config = [], int $mode = self::ADIOS_MODE_FULL)
+  public function __construct(array $config = [], int $mode = self::HUBLETO_MODE_FULL)
   {
 
-    // $this->params = $this->extractParamsFromRequest();
-
-    // $this->mode = $mode;
-
-    // try {
-
-    //   Helper::setGlobalApp($this);
-
-    //   $this->config = $this->createConfigManager($config);
-
-    //   if (php_sapi_name() !== 'cli') {
-    //     if (!empty($_GET['route'])) {
-    //       $this->requestedUri = $_GET['route'];
-    //     } else if ($this->config->getAsString('rewriteBase') == "/") {
-    //       $this->requestedUri = ltrim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), "/");
-    //     } else {
-    //       $this->requestedUri = str_replace(
-    //         $this->config->getAsString('rewriteBase'),
-    //         "",
-    //         parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
-    //       );
-    //     }
-
-    //     // render static assets, if requested
-    //     $this->renderAssets();
-    //   }
-
-    //   // inicializacia dependency injection
-    //   $this->di = $this->createDependencyInjection();
-
-    //   // inicializacia session managementu
-    //   $this->session = $this->createSessionManager();
-
-    //   // inicializacia debug konzoly
-    //   $this->logger = $this->createLogger();
-
-    //   // translator
-    //   $this->translator = $this->createTranslator();
-
-    //   // inicializacia routera
-    //   $this->router = $this->createRouter();
-
-    //   // inicializacia locale objektu
-    //   $this->locale = $this->createLocale();
-
-    //   // object pre kontrolu permissions
-    //   $this->permissions = $this->createPermissionsManager();
-
-    //   // auth provider
-    //   $this->auth = $this->createAuthProvider();
-
-    //   // test provider
-    //   $this->test = $this->createTestProvider();
-
-    //   // Twig renderer
-    //   $this->createRenderer();
-
-    //   // PDO
-    //   $this->pdo = new PDO($this);
-
-    // } catch (\Exception $e) {
-    //   echo "ADIOS BOOT failed: [".get_class($e)."] ".$e->getMessage() . "\n";
-    //   echo $e->getTraceAsString() . "\n";
-    //   exit;
-    // }
-
-    // return $this;
   }
 
   /**
@@ -148,7 +81,7 @@ class Loader
       $this->permissions->init();
       $this->auth->init();
 
-      if ($this->mode == self::ADIOS_MODE_FULL) {
+      if ($this->mode == self::HUBLETO_MODE_FULL) {
         $this->initDatabaseConnections();
 
         $this->session->start(true);
@@ -161,7 +94,7 @@ class Loader
       }
 
     } catch (\Exception $e) {
-      echo "ADIOS INIT failed: [".get_class($e)."] ".$e->getMessage() . "\n";
+      echo "Hubleto init failed: [".get_class($e)."] ".$e->getMessage() . "\n";
       echo $e->getTraceAsString() . "\n";
       exit;
     }
@@ -618,7 +551,7 @@ class Loader
       // header('HTTP/1.1 401 Unauthorized', true, 401);
     } catch (Exceptions\GeneralException $e) {
       header('HTTP/1.1 400 Bad Request', true, 400);
-      return "ADIOS RUN failed: [".get_class($e)."] ".$e->getMessage();
+      return "Hubleto run failed: [".get_class($e)."] ".$e->getMessage();
     } catch (\ArgumentCountError $e) {
       echo $e->getMessage();
       header('HTTP/1.1 400 Bad Request', true, 400);
@@ -657,39 +590,6 @@ class Loader
 
   public function controllerExists(string $controller) : bool {
     return class_exists($this->getControllerClassName($controller));
-  }
-
-  public function renderAssets() {
-    $cachingTime = 3600;
-    $headerExpires = "Expires: ".gmdate("D, d M Y H:i:s", time() + $cachingTime)." GMT";
-    $headerCacheControl = "Cache-Control: max-age={$cachingTime}";
-
-    if ($this->requestedUri == "adios/cache.css") {
-      $cssCache = $this->renderCSSCache();
-
-      header("Content-type: text/css");
-      header("ETag: ".md5($cssCache));
-      header($headerExpires);
-      header("Pragma: cache");
-      header($headerCacheControl);
-
-      echo $cssCache;
-
-      exit();
-    } else if ($this->requestedUri == "adios/cache.js") {
-      $jsCache = $this->renderJSCache();
-      $cachingTime = 3600;
-
-      header("Content-type: application/x-javascript");
-      header("ETag: ".md5($jsCache));
-      header($headerExpires);
-      header("Pragma: cache");
-      header($headerCacheControl);
-
-      echo $jsCache;
-
-      exit();
-    }
   }
 
   public function renderSuccess($return) {
@@ -759,11 +659,11 @@ class Loader
     switch (get_class($exception)) {
       case 'Hubleto\Framework\Exceptions\DBException':
         $html = "
-          <div class='adios exception emoji'>🥴</div>
-          <div class='adios exception message'>
+          <div class='hubleto exception emoji'>🥴</div>
+          <div class='hubleto exception message'>
             Oops! Something went wrong with the database.
           </div>
-          <div class='adios exception message'>
+          <div class='hubleto exception message'>
             {$errorMessage}
           </div>
           {$errorDebugInfoHtml}
@@ -814,7 +714,7 @@ class Loader
         }
 
         $html = "
-          <div class='adios exception message'>
+          <div class='hubleto exception message'>
             ".$this->translate($errorMessage)."<br/>
             <br/>
             <b>".join(", ", $invalidColumns)."</b>
@@ -827,10 +727,10 @@ class Loader
       break;
       default:
         $html = "
-          <div class='adios exception message'>
+          <div class='hubleto exception message'>
             Oops! Something went wrong.
           </div>
-          <div class='adios exception message'>
+          <div class='hubleto exception message'>
             ".$exception->getMessage()."
           </div>
           {$errorDebugInfoHtml}
@@ -885,10 +785,10 @@ class Loader
   }
 
   /**
-   * Checks the argument whether it is a valid ADIOS UID string.
+   * Checks the argument whether it is a validUID string.
    *
    * @param  string $uid The string to validate.
-   * @throws Exceptions\InvalidUidException If the provided string is not a valid ADIOS UID string.
+   * @throws Exceptions\InvalidUidException If the provided string is not a valid UID string.
    * @return void
    */
   public function checkUid($uid) {
@@ -937,11 +837,10 @@ class Loader
     $js = "";
 
     $jsFiles = [
-      dirname(__FILE__)."/../Assets/Js/adios.js",
+      dirname(__FILE__)."/../Assets/Js/hubleto.js",
       dirname(__FILE__)."/../Assets/Js/ajax_functions.js",
       dirname(__FILE__)."/../Assets/Js/base64.js",
       dirname(__FILE__)."/../Assets/Js/cookie.js",
-      dirname(__FILE__)."/../Assets/Js/desktop.js",
       dirname(__FILE__)."/../Assets/Js/jquery-3.5.1.js",
       dirname(__FILE__)."/../Assets/Js/md5.js",
       dirname(__FILE__)."/../Assets/Js/moment.min.js",

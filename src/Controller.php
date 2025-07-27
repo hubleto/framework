@@ -3,9 +3,9 @@
 namespace Hubleto\Framework;
 
 /**
- * Core implementation of ADIOS controller
+ * Core implementation of Hubleto Framework controller
  * 
- * 'Controller' is fundamendal class for generating HTML content of each ADIOS call. Controllers can
+ * 'Controller' is fundamendal class for generating HTML content of each call. Controllers can
  * be rendered using Twig template or using custom render() method.
  * 
  */
@@ -17,7 +17,7 @@ class Controller implements \Hubleto\Framework\Interfaces\TestableInterface {
   const RETURN_TYPE_NONE = 3;
 
   /**
-   * Reference to ADIOS object
+   * Reference to Hubleto Framework Loader object
    */
   protected \Hubleto\Framework\Loader $main;
     
@@ -42,7 +42,7 @@ class Controller implements \Hubleto\Framework\Interfaces\TestableInterface {
   public bool $requiresUserAuthentication = TRUE;
 
   /**
-   * If set to TRUE, the default ADIOS desktop will not be added to the rendered content
+   * If set to TRUE, the default desktop will not be added to the rendered content
    */
   public bool $hideDefaultDesktop = FALSE;
 
@@ -74,7 +74,7 @@ class Controller implements \Hubleto\Framework\Interfaces\TestableInterface {
   {
     $reflection = new \ReflectionClass($this);
 
-    $this->name = str_replace("\\", "/", str_replace("ADIOS\\", "", get_class($this)));
+    $this->name = str_replace("\\", "/", str_replace("Hubleto\\Framework\\", "", get_class($this)));
     $this->main = $main;
 
     if (isset($this->main->twig)) {
@@ -175,7 +175,7 @@ class Controller implements \Hubleto\Framework\Interfaces\TestableInterface {
   }
   
   /**
-   * Shorthand for ADIOS core translate() function. Uses own language dictionary.
+   * Shorthand for core translate() function. Uses own language dictionary.
    *
    * @param  string $string String to be translated
    * @param  string $context Context where the string is used

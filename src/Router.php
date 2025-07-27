@@ -1,13 +1,5 @@
 <?php
 
-/*
-  This file is part of ADIOS Framework.
-
-  This file is published under the terms of the license described
-  in the license.md file which is located in the root folder of
-  ADIOS Framework package.
-*/
-
 namespace Hubleto\Framework;
 
 class Router {
@@ -168,7 +160,7 @@ class Router {
     $controller = new \Hubleto\Framework\Controller($this->main);
     $controller->requiresUserAuthentication = FALSE;
     $controller->hideDefaultDesktop = TRUE;
-    $controller->translationContext = 'ADIOS\\Core\\Loader::Controllers\\SignIn';
+    $controller->translationContext = 'Hubleto\\Core\\Loader::Controllers\\SignIn';
 
     $controller->setView('@app/Views/SignIn.twig', ['status' => $_GET['incorrectLogin'] ?? '' == "1"]);
     return $controller;
@@ -179,7 +171,7 @@ class Router {
     $controller = new \Hubleto\Framework\Controller($this->main);
     $controller->requiresUserAuthentication = FALSE;
     $controller->hideDefaultDesktop = TRUE;
-    $controller->translationContext = 'ADIOS\\Core\\Loader::Controllers\\NotFound';
+    $controller->translationContext = 'Hubleto\\Core\\Loader::Controllers\\NotFound';
     $controller->setView('@app/Views/NotFound.twig');
     return $controller;
   }
@@ -192,7 +184,7 @@ class Router {
   public function createDesktopController(): \Hubleto\Framework\Controller
   {
     $controller = new \Hubleto\Framework\Controller($this->main);
-    $controller->translationContext = 'ADIOS\\Core\\Loader::Controllers\\Desktop';
+    $controller->translationContext = 'Hubleto\\Core\\Loader::Controllers\\Desktop';
     return $controller;
   }
 
