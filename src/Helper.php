@@ -4,11 +4,9 @@ namespace Hubleto\Framework;
 
 class Helper
 {
-  public Loader $main;
 
-  public function __construct(\Hubleto\Framework\Loader $main)
+  public function __construct(public \Hubleto\Framework\Loader $main)
   {
-    $this->main = $main;
   }
 
   /** Function serves as a delete funtion for the Tag Input

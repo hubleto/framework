@@ -4,7 +4,6 @@ namespace Hubleto\Framework;
 
 class Report
 {
-  public \Hubleto\Framework\Loader $main;
   public \Hubleto\Framework\App $hubletoApp;
 
   public const OPERATIONS = [
@@ -24,9 +23,8 @@ class Report
   protected string $urlSlug = '';
   protected string $name = '';
 
-  public function __construct(\Hubleto\Framework\Loader $main)
+  public function __construct(public \Hubleto\Framework\Loader $main)
   {
-    $this->main = $main;
   }
 
   public function getUrlSlug(): string

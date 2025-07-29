@@ -8,15 +8,13 @@ use HubletoApp\Community\Settings\Models\UserRole;
 
 class Permissions
 {
-  public \Hubleto\Framework\Loader $main;
 
   protected bool $grantAllPermissions = false;
   protected array $permissions = [];
   public array $administratorRoles = [];
 
-  public function __construct(\Hubleto\Framework\Loader $main)
+  public function __construct(public \Hubleto\Framework\Loader $main)
   {
-    $this->main = $main;
   }
 
   public function init(): void

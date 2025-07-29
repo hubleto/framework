@@ -3,12 +3,10 @@
 namespace Hubleto\Framework;
 
 class Locale {
-  public \Hubleto\Framework\Loader $main;
 
   private array $locale = [];
   
-  public function __construct(\Hubleto\Framework\Loader $main) {
-    $this->main = $main;
+  public function __construct(public \Hubleto\Framework\Loader $main) {
     $this->locale = $this->main->config->getAsArray('locale');
   }
 

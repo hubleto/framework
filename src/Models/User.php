@@ -28,7 +28,7 @@ class User extends \Hubleto\Framework\Model {
   ];
 
 
-  public function __construct(\Hubleto\Framework\Loader $main)
+  public function __construct(public \Hubleto\Framework\Loader $main)
   {
     parent::__construct($main);
 

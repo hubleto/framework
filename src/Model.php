@@ -31,13 +31,6 @@ class Model
    */
   public string $shortName = "";
 
-  /**
-   * Reference to Hubleto Framework Loader object
-   *
-   * @var mixed
-   */
-  public Loader $main;
-
   public object $record;
 
   /**
@@ -73,11 +66,9 @@ class Model
    * @param mixed $main
    * @return void
    */
-  public function __construct(\Hubleto\Framework\Loader $main)
+  public function __construct(public \Hubleto\Framework\Loader $main)
   {
     $reflection = new \ReflectionClass($this);
-
-    $this->main = $main;
 
     $recordManagerClass = $this->recordManagerClass;
     if (!empty($recordManagerClass) && $this->isDatabaseConnected()) {

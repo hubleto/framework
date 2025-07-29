@@ -5,8 +5,6 @@ namespace Hubleto\Framework;
 class DependencyInjection
 {
 
-  use \Hubleto\Framework\Traits\MainTrait;
-
   /**
    * [Description for $dependencies]
    *
@@ -14,8 +12,7 @@ class DependencyInjection
    */
   private array $dependencies = [];
   
-  public function __construct(\Hubleto\Framework\Loader $main) {
-    $this->main = $main;
+  public function __construct(public \Hubleto\Framework\Loader $main) {
 
     $this->setDependency('model.user', \Hubleto\Framework\Models\User::class);
 

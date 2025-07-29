@@ -4,13 +4,10 @@ namespace Hubleto\Framework;
 
 class Config
 {
-  public \Hubleto\Framework\Loader $app;
-
   protected array $config = [];
 
-  public function __construct(\Hubleto\Framework\Loader $app, array $config)
+  public function __construct(public \Hubleto\Framework\Loader $main, array $config)
   {
-    $this->app = $app;
     $this->config = $config;
 
     $this->set('requestUri', $_SERVER['REQUEST_URI'] ?? "");
@@ -89,7 +86,7 @@ class Config
   {
     try {
       if (!empty($path)) {
-        $this->app->pdo->execute("
+        $this->main->pdo->execute("
           insert into `config` set `path` = :path, `value` = :value
           on duplicate key update `path` = :path, `value` = :value
         ", ['path' => $path, 'value' => $value]);
@@ -100,14 +97,14 @@ class Config
 
   public function saveForUser(string $path, string $value): void
   {
-    $this->save('user/' . $this->app->auth->getUserId() . '/' . $path, $value);
+    $this->save('user/' . $this->main->auth->getUserId() . '/' . $path, $value);
   }
 
   public function delete($path): void
   {
     try {
       if (!empty($path)) {
-        $this->app->pdo->execute("delete from `config` where `path` like ?", [$path . '%']);
+        $this->main->pdo->execute("delete from `config` where `path` like ?", [$path . '%']);
       }
     } catch (\Exception $e) {
       if ($e->getCode() == '42S02') { // Base table not found
@@ -120,10 +117,10 @@ class Config
 
   public function loadFromDB(): void
   {
-    if (!$this->app->pdo->isConnected) return;
+    if (!$this->main->pdo->isConnected) return;
 
     try {
-      $cfgs = $this->app->pdo->fetchAll("select * from `config`");
+      $cfgs = $this->main->pdo->fetchAll("select * from `config`");
 
       foreach ($cfgs as $cfg) {
         $tmp = &$this->config;
@@ -146,22 +143,11 @@ class Config
 
   public function filterByUser(): void
   {
-    $idUser = $this->app->auth->getUserId();
+    $idUser = $this->main->auth->getUserId();
     if (isset($this->config['user'][$idUser]) && is_array($this->config['user'][$idUser])) {
       $this->config = array_merge_recursive($this->config, $this->config['user'][$idUser]);
       unset($this->config['user']);
     }
   }
-
-  // public function finalize() {
-  //   // various default values
-  //   $this->config['protocol'] = (strtoupper($_SERVER['HTTPS'] ?? "") == "ON" ? "https" : "http");
-  //   $this->config['timezone'] = $this->config['timezone'] ?? 'Europe/Bratislava';
-
-  //   $this->config['uploadFolder'] = $this->config['uploadFolder'] ?? "{$this->config['appDir']}/upload";
-  //   $this->config['uploadUrl'] = $this->config['uploadUrl'] ?? "{$this->config['rootUrl']}/upload";
-
-  //   $this->config['uploadFolder'] = str_replace("\\", "/", $this->config['uploadFolder']);
-  // }
 
 }

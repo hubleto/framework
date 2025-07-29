@@ -3,12 +3,10 @@
 namespace Hubleto\Framework;
 
 class Auth {
-  public \Hubleto\Framework\Loader $main;
   protected ?array $user = null;
 
-  function __construct(\Hubleto\Framework\Loader $main)
+  function __construct(public \Hubleto\Framework\Loader $main)
   {
-    $this->main = $main;
   }
 
   public function getUserFromSession(): array

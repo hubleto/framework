@@ -4,17 +4,15 @@ namespace Hubleto\Framework;
 
 class Session
 {
-  public \Hubleto\Framework\Loader $app;
 
   private string $salt = '';
 
-  public function __construct(\Hubleto\Framework\Loader $app)
+  public function __construct(public \Hubleto\Framework\Loader $main)
   {
-    $this->app = $app;
 
     if (isset($_SESSION) && is_array($_SESSION) && !is_array($_SESSION[$this->salt])) $_SESSION[$this->salt] = [];
 
-    $this->salt = $this->app->config->getAsString('sessionSalt');
+    $this->salt = $this->main->config->getAsString('sessionSalt');
   }
 
   public function getSalt(): string

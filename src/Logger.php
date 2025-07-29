@@ -8,7 +8,6 @@ use Monolog\Handler\RotatingFileHandler;
  * Debugger console.
  */
 class Logger {
-  public \Hubleto\Framework\Loader $app;
 
   public array $loggers = [];
 
@@ -16,9 +15,8 @@ class Logger {
   public string $logFolder = "";
   public bool $enabled = false;
  
-  public function __construct($app) {
-    $this->app = $app;
-    $this->logFolder = $this->app->config->getAsString('logFolder');
+  public function __construct(public Loader $main) {
+    $this->logFolder = $this->main->config->getAsString('logFolder');
     $this->enabled = !empty($this->logFolder) && is_dir($this->logFolder);
 
     $this->initLogger('core');

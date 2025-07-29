@@ -5,13 +5,9 @@ namespace Hubleto\Framework;
 class AppTest implements \Hubleto\Framework\Interfaces\TestableInterface
 {
   public \Hubleto\Framework\Loader $main;
-  public \HubletoMain\Cli\Agent\Loader $cli;
-  public \Hubleto\Framework\App $app;
 
-  public function __construct(\Hubleto\Framework\App $app, \HubletoMain\Cli\Agent\Loader $cli)
+  public function __construct(public \Hubleto\Framework\App $app, public \HubletoMain\Cli\Agent\Loader $cli)
   {
-    $this->cli = $cli;
-    $this->app = $app;
     $this->main = $app->main;
   }
 

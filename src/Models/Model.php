@@ -6,17 +6,14 @@ use HubletoApp\Community\Settings\Models\UserRole;
 
 class Model extends \Hubleto\Framework\Model
 {
-  public \Hubleto\Framework\Loader $main;
-
   public bool $isExtendableByCustomColumns = false;
 
   public array $conversionRelations = [];
   public string $permission = '';
   public array $rolePermissions = []; // example: [ [UserRole::ROLE_CHIEF_OFFICER => [true, true, true, true]] ]
 
-  public function __construct(\Hubleto\Framework\Loader $main)
+  public function __construct(public \Hubleto\Framework\Loader $main)
   {
-    $this->main = $main;
 
     $reflection = new \ReflectionClass($this);
     preg_match('/^(.*?)\\\Models\\\(.*?)$/', $reflection->getName(), $m);

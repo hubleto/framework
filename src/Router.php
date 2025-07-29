@@ -5,15 +5,13 @@ namespace Hubleto\Framework;
 class Router {
   const HTTP_GET = 'HTTP_GET';
 
-  public \Hubleto\Framework\Loader $main;
-
   public $routing = [];
 
   protected array $routesHttpGet = [];
   protected array $routeVars = [];
   
-  public function __construct(\Hubleto\Framework\Loader $main) {
-    $this->main = $main;
+  public function __construct(public \Hubleto\Framework\Loader $main)
+  {
 
     $this->httpGet([
       'about' => \Hubleto\Framework\Controllers\About::class,

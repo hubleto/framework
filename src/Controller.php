@@ -17,11 +17,6 @@ class Controller implements \Hubleto\Framework\Interfaces\TestableInterface {
   const RETURN_TYPE_NONE = 3;
 
   /**
-   * Reference to Hubleto Framework Loader object
-   */
-  protected \Hubleto\Framework\Loader $main;
-    
-  /**
    * Shorthand for "global table prefix"
    */
   protected string $gtp = "";
@@ -70,12 +65,11 @@ class Controller implements \Hubleto\Framework\Interfaces\TestableInterface {
   public object $renderer;
   public string $translationContext = '';
 
-  function __construct(Loader $main, array $params = [])
+  function __construct(public Loader $main, array $params = [])
   {
     $reflection = new \ReflectionClass($this);
 
     $this->name = str_replace("\\", "/", str_replace("Hubleto\\Framework\\", "", get_class($this)));
-    $this->main = $main;
 
     if (isset($this->main->twig)) {
       $this->renderer = $this->main->twig;

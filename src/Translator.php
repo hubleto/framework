@@ -4,14 +4,12 @@ namespace Hubleto\Framework;
 
 class Translator
 {
-  public \Hubleto\Framework\Loader $main;
 
   public string $dictionaryFilename = "Core-Loader";
   public array $dictionary = [];
 
-  public function __construct(\Hubleto\Framework\Loader $main)
+  public function __construct(public \Hubleto\Framework\Loader $main)
   {
-    $this->main = $main;
     $this->dictionary = [];
   }
 

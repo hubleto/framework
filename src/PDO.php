@@ -3,12 +3,11 @@
 namespace Hubleto\Framework;
 
 class PDO {
-  public \Hubleto\Framework\Loader $main;
   public ?\PDO $connection = null;
   public bool $isConnected = false;
-  
-  public function __construct($main) {
-    $this->main = $main;
+
+  public function __construct(Loader $main)
+  {
   }
 
   public function connect() {

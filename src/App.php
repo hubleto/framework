@@ -12,7 +12,6 @@ class App
   public const APP_TYPE_PREMIUM = 2;
   public const APP_TYPE_EXTERNAL = 3;
 
-  public \Hubleto\Framework\Loader $main;
   public \HubletoMain\Cli\Agent\Loader|null $cli;
 
   /**
@@ -42,11 +41,10 @@ class App
     return true;
   }
 
-  public function __construct(\Hubleto\Framework\Loader $main)
+  public function __construct(public \Hubleto\Framework\Loader $main)
   {
     $reflection = new \ReflectionClass($this);
 
-    $this->main = $main;
     $this->cli = null;
     $this->rootFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
     $this->namespace = $reflection->getNamespaceName();
