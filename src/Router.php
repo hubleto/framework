@@ -88,26 +88,6 @@ class Router {
     return $routeData;
   }
 
-  // public function findController(string $method, string $route): string
-  // {
-  //   $controller = '';
-
-  //   $tmpRoute = $this->findRoute($method, $route);
-
-  //   if (!empty($tmpRoute['redirect'])) {
-  //     $url = $tmpRoute['redirect']['url'];
-  //     foreach ($m as $k => $v) {
-  //       $url = str_replace('$'.$k, $v, $url);
-  //     }
-  //     $this->redirectTo($url, $tmpRoute['redirect']['code'] ?? 302);
-  //     exit;
-  //   } else if (is_string($tmpRoute)) {
-  //     $controller = $tmpRoute;
-  //   }
-
-  //   return $controller;
-  // }
-
   public function setRouteVars(array $routeVars): void
   {
     $this->routeVars = $routeVars;
@@ -160,30 +140,29 @@ class Router {
     $controller->hideDefaultDesktop = TRUE;
     $controller->translationContext = 'Hubleto\\Core\\Loader::Controllers\\SignIn';
 
-    $controller->setView('@app/Views/SignIn.twig', ['status' => $_GET['incorrectLogin'] ?? '' == "1"]);
+    $controller->setView('@framework/SignIn.twig', ['status' => $_GET['incorrectLogin'] ?? '' == "1"]);
     return $controller;
   }
 
   public function createNotFoundController(): \Hubleto\Framework\Controller
   {
+    return $this->main(\Hubleto\Framework\Controllers\NotFoundController::class);
     $controller = new \Hubleto\Framework\Controller($this->main);
     $controller->requiresUserAuthentication = FALSE;
     $controller->hideDefaultDesktop = TRUE;
     $controller->translationContext = 'Hubleto\\Core\\Loader::Controllers\\NotFound';
-    $controller->setView('@app/Views/NotFound.twig');
+    $controller->setView('@framework/NotFound.twig');
     return $controller;
   }
 
   public function createResetPasswordController(): \Hubleto\Framework\Controller
   {
-    return new \Hubleto\Framework\Controller($this->main);
+    return $this->main(\Hubleto\Framework\Controller::class);
   }
 
   public function createDesktopController(): \Hubleto\Framework\Controller
   {
-    $controller = new \Hubleto\Framework\Controller($this->main);
-    $controller->translationContext = 'Hubleto\\Core\\Loader::Controllers\\Desktop';
-    return $controller;
+    return $this->main(\Hubleto\Framework\Controllers\DesktopController::class);
   }
 
 }

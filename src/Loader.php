@@ -55,6 +55,50 @@ class Loader
 
   public function __construct(array $config = [], int $mode = self::HUBLETO_MODE_FULL)
   {
+    $this->setAsGlobal();
+
+    $this->params = $this->extractParamsFromRequest();
+
+    $this->mode = $mode;
+
+    try {
+
+      // load config
+      $this->config = $this->createConfigManager($config);
+
+      if (php_sapi_name() !== 'cli') {
+        if (!empty($_GET['route'])) {
+          $this->requestedUri = $_GET['route'];
+        } else if ($this->config->getAsString('rewriteBase') == "/") {
+          $this->requestedUri = ltrim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), "/");
+        } else {
+          $this->requestedUri = str_replace(
+            $this->config->getAsString('rewriteBase'),
+            "",
+            parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
+          );
+        }
+
+      }
+
+      // create required services
+      $this->di = $this->createDependencyInjection();
+      $this->session = $this->createSessionManager();
+      $this->logger = $this->createLogger();
+      $this->translator = $this->createTranslator();
+      $this->router = $this->createRouter();
+      $this->locale = $this->createLocale();
+      $this->permissions = $this->createPermissionsManager();
+      $this->auth = $this->createAuthProvider();
+      $this->test = $this->createTestProvider();
+      $this->createRenderer();
+      $this->pdo = new \Hubleto\Framework\PDO($this);
+
+    } catch (\Exception $e) {
+      echo "Hubleto boot failed: [".get_class($e)."] ".$e->getMessage() . "\n";
+      echo $e->getTraceAsString() . "\n";
+      exit;
+    }
 
   }
 
@@ -149,7 +193,7 @@ class Loader
 
   public function createAuthProvider(): Auth
   {
-    return $this->di->create(DefaultProvider::class);
+    return $this->di->create(Auth\DefaultProvider::class);
   }
 
   public function createSessionManager(): Session
@@ -198,48 +242,62 @@ class Loader
     $this->configureRenderer();
   }
 
-  // public function configureRenderer()
-  // {
+  /**
+   * Creates object for HTML rendering (Twig).
+   *
+   * @return void
+   * 
+   */
+  public function configureRenderer(): void
+  {
 
-  //   $this->twigLoader->addPath($this->config->getAsString('srcFolder'));
-  //   $this->twigLoader->addPath($this->config->getAsString('srcFolder'), 'app');
+    $this->twigLoader->addPath(__DIR__);
+    $this->twigLoader->addPath(realpath(__DIR__ . '/../views'), 'framework');
 
-  //   $this->twig->addGlobal('config', $this->config->get());
-  //   $this->twig->addExtension(new \Twig\Extension\StringLoaderExtension());
-  //   $this->twig->addExtension(new \Twig\Extension\DebugExtension());
+    $this->twig->addGlobal('config', $this->config->get());
+    $this->twig->addExtension(new \Twig\Extension\StringLoaderExtension());
+    $this->twig->addExtension(new \Twig\Extension\DebugExtension());
 
-  //   $this->twig->addFunction(new \Twig\TwigFunction(
-  //     'str2url',
-  //     function ($string) {
-  //       return Helper::str2url($string ?? '');
-  //     }
-  //   ));
-  //   $this->twig->addFunction(new \Twig\TwigFunction(
-  //     'hasPermission',
-  //     function (string $permission, array $idUserRoles = []) {
-  //       return $this->permissions->granted($permission, $idUserRoles);
-  //     }
-  //   ));
-  //   $this->twig->addFunction(new \Twig\TwigFunction(
-  //     'hasRole',
-  //     function (int|string $role) {
-  //       return $this->permissions->hasRole($role);
-  //     }
-  //   ));
-  //   $this->twig->addFunction(new \Twig\TwigFunction(
-  //     'setTranslationContext',
-  //     function ($context) {
-  //       $this->translationContext = $context;
-  //     }
-  //   ));
-  //   $this->twig->addFunction(new \Twig\TwigFunction(
-  //     'translate',
-  //     function ($string, $context = '') {
-  //       if (empty($context)) $context = $this->translationContext;
-  //       return $this->translate($string, [], $context);
-  //     }
-  //   ));
-  // }
+    $this->twig->addFunction(new \Twig\TwigFunction(
+      'str2url',
+      function ($string) {
+        return Helper::str2url($string ?? '');
+      }
+    ));
+    $this->twig->addFunction(new \Twig\TwigFunction(
+      'hasPermission',
+      function (string $permission, array $idUserRoles = []) {
+        return $this->permissions->granted($permission, $idUserRoles);
+      }
+    ));
+    $this->twig->addFunction(new \Twig\TwigFunction(
+      'hasRole',
+      function (int|string $role) {
+        return $this->permissions->hasRole($role);
+      }
+    ));
+    $this->twig->addFunction(new \Twig\TwigFunction(
+      'setTranslationContext',
+      function ($context) {
+        $this->translationContext = $context;
+      }
+    ));
+    $this->twig->addFunction(new \Twig\TwigFunction(
+      'translate',
+      function ($string, $context = '') {
+        if (empty($context)) $context = $this->translationContext;
+        return $this->translate($string, [], $context);
+      }
+    ));
+
+    $this->twig->addFunction(new \Twig\TwigFunction(
+      'number',
+      function (string $amount) {
+        return number_format((float) $amount, 2, ",", " ");
+      }
+    ));
+
+  }
 
   //////////////////////////////////////////////////////////////////////////////
   // MODELS
@@ -400,7 +458,7 @@ class Loader
 
       // Check if controller exists and if it can be used
       if (empty($this->controller)) {
-        $controllerClassName = $this->router->createNotFoundController();
+        $controllerClassName = Controllers\NotFoundController::class;
       } else if (!$this->controllerExists($this->controller)) {
         throw new Exceptions\ControllerNotFound($this->controller);
       } else {

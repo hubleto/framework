@@ -58,7 +58,7 @@ class Controller implements \Hubleto\Framework\Interfaces\TestableInterface {
   public string $shortName = "";
   public string $fullName = "";
   public string $permission = "";
-  public null|string $view = null;
+  public string $view = "";
 
   public int $returnType = self::RETURN_TYPE_VIEW;
 

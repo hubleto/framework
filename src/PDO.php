@@ -6,7 +6,7 @@ class PDO {
   public ?\PDO $connection = null;
   public bool $isConnected = false;
 
-  public function __construct(Loader $main)
+  public function __construct(public Loader $main)
   {
   }
 

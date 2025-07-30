@@ -405,16 +405,19 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     $id = (int) ($record['id'] ?? 0);
     $isCreate = ($id <= 0);
 
-    $permissions = $this->getPermissions($record);
+    if ($id <= 0) {
+      $permissions = $this->getPermissions($record);
+    } else {
+      $originalRecord = $this->where($this->table . '.id', $id)->first()?->toArray();
+      $permissions = $this->getPermissions($originalRecord);
+    }
+
     if (
       ($id < 0 && !$permissions[0]) // cannot create
       || ($id >= 0 && !$permissions[2]) // cannot update
     ) {
-      throw new Exceptions\NotEnoughPermissionsException("Cannot save. Not enough permissions.");
+      throw new \ADIOS\Core\Exceptions\NotEnoughPermissionsException("Cannot save. Not enough permissions.");
     }
-
-    if ($id <= 0) $originalRecord = [];
-    else $originalRecord = $this->where($this->table . '.id', $id)->first()?->toArray();
 
     $savedRecord = $record;
     if ($idMasterRecord == 0) $this->recordValidate($savedRecord);
