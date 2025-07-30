@@ -178,10 +178,6 @@ class User extends \Hubleto\Framework\Model {
     return $user;
   }
 
-  public function loadUserFromSession() {
-    return $this->loadUser((int) ($this->main->session->get('userProfile')['id'] ?? 0));
-  }
-
   public function getByEmail(string $email) {
     $user = $this->record->where("email", $email)->first();
 
