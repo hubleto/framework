@@ -51,7 +51,7 @@ class PDO {
   public function execute(string $query, array $data = []): void
   {
     if (!empty($query)) {
-      $stmt = $this->connection->prepare($query);
+      $stmt = $this->connection->prepare(trim($query));
       $stmt->execute($data);
     }
   }

@@ -92,7 +92,7 @@ class Loader
       $this->auth = $this->createAuthProvider();
       $this->test = $this->createTestProvider();
       $this->createRenderer();
-      $this->pdo = new \Hubleto\Framework\PDO($this);
+      $this->pdo = $this->createDbProvider();
 
     } catch (\Exception $e) {
       echo "Hubleto boot failed: [".get_class($e)."] ".$e->getMessage() . "\n";
@@ -189,6 +189,11 @@ class Loader
   public function createTestProvider(): Test
   {
     return $this->di->create(Test::class);
+  }
+
+  public function createDbProvider(): PDO
+  {
+    return $this->di->create(PDO::class);
   }
 
   public function createAuthProvider(): Auth
@@ -420,7 +425,6 @@ class Loader
    */
   public function render(string $route = '', array $params = []): string
   {
-    $this->init();
 
     try {
 
