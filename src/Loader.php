@@ -28,8 +28,6 @@ class Loader
   public array $modelObjects = [];
   public array $registeredModels = [];
 
-  public bool $testMode = false; // Set to TRUE only in DEVELOPMENT. Disables authentication.
-
   public Config $config;
   public DependencyInjection $di;
   public Session $session;
@@ -69,7 +67,6 @@ class Loader
     $reflection = new \ReflectionClass($this);
     $this->srcFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
 
-
     try {
 
       // load config
@@ -93,8 +90,14 @@ class Loader
 
       }
 
-      // create required services
+      // initialize dependency injector
       $this->di = $this->createDependencyInjection();
+
+      foreach ($this->getServiceProviders() as $service => $provider) {
+        $this->di->setServiceProvider($service, $provider);
+      }
+
+      // create required services
       $this->session = $this->createSessionManager();
       $this->logger = $this->createLogger();
       $this->translator = $this->createTranslator();
@@ -113,6 +116,11 @@ class Loader
       exit;
     }
 
+  }
+
+  public function getServiceProviders(): array
+  {
+    return $this->config->getAsArray('serviceProviders');
   }
 
   /**
@@ -134,7 +142,9 @@ class Loader
 
   public function init(): void
   {
+
     try {
+      $this->router->init();
       $this->permissions->init();
       $this->auth->init();
 
@@ -269,8 +279,12 @@ class Loader
   public function configureRenderer(): void
   {
 
-    $this->twigLoader->addPath(__DIR__);
-    $this->twigLoader->addPath(realpath(__DIR__ . '/../views'), 'framework');
+    try {
+      $this->twigLoader->addPath($this->projectFolder . '/views', 'app');
+    } catch (\Exception $e) { }
+    try {
+      $this->twigLoader->addPath(realpath(__DIR__ . '/../views'), 'framework');
+    } catch (\Exception $e) { }
 
     $this->twig->addGlobal('config', $this->config->get());
     $this->twig->addExtension(new \Twig\Extension\StringLoaderExtension());
@@ -493,7 +507,7 @@ class Loader
         $this->permission = $controllerObject->permission;
       }
 
-      // Perform some basic checks
+      // Check if controller can be executed in this SAPI
       if (php_sapi_name() === 'cli') {
         if (!$controllerClassName::$cliSAPIEnabled) {
           throw new Exceptions\GeneralException("Controller is not enabled in CLI interface.");
@@ -504,14 +518,14 @@ class Loader
         }
       }
 
-      if (!$this->testMode && $controllerObject->requiresUserAuthentication) {
+      if ($controllerObject->requiresUserAuthentication) {
         if (!$this->auth->isUserInSession()) {
           $controllerObject = $this->router->createSignInController();
           $this->permission = $controllerObject->permission;
         }
       }
 
-      if (!$this->testMode && $controllerObject->requiresUserAuthentication) {
+      if ($controllerObject->requiresUserAuthentication) {
         $this->permissions->check($this->permission);
       }
 
@@ -521,14 +535,14 @@ class Loader
 
       // All OK, rendering content...
 
-      // vygenerovanie UID tohto behu
-      if (empty($this->uid)) {
-        $uid = $this->getUid($this->urlParamAsString('id'));
-      } else {
-        $uid = $this->uid.'__'.$this->getUid($this->urlParamAsString('id'));
-      }
+      // // vygenerovanie UID tohto behu
+      // if (empty($this->uid)) {
+      //   $uid = $this->getUid($this->urlParamAsString('id'));
+      // } else {
+      //   $uid = $this->uid.'__'.$this->getUid($this->urlParamAsString('id'));
+      // }
 
-      $this->setUid($uid);
+      // $this->setUid($uid);
 
       $return = '';
 
@@ -631,30 +645,26 @@ class Loader
       echo $e->getMessage();
       header('HTTP/1.1 400 Bad Request', true, 400);
     } catch (\Exception $e) {
-      if ($this->testMode) {
-        throw new (get_class($e))($e->getMessage());
+      $error = error_get_last();
+
+      if ($error && $error['type'] == E_ERROR) {
+        $return = $this->renderFatal(
+          '<div style="margin-bottom:1em;">'
+            . $error['message'] . ' in ' . $error['file'] . ':' . $error['line']
+          . '</div>'
+          . '<pre style="font-size:0.75em;font-family:Courier New">'
+            . $e->getTraceAsString()
+          . '</pre>',
+          true
+        );
       } else {
-        $error = error_get_last();
+        $return = $this->renderFatal($this->renderExceptionHtml($e));
+      }
 
-        if ($error && $error['type'] == E_ERROR) {
-          $return = $this->renderFatal(
-            '<div style="margin-bottom:1em;">'
-              . $error['message'] . ' in ' . $error['file'] . ':' . $error['line']
-            . '</div>'
-            . '<pre style="font-size:0.75em;font-family:Courier New">'
-              . $e->getTraceAsString()
-            . '</pre>',
-            true
-          );
-        } else {
-          $return = $this->renderFatal($this->renderExceptionHtml($e));
-        }
+      return $return;
 
-        return $return;
-
-        if (php_sapi_name() !== 'cli') {
-          header('HTTP/1.1 400 Bad Request', true, 400);
-        }
+      if (php_sapi_name() !== 'cli') {
+        header('HTTP/1.1 400 Bad Request', true, 400);
       }
     }
   }
@@ -835,47 +845,47 @@ class Loader
 
   ////////////////////////////////////////////////
 
-  public function getUid($uid = '') {
-    if (empty($uid)) {
-      $tmp = $this->controller.'-'.time().rand(100000, 999999);
-    } else {
-      $tmp = $uid;
-    }
+  // public function getUid($uid = '') {
+  //   if (empty($uid)) {
+  //     $tmp = $this->controller.'-'.time().rand(100000, 999999);
+  //   } else {
+  //     $tmp = $uid;
+  //   }
 
-    $tmp = str_replace('\\', '/', $tmp);
-    $tmp = str_replace('/', '-', $tmp);
+  //   $tmp = str_replace('\\', '/', $tmp);
+  //   $tmp = str_replace('/', '-', $tmp);
 
-    $uid = "";
-    for ($i = 0; $i < strlen($tmp); $i++) {
-      if ($tmp[$i] == "-") {
-        $uid .= strtoupper($tmp[++$i]);
-      } else {
-        $uid .= $tmp[$i];
-      }
-    }
+  //   $uid = "";
+  //   for ($i = 0; $i < strlen($tmp); $i++) {
+  //     if ($tmp[$i] == "-") {
+  //       $uid .= strtoupper($tmp[++$i]);
+  //     } else {
+  //       $uid .= $tmp[$i];
+  //     }
+  //   }
 
-    $this->setUid($uid);
+  //   $this->setUid($uid);
 
-    return $uid;
-  }
+  //   return $uid;
+  // }
 
-  /**
-   * Checks the argument whether it is a validUID string.
-   *
-   * @param  string $uid The string to validate.
-   * @throws Exceptions\InvalidUidException If the provided string is not a valid UID string.
-   * @return void
-   */
-  public function checkUid($uid) {
-    if (preg_match('/[^A-Za-z0-9\-_]/', $uid)) {
-      throw new Exceptions\InvalidUidException();
-    }
-  }
+  // /**
+  //  * Checks the argument whether it is a validUID string.
+  //  *
+  //  * @param  string $uid The string to validate.
+  //  * @throws Exceptions\InvalidUidException If the provided string is not a valid UID string.
+  //  * @return void
+  //  */
+  // public function checkUid($uid) {
+  //   if (preg_match('/[^A-Za-z0-9\-_]/', $uid)) {
+  //     throw new Exceptions\InvalidUidException();
+  //   }
+  // }
 
-  public function setUid($uid) {
-    $this->checkUid($uid);
-    $this->uid = $uid;
-  }
+  // public function setUid($uid) {
+  //   $this->checkUid($uid);
+  //   $this->uid = $uid;
+  // }
 
   public function renderCSSCache() {
     $css = "";

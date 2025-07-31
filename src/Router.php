@@ -25,7 +25,9 @@ class Router {
     ]);
   }
 
-  // 2024-12-04 NEW PRINCIPLE.
+  public function init(): void
+  {
+  }
 
   // configure routes for HTTP GET
   public function httpGet(array $routes)
@@ -84,7 +86,6 @@ class Router {
       }
     }
 
-
     return $routeData;
   }
 
@@ -140,7 +141,7 @@ class Router {
     $controller->hideDefaultDesktop = TRUE;
     $controller->translationContext = 'Hubleto\\Core\\Loader::Controllers\\SignIn';
 
-    $controller->setView('@framework/SignIn.twig', ['status' => $_GET['incorrectLogin'] ?? '' == "1"]);
+    $controller->setView('@app/SignIn.twig', ['status' => $_GET['incorrectLogin'] ?? '' == "1"]);
     return $controller;
   }
 
@@ -151,18 +152,18 @@ class Router {
     $controller->requiresUserAuthentication = FALSE;
     $controller->hideDefaultDesktop = TRUE;
     $controller->translationContext = 'Hubleto\\Core\\Loader::Controllers\\NotFound';
-    $controller->setView('@framework/NotFound.twig');
+    $controller->setView('@app/NotFound.twig');
     return $controller;
   }
 
   public function createResetPasswordController(): \Hubleto\Framework\Controller
   {
-    return $this->main(\Hubleto\Framework\Controller::class);
+    return $this->main->di->create(\Hubleto\Framework\Controller::class);
   }
 
   public function createDesktopController(): \Hubleto\Framework\Controller
   {
-    return $this->main(\Hubleto\Framework\Controllers\DesktopController::class);
+    return $this->main->di->create(\Hubleto\Framework\Controllers\DesktopController::class);
   }
 
 }

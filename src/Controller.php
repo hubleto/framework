@@ -166,6 +166,7 @@ class Controller {
   {
     $this->main->translationContext = $this->translationContext;
     $this->viewParams = $this->main->getUrlParams();
+    $this->viewParams['main'] = $this->main;
   }
   
   /**
