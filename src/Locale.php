@@ -17,7 +17,7 @@ class Locale {
 
   public function getDateLongFormat(): string
   {
-    return "Y-m-d";
+    return "jS F Y";
   }
 
   public function getDatetimeFormat(): string
