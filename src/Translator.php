@@ -21,7 +21,7 @@ class Translator
     if (empty($language)) $language = 'en';
 
     if (strlen($language) == 2) {
-      $dictionaryFile = $this->main->config->getAsString('srcFolder') . "/Lang/{$language}.json";
+      $dictionaryFile = $this->main->srcFolder . "/Lang/{$language}.json";
     }
 
     return $dictionaryFile;
@@ -96,7 +96,7 @@ class Translator
 
       $app = $this->main->apps->getAppInstance($appClass);
       if ($app) {
-        $dictionaryFilename = $app->rootFolder . '/Lang/' . $language . '.json';
+        $dictionaryFilename = $app->srcFolder . '/Lang/' . $language . '.json';
       }
     }
 

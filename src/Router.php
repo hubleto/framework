@@ -129,7 +129,7 @@ class Router {
   }
 
   public function redirectTo(string $url, int $code = 302) {
-    header("Location: " . $this->main->config->getAsString('rootUrl') . "/" . trim($url, "/"), true, $code);
+    header("Location: " . $this->main->projectUrl . "/" . trim($url, "/"), true, $code);
     exit;
   }
 

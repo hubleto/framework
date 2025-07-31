@@ -26,7 +26,7 @@ class App
 
   public bool $permittedForAllUsers = false;
 
-  public string $rootFolder = '';
+  public string $srcFolder = '';
   public string $viewNamespace = '';
   public string $namespace = '';
   public string $fullName = '';
@@ -46,7 +46,7 @@ class App
     $reflection = new \ReflectionClass($this);
 
     $this->cli = null;
-    $this->rootFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
+    $this->srcFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
     $this->namespace = $reflection->getNamespaceName();
     $this->fullName = $reflection->getName();
     $this->translationContext = trim(str_replace('\\', '/', $this->fullName), '/');
@@ -54,7 +54,7 @@ class App
     $this->viewNamespace = $this->namespace;
     $this->viewNamespace = str_replace('\\', ':', $this->viewNamespace);
 
-    $manifestFile = $this->rootFolder . '/manifest.yaml';
+    $manifestFile = $this->srcFolder . '/manifest.yaml';
     if (is_file($manifestFile)) {
       $this->manifest = (array) \Symfony\Component\Yaml\Yaml::parse((string) file_get_contents($manifestFile));
     } else {
@@ -104,7 +104,7 @@ class App
     $this->manifest['nameTranslated'] = $this->translate($this->manifest['name'], [], 'manifest');
     $this->manifest['highlightTranslated'] = $this->translate($this->manifest['highlight'], [], 'manifest');
 
-    $this->main->addTwigViewNamespace($this->rootFolder . '/Views', $this->viewNamespace);
+    $this->main->addTwigViewNamespace($this->srcFolder . '/Views', $this->viewNamespace);
   }
 
   public function onBeforeRender(): void
@@ -146,7 +146,7 @@ class App
   public function getAllTests(): array
   {
     $tests = [];
-    $testFiles = (array) @scandir($this->rootFolder . '/Tests');
+    $testFiles = (array) @scandir($this->srcFolder . '/Tests');
     foreach ($testFiles as $testFile) {
       if (substr($testFile, -4) == '.php') {
         $tests[] = substr($testFile, 0, -4);
@@ -161,8 +161,8 @@ class App
     if (strlen($language) == 2) {
       $appClass = get_called_class();
       $reflection = new \ReflectionClass(get_called_class());
-      $rootFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
-      return $rootFolder . '/Lang/' . $language . '.json';
+      $srcFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
+      return $srcFolder . '/Lang/' . $language . '.json';
     } else {
       return '';
     }
@@ -235,7 +235,7 @@ class App
   {
     $controllerClasses = [];
 
-    $controllersFolder = $this->rootFolder . '/Controllers';
+    $controllersFolder = $this->srcFolder . '/Controllers';
     if (is_dir($controllersFolder)) {
       $controllers = Helper::scanDirRecursively($controllersFolder);
       foreach ($controllers as $controller) {
@@ -255,7 +255,7 @@ class App
   {
     $modelClasses = [];
 
-    $modelsFolder = $this->rootFolder . '/Models';
+    $modelsFolder = $this->srcFolder . '/Models';
     if (is_dir($modelsFolder)) {
       $models = Helper::scanDirRecursively($modelsFolder);
       foreach ($models as $model) {
@@ -287,7 +287,7 @@ class App
       'Api/Record/Save',
     ];
 
-    $controllersFolder = $this->rootFolder . '/Controllers';
+    $controllersFolder = $this->srcFolder . '/Controllers';
     if (is_dir($controllersFolder)) {
       $controllers = Helper::scanDirRecursively($controllersFolder);
       foreach ($controllers as $controller) {
@@ -301,7 +301,7 @@ class App
       }
     }
 
-    $modelsFolder = $this->rootFolder . '/Models';
+    $modelsFolder = $this->srcFolder . '/Models';
     if (is_dir($modelsFolder)) {
       $models = Helper::scanDirRecursively($modelsFolder);
       foreach ($models as $model) {

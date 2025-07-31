@@ -16,6 +16,9 @@ class Loader
 
   const RELATIVE_DICTIONARY_PATH = '../Lang';
 
+  public string $projectFolder = '';
+  public string $projectUrl = '';
+
   public string $requestedUri = "";
   public string $controller = "";
   public string $permission = "";
@@ -51,6 +54,8 @@ class Loader
 
   public ?array $uploadedFiles = null;
 
+  public string $srcFolder = '';
+
   public int $mode = 0;
 
   public function __construct(array $config = [], int $mode = self::HUBLETO_MODE_FULL)
@@ -61,10 +66,17 @@ class Loader
 
     $this->mode = $mode;
 
+    $reflection = new \ReflectionClass($this);
+    $this->srcFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
+
+
     try {
 
       // load config
       $this->config = $this->createConfigManager($config);
+
+      $this->projectFolder = $this->config->getAsString('projectFolder');
+      $this->projectUrl = $this->config->getAsString('projectUrl');
 
       if (php_sapi_name() !== 'cli') {
         if (!empty($_GET['route'])) {
@@ -608,7 +620,7 @@ class Loader
     } catch (Exceptions\NotEnoughPermissionsException $e) {
       $message = $e->getMessage();
       if ($this->auth->isUserInSession()) {
-        $message .= " Hint: Sign out at {$this->config->getAsString('rootUrl')}?sign-out and sign in again or check your permissions.";
+        $message .= " Hint: Sign out at {$this->projectUrl}?sign-out and sign in again or check your permissions.";
       }
       return $this->renderFatal($message, false);
       // header('HTTP/1.1 401 Unauthorized', true, 401);
@@ -1008,8 +1020,8 @@ class Loader
     if (strlen($language) == 2) {
       $appClass = get_called_class();
       $reflection = new \ReflectionClass(get_called_class());
-      $rootFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
-      return $rootFolder . '/' . static::RELATIVE_DICTIONARY_PATH . '/' . $language . '.json';
+      $srcFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
+      return $srcFolder . '/' . static::RELATIVE_DICTIONARY_PATH . '/' . $language . '.json';
     } else {
       return '';
     }
