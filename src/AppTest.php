@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class AppTest implements \Hubleto\Framework\Interfaces\TestableInterface
+class AppTest
 {
   public \Hubleto\Framework\Loader $main;
 
@@ -22,13 +22,6 @@ class AppTest implements \Hubleto\Framework\Interfaces\TestableInterface
     return [
       '\'',
     ];
-  }
-
-  public function assert(string $assertionName, bool $assertion): void
-  {
-    if ($this->main->testMode && !$assertion) {
-      throw new Exceptions\TestAssertionFailedException('TEST FAILED: Assertion [' . $assertionName . '] not fulfilled in ' . get_parent_class($this));
-    }
   }
 
 }

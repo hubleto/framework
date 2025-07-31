@@ -91,8 +91,9 @@ class Loader
       $this->permissions = $this->createPermissionsManager();
       $this->auth = $this->createAuthProvider();
       $this->test = $this->createTestProvider();
-      $this->createRenderer();
       $this->pdo = $this->createDbProvider();
+
+      $this->createRenderer();
 
     } catch (\Exception $e) {
       echo "Hubleto boot failed: [".get_class($e)."] ".$e->getMessage() . "\n";
@@ -235,8 +236,8 @@ class Loader
   {
     return $this->di->create(Translator::class);
   }
-  
-  public function createRenderer()
+
+  public function createRenderer(): void
   {
     $this->twigLoader = new \Twig\Loader\FilesystemLoader();
     $this->twig = new \Twig\Environment($this->twigLoader, array(

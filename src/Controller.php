@@ -9,7 +9,7 @@ namespace Hubleto\Framework;
  * be rendered using Twig template or using custom render() method.
  * 
  */
-class Controller implements \Hubleto\Framework\Interfaces\TestableInterface {
+class Controller {
 
   const RETURN_TYPE_VIEW = 0;
   const RETURN_TYPE_JSON = 1;
@@ -181,18 +181,17 @@ class Controller implements \Hubleto\Framework\Interfaces\TestableInterface {
     return $this->main->translate($string, $vars, $this->translationContext);
   }
 
-  public function setView(null|string $view, array|null $viewParams = null)
+  public function setView(string $view): void
   {
     $this->view = $view;
-    if (is_array($viewParams)) $this->viewParams = $viewParams;
   }
 
-  public function setRenderer(Object $renderer)
+  public function setRenderer(Object $renderer): void
   {
     $this->renderer = $renderer;
   }
 
-  public function getView(): null|string
+  public function getView(): string
   {
     return $this->view;
   }
@@ -200,13 +199,6 @@ class Controller implements \Hubleto\Framework\Interfaces\TestableInterface {
   public function getViewParams(): array
   {
     return $this->viewParams;
-  }
-
-  public function assert(string $assertionName, bool $assertion): void
-  {
-    if ($this->main->testMode && !$assertion) {
-      throw new Exceptions\TestAssertionFailedException('TEST FAILED: Assertion [' . $assertionName . '] not fulfilled in ' . get_parent_class($this));
-    }
   }
 
   public function render(array $params): string

@@ -9,6 +9,10 @@ class Auth {
   {
   }
 
+  public function init(): void
+  {
+  }
+
   public function getUserFromSession(): array
   {
     $tmp = $this->main->session->get('userProfile') ?? [];
