@@ -8,9 +8,9 @@ class App
     'sidebarOrder' => 500,
   ];
 
-  public const APP_TYPE_COMMUNITY = 1;
-  public const APP_TYPE_PREMIUM = 2;
-  public const APP_TYPE_EXTERNAL = 3;
+  public const APP_TYPE_COMMUNITY = 'community';
+  public const APP_TYPE_PREMIUM = 'premium';
+  public const APP_TYPE_EXTERNAL = 'external';
 
   public \HubletoMain\Cli\Agent\Loader|null $cli;
 
@@ -61,17 +61,6 @@ class App
       $this->manifest = [];
     }
 
-    if (str_starts_with($this->namespace, 'HubletoApp\\Community')) {
-      $this->manifest['appType'] = self::APP_TYPE_COMMUNITY;
-    }
-    if (str_starts_with($this->namespace, 'HubletoApp\\Premium')) {
-      $this->manifest['appType'] = self::APP_TYPE_PREMIUM;
-    }
-    if (str_starts_with($this->namespace, 'HubletoApp\\External')) {
-      $this->manifest['appType'] = self::APP_TYPE_EXTERNAL;
-    }
-
-
     $this->validateManifest();
 
   }
@@ -81,6 +70,9 @@ class App
     $missing = [];
     if (empty($this->manifest['namespace'])) {
       $missing[] = 'namespace';
+    }
+    if (empty($this->manifest['appType'])) {
+      $missing[] = 'appType';
     }
     if (empty($this->manifest['rootUrlSlug'])) {
       $missing[] = 'rootUrlSlug';
@@ -94,8 +86,13 @@ class App
     if (empty($this->manifest['icon'])) {
       $missing[] = 'icon';
     }
+
     if (count($missing) > 0) {
       throw new \Exception("{$this->fullName}: Some properties are missing in manifest (" . join(", ", $missing) . ").");
+    }
+
+    if (!str_starts_with($this->manifest['namespace'], 'HubletoApp')) {
+      throw new \Exception("{$this->fullName}: Namespace must start with 'HubletoApp'.");
     }
   }
 
