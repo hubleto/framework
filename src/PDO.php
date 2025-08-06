@@ -51,8 +51,12 @@ class PDO {
   public function execute(string $query, array $data = []): void
   {
     if (!empty($query)) {
-      $stmt = $this->connection->prepare(trim($query));
-      $stmt->execute($data);
+      try {
+        $stmt = $this->connection->prepare(trim($query));
+        $stmt->execute($data);
+      } catch (\Exception $e) {
+        throw new \Hubleto\Framework\Exceptions\DBException('Failed to execute query: ' . $query, 0, $e);
+      }
     }
   }
 
