@@ -261,7 +261,7 @@ class App
         $mClass = str_replace('.php', '', $mClass);
         if (class_exists($mClass)) {
           try {
-            $mObj = $this->main->di->create($mClass::class);
+            $mObj = $this->main->di->create($mClass);
             $modelClasses[] = $mClass;
           } catch (\Throwable) {
           }
