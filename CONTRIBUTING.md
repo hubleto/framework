@@ -21,7 +21,14 @@ Additionally, we use PHPStan for static analysis. Please ensure your code passes
 1.  **Create a new branch** for your feature or bug fix (e.g., `feature/your-feature-name` or `bugfix/your-bug-name`).
 2.  **Fork the repository** and create your branch from `main`.
 2.  **Make your changes** and ensure they adhere to the coding standards.
-3.  **Write clear, concise commit messages** that explain the purpose of your changes.
+3.  **Write clear, concise commit messages** that explain the purpose of your changes, following the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/).
+
+    **Examples:**
+    *   `feat: Add user authentication module`
+    *   `fix: Correct typo in README`
+    *   `docs: Update installation instructions`
+    *   `refactor: Improve performance of data processing function`
+    *   `test: Add unit tests for new feature`
 4.  **Ensure all tests pass** (if applicable, add new tests for new features or bug fixes).
 5.  **Submit a pull request** to the `main` branch of the Hubleto Framework repository.
 
