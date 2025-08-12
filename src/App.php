@@ -373,6 +373,19 @@ class App
     return '';
   }
 
+  /**
+   * Implements fulltext search functionality for the app
+   *
+   * @param array $expressions List of expressions to be searched and glued with logical 'or'.
+   * 
+   * @return array
+   * 
+   */
+  public function search(array $expressions): array
+  {
+    return [];
+  }
+
   public function getFullConfigPath(string $path): string
   {
     return 'apps/' . $this->main->apps->getAppNamespaceForConfig($this->namespace) . '/' . $path;
