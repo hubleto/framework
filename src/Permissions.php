@@ -2,16 +2,13 @@
 
 namespace Hubleto\Framework;
 
-use HubletoApp\Community\Settings\Models\Permission;
-use HubletoApp\Community\Settings\Models\RolePermission;
-use HubletoApp\Community\Settings\Models\UserRole;
-
 class Permissions
 {
 
   protected bool $grantAllPermissions = false;
   protected array $permissions = [];
   public array $administratorRoles = [];
+  public array $administratorTypes = [];
 
   public function __construct(public \Hubleto\Framework\Loader $main)
   {
@@ -22,11 +19,12 @@ class Permissions
     $this->permissions = $this->loadPermissions();
     $this->expandPermissionGroups();
     $this->administratorRoles = $this->loadAdministratorRoles();
+    $this->administratorTypes = $this->loadAdministratorTypes();
   }
 
   public function createUserRoleModel(): Model
   {
-    return new \HubletoApp\Community\Settings\Models\UserRole($this->main);
+    return null; //new \HubletoApp\Community\Settings\Models\UserRole($this->main);
   }
 
   public function DANGEROUS__grantAllPermissions()
@@ -41,12 +39,12 @@ class Permissions
 
   public function loadAdministratorRoles(): array
   {
-    if (!isset($this->main->pdo) || !$this->main->pdo->isConnected) {
-      return [];
-    }
-    $mUserRole = $this->main->di->create(UserRole::class);
-    $administratorRoles = Helper::pluck('id', $this->main->pdo->fetchAll("select id from `{$mUserRole->table}` where grant_all = 1"));
-    return $administratorRoles;
+    return [];
+  }
+
+  public function loadAdministratorTypes(): array
+  {
+    return [];
   }
 
   public function expandPermissionGroups() {
@@ -78,8 +76,12 @@ class Permissions
   public function hasRole(int|string $role) {
     if (is_string($role)) {
       $userRoleModel = $this->createUserRoleModel();
-      $idUserRoleByRoleName = array_flip($userRoleModel::USER_ROLES);
-      $idRole = (int) $idUserRoleByRoleName[$role];
+      if ($userRoleModel) {
+        $idUserRoleByRoleName = array_flip($userRoleModel::USER_ROLES);
+        $idRole = (int) $idUserRoleByRoleName[$role];
+      } else {
+        $idRole = 0;
+      }
     } else {
       $idRole = (int) $role;
     }
@@ -99,17 +101,19 @@ class Permissions
     return $granted;
   }
 
-  public function granted(string $permission, array $userRoles = []): bool
+  public function granted(string $permission, array $userRoles = [], int $userType = 0): bool
   {
     if ($this->grantAllPermissions) {
       return true;
     } else {
       if (empty($permission)) return true;
       if (count($userRoles) == 0) $userRoles = $this->main->auth->getUserRoles();
+      if ($userType == 0) $userType = $this->main->auth->getUserType();
 
       $granted = false;
 
       if (count(array_intersect($this->administratorRoles, $userRoles)) > 0) $granted = true;
+      if (in_array($userType, $this->administratorTypes)) $granted = true;
 
       // check if the premission is granted for one of the roles of the user
       if (!$granted) {
@@ -140,52 +144,18 @@ class Permissions
   */
   public function loadPermissions(): array
   {
-    $permissions = [];
-    foreach ($this->main->config->getAsArray('permissions') as $idUserRole => $permissionsByRole) {
-      $permissions[$idUserRole] = [];
-      foreach ($permissionsByRole as $permissionPath => $isEnabled) {
-        if ((bool) $isEnabled) {
-          $permissions[$idUserRole][] = str_replace(":", "/", $permissionPath);
-        }
-      }
-      $permissions[$idUserRole] = array_unique($permissions[$idUserRole]);
-    }
-
-    if (isset($this->main->pdo) && $this->main->pdo->isConnected) {
-      $mUserRole = $this->main->di->create(UserRole::class);
-
-      $idCommonUserRoles = Helper::pluck('id', $this->main->pdo->fetchAll("select id from `{$mUserRole->table}` where grant_all = 0"));
-
-      foreach ($idCommonUserRoles as $idCommonRole) {
-        $idCommonRole = (int) $idCommonRole;
-
-        $mRolePermission = $this->main->di->create(RolePermission::class);
-
-        /** @var array<int, array> */
-        $rolePermissions = (array) $mRolePermission->record
-          ->selectRaw("role_permissions.*,permissions.permission")
-          ->where("id_role", $idCommonRole)
-          ->join("permissions", "role_permissions.id_permission", "permissions.id")
-          ->get()
-          ->toArray()
-        ;
-
-        foreach ($rolePermissions as $key => $rolePermission) {
-          $permissions[$idCommonRole][] = (string) $rolePermission['permission'];
-        }
-      }
-    }
-
-    return $permissions;
+    return [];
   }
 
   public function isAppPermittedForActiveUser(\Hubleto\Framework\App $app)
   {
     $userRoles = $this->main->auth->getUserRoles();
+    $userType = $this->main->auth->getUserType();
 
     if (
       $this->grantAllPermissions
       || $app->permittedForAllUsers
+      || in_array($userType, $this->administratorTypes)
       || count(array_intersect($this->administratorRoles, $userRoles)) > 0
     ) {
       return true;

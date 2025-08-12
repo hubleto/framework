@@ -75,12 +75,12 @@ class Controller {
       $this->renderer = $this->main->twig;
     }
 
-    $this->permission = $this->shortName;
-
     $this->fullName = str_replace("\\", "/", $reflection->getName());
 
     $tmp = explode("/", $this->fullName);
     $this->shortName = end($tmp);
+
+    $this->permission = $this->fullName;
 
     if (empty($this->translationContext)) {
       $this->translationContext = trim(str_replace('/', '\\', $this->fullName), '\\');

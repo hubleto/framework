@@ -89,6 +89,12 @@ class Auth {
     return is_array($this->user) ? $this->user : [];
   }
 
+  public function getUserType(): int
+  {
+    $user = $this->getUser();
+    return $user['type'];
+  }
+
   public function getUserRoles(): array
   {
     if (isset($this->user['ROLES']) && is_array($this->user['ROLES'])) return $this->user['ROLES'];

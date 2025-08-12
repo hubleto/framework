@@ -276,12 +276,12 @@ class App
   public function installDefaultPermissions(): void
   {
     $permissions = [
-      'Api/Table/Describe',
-      'Api/Form/Describe',
-      'Api/Record/Get',
-      'Api/Record/GetList',
-      'Api/Record/Lookup',
-      'Api/Record/Save',
+      // 'Api/Table/Describe',
+      // 'Api/Form/Describe',
+      // 'Api/Record/Get',
+      // 'Api/Record/GetList',
+      // 'Api/Record/Lookup',
+      // 'Api/Record/Save',
     ];
 
     $controllersFolder = $this->srcFolder . '/Controllers';
@@ -298,25 +298,25 @@ class App
       }
     }
 
-    $modelsFolder = $this->srcFolder . '/Models';
-    if (is_dir($modelsFolder)) {
-      $models = Helper::scanDirRecursively($modelsFolder);
-      foreach ($models as $model) {
-        $mClass = $this->namespace . '/Models/' . $model;
-        $mClass = str_replace('/', '\\', $mClass);
-        $mClass = str_replace('.php', '', $mClass);
-        if (class_exists($mClass)) {
-          try {
-            $mObj = $this->main->di->create($mClass::class);
-            $permissions[] = $mObj->fullName . ':Create';
-            $permissions[] = $mObj->fullName . ':Read';
-            $permissions[] = $mObj->fullName . ':Update';
-            $permissions[] = $mObj->fullName . ':Delete';
-          } catch (\Throwable) {
-          }
-        }
-      }
-    }
+    // $modelsFolder = $this->srcFolder . '/Models';
+    // if (is_dir($modelsFolder)) {
+    //   $models = Helper::scanDirRecursively($modelsFolder);
+    //   foreach ($models as $model) {
+    //     $mClass = $this->namespace . '/Models/' . $model;
+    //     $mClass = str_replace('/', '\\', $mClass);
+    //     $mClass = str_replace('.php', '', $mClass);
+    //     if (class_exists($mClass)) {
+    //       try {
+    //         $mObj = $this->main->di->create($mClass::class);
+    //         $permissions[] = $mObj->fullName . ':Create';
+    //         $permissions[] = $mObj->fullName . ':Read';
+    //         $permissions[] = $mObj->fullName . ':Update';
+    //         $permissions[] = $mObj->fullName . ':Delete';
+    //       } catch (\Throwable) {
+    //       }
+    //     }
+    //   }
+    // }
 
     $mPermission = $this->main->di->create(\HubletoApp\Community\Settings\Models\Permission::class);
 
@@ -350,7 +350,7 @@ class App
     foreach ($controllerClasses as $controllerClass) {
       $cObj = new $controllerClass($this->main);
       foreach ($userRoles as $role) {
-        $mRolePermission->grantPermissionByString($role['id'], $cObj->permission);
+        $mRolePermission->grantPermissionByString($role['id'], $cObj->fullName);
       }
     }
 
