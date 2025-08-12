@@ -6,7 +6,7 @@ class AppTest
 {
   public \Hubleto\Framework\Loader $main;
 
-  public function __construct(public \Hubleto\Framework\App $app, public \HubletoMain\Cli\Agent\Loader $cli)
+  public function __construct(public \Hubleto\Framework\App $app)
   {
     $this->main = $app->main;
   }

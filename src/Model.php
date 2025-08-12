@@ -2,14 +2,7 @@
 
 namespace Hubleto\Framework;
 
-use Db\DataType;
-use Db\Query;
-use Exceptions\DBException;
-use Exceptions\RecordSaveException;
-// use ViewsWithController\Form;
-// use ViewsWithController\Table;
-use Closure;
-use Exception;
+use Hubleto\Framework\Exceptions\DBException;
 use ReflectionClass;
 
 /**
@@ -212,6 +205,7 @@ class Model
     foreach ($columns as $columnName => $column) {
       $tmp = $column->sqlCreateString($this->table, $columnName);
       if (!empty($tmp)) $createSql .= " {$tmp},\n";
+
     }
 
     // indexy
@@ -321,33 +315,33 @@ class Model
    * @return void
    * @throws DBException When an error occured during the upgrade.
    */
-  public function installUpgrades(): void
-  {
-    if ($this->hasAvailableUpgrades()) {
-      $currentVersion = (int)$this->getCurrentInstalledVersion();
-      $lastVersion = $this->getLastAvailableVersion();
+  // public function installUpgrades(): void
+  // {
+  //   if ($this->hasAvailableUpgrades()) {
+  //     $currentVersion = (int)$this->getCurrentInstalledVersion();
+  //     $lastVersion = $this->getLastAvailableVersion();
 
-      try {
-        $this->main->pdo->startTransaction();
+  //     try {
+  //       $this->main->pdo->startTransaction();
 
-        $upgrades = $this->upgrades();
+  //       $upgrades = $this->upgrades();
 
-        for ($v = $currentVersion + 1; $v <= $lastVersion; $v++) {
-          if (is_array($upgrades[$v])) {
-            foreach ($upgrades[$v] as $query) {
-              $this->main->pdo->execute($query);
-            }
-          }
-        }
+  //       for ($v = $currentVersion + 1; $v <= $lastVersion; $v++) {
+  //         if (is_array($upgrades[$v])) {
+  //           foreach ($upgrades[$v] as $query) {
+  //             $this->main->pdo->execute($query);
+  //           }
+  //         }
+  //       }
 
-        $this->main->pdo->commit();
-        $this->saveConfig('installed-version', $lastVersion);
-      } catch (DBException $e) {
-        $this->main->pdo->rollback();
-        throw new DBException($e->getMessage());
-      }
-    }
-  }
+  //       $this->main->pdo->commit();
+  //       $this->saveConfig('installed-version', $lastVersion);
+  //     } catch (DBException $e) {
+  //       $this->main->pdo->rollback();
+  //       throw new DBException($e->getMessage());
+  //     }
+  //   }
+  // }
 
   public function dropTableIfExists(): Model
   {
@@ -667,6 +661,19 @@ class Model
   public function onAfterLoadRecords(array $records): array
   {
     return $records;
+  }
+
+  /**
+   * Used to encrypt passowrd to store it securely.
+   *
+   * @param string $original
+   * 
+   * @return string
+   * 
+   */
+  public function hashPassword(string $original): string
+  {
+    return password_hash($original, PASSWORD_DEFAULT);
   }
 
 }

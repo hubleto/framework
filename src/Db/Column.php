@@ -7,6 +7,8 @@ abstract class Column implements \JsonSerializable
 
   protected \Hubleto\Framework\Model $model;
 
+  protected array $indexes = [];
+
   protected string $type = '';
   protected string $sqlDataType = '';
   protected string $title = '';
@@ -35,6 +37,17 @@ abstract class Column implements \JsonSerializable
   {
     $this->model = $model;
     $this->title = $title;
+  }
+
+  public function addIndex(string $indexDefinition): Column
+  {
+    $this->indexes[] = $indexDefinition;
+    return $this;
+  }
+
+  public function getIndexes(): array
+  {
+    return $this->indexes;
   }
 
   public function getProperty(string $pName): mixed { return $this->properties[$pName] ?? null; }
@@ -206,6 +219,8 @@ abstract class Column implements \JsonSerializable
     return (empty($this->sqlDataType) ? '' : "`{$columnName}` {$this->sqlDataType} " . $this->getRawSqlDefinition());
   }
 
-  public function sqlIndexString(string $table, string $columnName): string { return ''; }
+  public function sqlIndexString(string $table, string $columnName): string {
+    return join(', ', $this->indexes);
+  }
 
 }

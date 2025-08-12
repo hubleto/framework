@@ -39,6 +39,7 @@ class Loader
   public Auth $auth;
   public Translator $translator;
   public PDO $pdo;
+  public Interfaces\AppManagerInterface $apps;
 
   public \Illuminate\Database\Capsule\Manager $eloquent;
 
@@ -509,10 +510,12 @@ class Loader
 
       // Check if controller can be executed in this SAPI
       if (php_sapi_name() === 'cli') {
+        /** @disregard P1014 */
         if (!$controllerClassName::$cliSAPIEnabled) {
           throw new Exceptions\GeneralException("Controller is not enabled in CLI interface.");
         }
       } else {
+        /** @disregard P1014 */
         if (!$controllerClassName::$webSAPIEnabled) {
           throw new Exceptions\GeneralException("Controller is not enabled in WEB interface.");
         }
@@ -534,15 +537,6 @@ class Loader
       $controllerObject->postInit();
 
       // All OK, rendering content...
-
-      // // vygenerovanie UID tohto behu
-      // if (empty($this->uid)) {
-      //   $uid = $this->getUid($this->urlParamAsString('id'));
-      // } else {
-      //   $uid = $this->uid.'__'.$this->getUid($this->urlParamAsString('id'));
-      // }
-
-      // $this->setUid($uid);
 
       $return = '';
 
@@ -572,7 +566,7 @@ class Loader
       } else {
         $controllerObject->prepareView();
 
-        $view = $controllerObject->getView() === '' ? $this->view : $controllerObject->getView();
+        $view = $controllerObject->getView();
 
         $contentParams = [
           'app' => $this,
@@ -644,6 +638,8 @@ class Loader
     } catch (\ArgumentCountError $e) {
       echo $e->getMessage();
       header('HTTP/1.1 400 Bad Request', true, 400);
+      exit;
+      return '';
     } catch (\Exception $e) {
       $error = error_get_last();
 
@@ -843,49 +839,6 @@ class Loader
     // to be overriden
   }
 
-  ////////////////////////////////////////////////
-
-  // public function getUid($uid = '') {
-  //   if (empty($uid)) {
-  //     $tmp = $this->controller.'-'.time().rand(100000, 999999);
-  //   } else {
-  //     $tmp = $uid;
-  //   }
-
-  //   $tmp = str_replace('\\', '/', $tmp);
-  //   $tmp = str_replace('/', '-', $tmp);
-
-  //   $uid = "";
-  //   for ($i = 0; $i < strlen($tmp); $i++) {
-  //     if ($tmp[$i] == "-") {
-  //       $uid .= strtoupper($tmp[++$i]);
-  //     } else {
-  //       $uid .= $tmp[$i];
-  //     }
-  //   }
-
-  //   $this->setUid($uid);
-
-  //   return $uid;
-  // }
-
-  // /**
-  //  * Checks the argument whether it is a validUID string.
-  //  *
-  //  * @param  string $uid The string to validate.
-  //  * @throws Exceptions\InvalidUidException If the provided string is not a valid UID string.
-  //  * @return void
-  //  */
-  // public function checkUid($uid) {
-  //   if (preg_match('/[^A-Za-z0-9\-_]/', $uid)) {
-  //     throw new Exceptions\InvalidUidException();
-  //   }
-  // }
-
-  // public function setUid($uid) {
-  //   $this->checkUid($uid);
-  //   $this->uid = $uid;
-  // }
 
   public function renderCSSCache() {
     $css = "";
@@ -904,19 +857,6 @@ class Loader
 
     return $css;
   }
-
-  // private function scanReactFolder(string $path): string {
-  //   $reactJs = '';
-
-  //   foreach (scandir($path . '/Assets/Js/React') as $file) {
-  //     if ('.js' == substr($file, -3)) {
-  //       $reactJs = @file_get_contents($path . "/Assets/Js/React/{$file}") . ";";
-  //       break;
-  //     }
-  //   }
-
-  //   return $reactJs;
-  // }
 
   public function renderJSCache() {
     $js = "";
@@ -939,6 +879,22 @@ class Loader
     return $js;
   }
 
+
+  /**
+   * Adds namespace for Twig renderer
+   *
+   * @param string $folder
+   * @param string $namespace
+   * 
+   * @return void
+   * 
+   */
+  public function addTwigViewNamespace(string $folder, string $namespace)
+  {
+    if (isset($this->twigLoader) && is_dir($folder)) {
+      $this->twigLoader->addPath($folder, $namespace);
+    }
+  }
 
 
 

@@ -40,6 +40,20 @@ class DefaultProvider extends \Hubleto\Framework\Auth {
     ;
   }
 
+  public function verifyPassword($password1, $password2): bool
+  {
+    return password_verify($password1, $password2);
+  }
+
+  public function getActiveUsers(): array
+  {
+    return (array) $this->createUserModel()->record
+      ->where($this->activeAttribute, '<>', 0)
+      ->get()
+      ->toArray()
+    ;
+  }
+
   public function auth(): void
   {
 
@@ -62,14 +76,7 @@ class DefaultProvider extends \Hubleto\Framework\Auth {
         $users = $this->findUsersByLogin($login);
 
         foreach ($users as $user) {
-          $passwordMatch = FALSE;
-
-          if ($this->verifyMethod == 'password_verify' && password_verify($password, $user[$this->passwordAttribute] ?? "")) {
-            $passwordMatch = TRUE;
-          }
-          if ($this->verifyMethod == 'md5' && md5($password) == $user[$this->passwordAttribute]) {
-            $passwordMatch = TRUE;
-          }
+          $passwordMatch = $this->verifyPassword($password, $user[$this->passwordAttribute]);
 
           if ($passwordMatch) {
             $authResult = $userModel->loadUser($user['id']);

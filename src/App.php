@@ -12,8 +12,6 @@ class App
   public const APP_TYPE_PREMIUM = 'premium';
   public const APP_TYPE_EXTERNAL = 'external';
 
-  public \HubletoMain\Cli\Agent\Loader|null $cli;
-
   /**
   * @var array<string>
   */
@@ -36,6 +34,12 @@ class App
   public bool $isActivated = false;
   public bool $hasCustomSettings = false;
 
+  public Interfaces\AppMenuManagerInterface $appMenu;
+
+  /** @var array<int, array<\Hubleto\Framework\App, array>> */
+  private array $settings = [];
+
+
   public static function canBeAdded(\Hubleto\Framework\Loader $main): bool
   {
     return true;
@@ -45,7 +49,6 @@ class App
   {
     $reflection = new \ReflectionClass($this);
 
-    $this->cli = null;
     $this->srcFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
     $this->namespace = $reflection->getNamespaceName();
     $this->fullName = $reflection->getName();
@@ -117,11 +120,6 @@ class App
     return $this->manifest['rootUrlSlug'] ?? '';
   }
 
-  public function setCli(\HubletoMain\Cli\Agent\Loader $cli): void
-  {
-    $this->cli = $cli;
-  }
-
   public function getNotificationsCount(): int
   {
     return 0;
@@ -131,7 +129,7 @@ class App
   {
     $reflection = new \ReflectionClass($this);
     $testClass = $reflection->getNamespaceName() . '\\Tests\\' . $test;
-    return new $testClass($this, $this->cli); // @phpstan-ignore-line
+    return new $testClass($this);
   }
 
   public function test(string $test): void
@@ -190,6 +188,7 @@ class App
     $main = \Hubleto\Framework\Loader::getGlobalApp();
 
     if ($main->config->getAsBool('autoTranslate')) {
+      /** @disregard P1009 */
       $tr = new \Stichoza\GoogleTranslate\GoogleTranslate();
       $tr->setSource('en'); // Translate from
       $tr->setTarget($language); // Translate to
@@ -298,26 +297,6 @@ class App
       }
     }
 
-    // $modelsFolder = $this->srcFolder . '/Models';
-    // if (is_dir($modelsFolder)) {
-    //   $models = Helper::scanDirRecursively($modelsFolder);
-    //   foreach ($models as $model) {
-    //     $mClass = $this->namespace . '/Models/' . $model;
-    //     $mClass = str_replace('/', '\\', $mClass);
-    //     $mClass = str_replace('.php', '', $mClass);
-    //     if (class_exists($mClass)) {
-    //       try {
-    //         $mObj = $this->main->di->create($mClass::class);
-    //         $permissions[] = $mObj->fullName . ':Create';
-    //         $permissions[] = $mObj->fullName . ':Read';
-    //         $permissions[] = $mObj->fullName . ':Update';
-    //         $permissions[] = $mObj->fullName . ':Delete';
-    //       } catch (\Throwable) {
-    //       }
-    //     }
-    //   }
-    // }
-
     $mPermission = $this->main->di->create(\HubletoApp\Community\Settings\Models\Permission::class);
 
     foreach ($permissions as $permission) {
@@ -354,13 +333,6 @@ class App
       }
     }
 
-    // $modelClasses = $this->getAvailableModelClasses();
-    // foreach ($modelClasses as $modelClass) {
-    //   $mObj = $this->main->di->create($modelClass::class);
-    //   foreach ($mObj->rolePermissions as $idRole => $rolePermissions) {
-    //     $mRolePermission->grantPermissionsForModel($idRole, $mObj->fullName, $rolePermissions);
-    //   }
-    // }
   }
 
   public function generateDemoData(): void
@@ -384,6 +356,23 @@ class App
   public function search(array $expressions): array
   {
     return [];
+  }
+
+  public function addSetting(\Hubleto\Framework\App $app, array $setting): void
+  {
+    $this->settings[] = [$app, $setting];
+  }
+
+  public function getSettings(): array
+  {
+    $settings = [];
+    foreach ($this->settings as $setting) {
+      $settings[] = $setting[1];
+    }
+
+    $titles = array_column($settings, 'title');
+    array_multisort($titles, SORT_ASC, $settings);
+    return $settings;
   }
 
   public function getFullConfigPath(string $path): string

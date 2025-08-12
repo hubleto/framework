@@ -61,6 +61,11 @@ class Auth {
     exit;
   }
 
+  public function getActiveUsers(): array
+  {
+    return [];
+  }
+
   public function auth(): void
   {
     // to be overriden
