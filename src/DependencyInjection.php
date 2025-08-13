@@ -11,6 +11,8 @@ class DependencyInjection
    * @var array<string, string>
    */
   private array $serviceProviders = [];
+
+  private array $services = [];
   
   public function __construct(public \Hubleto\Framework\Loader $main) {
     $this->setServiceProvider('model.user', \Hubleto\Framework\Models\User::class);
@@ -24,6 +26,9 @@ class DependencyInjection
   public function create(string $service): mixed
   {
     $class = $this->serviceProviders[$service] ?? $service;
-    return (new $class($this->main));
+    if (!isset($this->services[$service])) {
+      $this->services[$service] = (new $class($this->main));
+    }
+    return $this->services[$service];
   }
 }

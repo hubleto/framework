@@ -12,11 +12,6 @@ class App
   public const APP_TYPE_PREMIUM = 'premium';
   public const APP_TYPE_EXTERNAL = 'external';
 
-  /**
-  * @var array<string>
-  */
-  protected array $registeredModels = [];
-
   public array $manifest = [];
 
   public bool $enabled = false;
@@ -203,21 +198,6 @@ class App
   public function translate(string $string, array $vars = [], string $context = 'root'): string
   {
     return $this->main->translate($string, $vars, $this->fullName . '::' . $context);
-  }
-
-  public function registerModel(string $model): void
-  {
-    if (!in_array($model, $this->registeredModels)) {
-      $this->registeredModels[] = $model;
-    }
-  }
-
-  /**
-  * @return array<string>
-  */
-  public function getRegisteredModels(): array
-  {
-    return $this->registeredModels;
   }
 
   public function installTables(int $round): void

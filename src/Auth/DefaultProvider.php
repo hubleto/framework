@@ -2,7 +2,8 @@
 
 namespace Hubleto\Framework\Auth;
 
-class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface {
+class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
+{
   public array $user { get => $this->user; set (array $user) { $this->user = $user; } }
 
   public \Hubleto\Framework\Loader $main;
@@ -14,10 +15,7 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface {
 
   function __construct(\Hubleto\Framework\Loader $main)
   {
-    $this->main->registerModel(\Hubleto\Framework\Models\User::class);
-    $this->main->registerModel(\Hubleto\Framework\Models\UserRole::class);
-    $this->main->registerModel(\Hubleto\Framework\Models\UserHasRole::class);
-
+    $this->main = $main;
     $this->user = [];
   }
 
@@ -78,7 +76,7 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface {
 
   public function createUserModel(): \Hubleto\Framework\Model
   {
-    return $this->main->di->create('model.user');
+    return $this->main->di->create(\Hubleto\Framework\Models\User::class);
   }
 
   public function findUsersByLogin(string $login): array

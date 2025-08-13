@@ -12,8 +12,6 @@ interface AppInterface
   public const APP_TYPE_PREMIUM = 'premium';
   public const APP_TYPE_EXTERNAL = 'external';
 
-  public array $registeredModels { get; set; }
-
   public array $manifest { get; set; }
 
   public bool $enabled { get; set; }
@@ -50,8 +48,6 @@ interface AppInterface
   public static function loadDictionary(string $language): array;
   public static function addToDictionary(string $language, string $contextInner, string $string): void;
   public function translate(string $string, array $vars = [], string $context = 'root'): string;
-  public function registerModel(string $model): void;
-  public function getRegisteredModels(): array;
   public function installTables(int $round): void;
   public function getAvailableControllerClasses(): array;
   public function getAvailableModelClasses(): array;

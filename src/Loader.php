@@ -28,7 +28,6 @@ class Loader
   public string $route = "";
 
   public array $modelObjects = [];
-  public array $registeredModels = [];
 
   public Config $config;
   public DependencyInjection $di;
@@ -161,9 +160,6 @@ class Loader
 
         $this->config->loadFromDB();
 
-        foreach ($this->registeredModels as $modelName) {
-          $this->getModel($modelName);
-        }
       }
 
     } catch (\Exception $e) {
@@ -340,13 +336,6 @@ class Loader
   //////////////////////////////////////////////////////////////////////////////
   // MODELS
 
-  public function registerModel(string $modelClass): void
-  {
-    if (!in_array($modelClass, $this->registeredModels)) {
-      $this->registeredModels[] = $modelClass;
-    }
-  }
-
   public function getModelClassName($modelName): string
   {
     return str_replace("/", "\\", $modelName);
@@ -376,42 +365,6 @@ class Loader
 
   //////////////////////////////////////////////////////////////////////////////
   // MISCELANEOUS
-
-  public function install() {
-    $installationStart = microtime(true);
-
-    $this->logger->info("Dropping existing tables.");
-
-    foreach ($this->registeredModels as $modelName) {
-      $model = $this->getModel($modelName);
-      $model->dropTableIfExists();
-    }
-
-    $this->logger->info("Database is empty, installing models.");
-
-    foreach ($this->registeredModels as $modelName) {
-      try {
-        $model = $this->getModel($modelName);
-
-        $start = microtime(true);
-
-        $model->install();
-        $this->logger->info("Model {$modelName} installed.", ["duration" => round((microtime(true) - $start) * 1000, 2)." msec"]);
-      } catch (Exceptions\ModelInstallationException $e) {
-        $this->logger->warning("Model {$modelName} installation skipped.", ["exception" => $e->getMessage()]);
-      } catch (\Exception $e) {
-        $this->logger->error("Model {$modelName} installation failed.", ["exception" => $e->getMessage()]);
-      } catch (\Illuminate\Database\QueryException $e) {
-        //
-      } catch (Exceptions\DBException $e) {
-        // Moze sa stat, ze vytvorenie tabulky zlyha napr. kvoli
-        // "Cannot add or update a child row: a foreign key constraint fails".
-        // V takom pripade budem instalaciu opakovat v dalsom kole
-      }
-    }
-
-    $this->logger->info("Core installation done in ".round((microtime(true) - $installationStart), 2)." seconds.");
-  }
 
   public function extractParamsFromRequest(): array {
     $route = '';
