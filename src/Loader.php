@@ -975,5 +975,9 @@ class Loader
     }
   }
 
+  public function load(string $service): mixed
+  {
+    return $this->di->create($service);
+  }
 
 }

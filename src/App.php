@@ -240,7 +240,7 @@ class App
         $mClass = str_replace('.php', '', $mClass);
         if (class_exists($mClass)) {
           try {
-            $mObj = $this->main->di->create($mClass);
+            $mObj = $this->main->load($mClass);
             $modelClasses[] = $mClass;
           } catch (\Throwable) {
           }
@@ -277,7 +277,7 @@ class App
       }
     }
 
-    $mPermission = $this->main->di->create(\HubletoApp\Community\Settings\Models\Permission::class);
+    $mPermission = $this->main->load(\HubletoApp\Community\Settings\Models\Permission::class);
 
     foreach ($permissions as $permission) {
       $mPermission->record->recordCreate([
@@ -288,8 +288,8 @@ class App
 
   public function assignPermissionsToRoles(): void
   {
-    $mUserRole = $this->main->di->create(\HubletoApp\Community\Settings\Models\UserRole::class);
-    $mRolePermission = $this->main->di->create(\HubletoApp\Community\Settings\Models\RolePermission::class);
+    $mUserRole = $this->main->load(\HubletoApp\Community\Settings\Models\UserRole::class);
+    $mRolePermission = $this->main->load(\HubletoApp\Community\Settings\Models\RolePermission::class);
 
     $userRoles = $mUserRole->record->get()->toArray();
     foreach ($userRoles as $role) {

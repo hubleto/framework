@@ -146,7 +146,7 @@ class Router {
 
   public function createNotFoundController(): \Hubleto\Framework\Controller
   {
-    return $this->main->di->create(\Hubleto\Framework\Controllers\NotFoundController::class);
+    return $this->main->load(\Hubleto\Framework\Controllers\NotFoundController::class);
     $controller = new \Hubleto\Framework\Controller($this->main);
     $controller->requiresUserAuthentication = FALSE;
     $controller->hideDefaultDesktop = TRUE;
@@ -157,12 +157,12 @@ class Router {
 
   public function createResetPasswordController(): \Hubleto\Framework\Controller
   {
-    return $this->main->di->create(\Hubleto\Framework\Controller::class);
+    return $this->main->load(\Hubleto\Framework\Controller::class);
   }
 
   public function createDesktopController(): \Hubleto\Framework\Controller
   {
-    return $this->main->di->create(\Hubleto\Framework\Controllers\DesktopController::class);
+    return $this->main->load(\Hubleto\Framework\Controllers\DesktopController::class);
   }
 
 }

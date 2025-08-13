@@ -76,7 +76,7 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
 
   public function createUserModel(): \Hubleto\Framework\Model
   {
-    return $this->main->di->create(\Hubleto\Framework\Models\User::class);
+    return $this->main->load(\Hubleto\Framework\Models\User::class);
   }
 
   public function findUsersByLogin(string $login): array
