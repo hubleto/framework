@@ -147,7 +147,7 @@ class Permissions
     return [];
   }
 
-  public function isAppPermittedForActiveUser(\Hubleto\Framework\App $app)
+  public function isAppPermittedForActiveUser(\Hubleto\Framework\Interfaces\AppInterface $app)
   {
     $userRoles = $this->main->auth->getUserRoles();
     $userType = $this->main->auth->getUserType();

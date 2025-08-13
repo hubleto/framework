@@ -10,7 +10,7 @@ interface AppMenuManagerInterface
   public array $items { get; set; }
 
   public function __construct(\HubletoMain\Loader $main);
-  public function addItem(\Hubleto\Framework\App $app, string $url, string $title, string $icon): void;
+  public function addItem(\Hubleto\Framework\Interfaces\AppInterface $app, string $url, string $title, string $icon): void;
   public function getItems(): array;
 
 }

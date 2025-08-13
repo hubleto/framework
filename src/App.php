@@ -358,7 +358,7 @@ class App
     return [];
   }
 
-  public function addSetting(\Hubleto\Framework\App $app, array $setting): void
+  public function addSetting(\Hubleto\Framework\Interfaces\AppInterface $app, array $setting): void
   {
     $this->settings[] = [$app, $setting];
   }

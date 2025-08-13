@@ -4,7 +4,7 @@ namespace Hubleto\Framework\Interfaces;
 
 interface AppManagerInterface
 {
-  public \Hubleto\Framework\App $activatedApp { get; set; }
+  public AppInterface $activatedApp { get; set; }
 
   /** @var array<\Hubleto\Framework\App> */
   public array $apps { get; set; }
@@ -23,15 +23,15 @@ interface AppManagerInterface
   public function getAppNamespaceForConfig(string $appNamespace): string;
   public function getAvailableApps(): array;
   public function getInstalledAppNamespaces(): array;
-  public function createAppInstance(string $appNamespace): \Hubleto\Framework\App;
+  public function createAppInstance(string $appNamespace): AppInterface;
   public function getEnabledApps(): array;
   public function getDisabledApps(): array;
   public function getInstalledApps(): array;
-  public function getActivatedApp(): \Hubleto\Framework\App|null;
-  public function getAppInstance(string $appNamespace): null|\Hubleto\Framework\App;
+  public function getActivatedApp(): null|AppInterface;
+  public function getAppInstance(string $appNamespace): null|AppInterface;
   public function isAppInstalled(string $appNamespace): bool;
-  public function community(string $appName): null|\Hubleto\Framework\App;
-  public function custom(string $appName): null|\Hubleto\Framework\App;
+  public function community(string $appName): null|AppInterface;
+  public function custom(string $appName): null|AppInterface;
   public function installApp(int $round, string $appNamespace, array $appConfig = [], bool $forceInstall = false): bool;
   public function disableApp(string $appNamespace): void;
   public function enableApp(string $appNamespace): void;
