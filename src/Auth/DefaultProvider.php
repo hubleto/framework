@@ -2,7 +2,11 @@
 
 namespace Hubleto\Framework\Auth;
 
-class DefaultProvider extends \Hubleto\Framework\Auth {
+class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface {
+  public array $user { get => $this->user; set (array $user) { $this->user = $user; } }
+
+  public \Hubleto\Framework\Loader $main;
+
   public $loginAttribute = 'login';
   public $passwordAttribute = 'password';
   public $activeAttribute = 'is_active';
@@ -10,11 +14,11 @@ class DefaultProvider extends \Hubleto\Framework\Auth {
 
   function __construct(\Hubleto\Framework\Loader $main)
   {
-    parent::__construct($main);
-
     $this->main->registerModel(\Hubleto\Framework\Models\User::class);
     $this->main->registerModel(\Hubleto\Framework\Models\UserRole::class);
     $this->main->registerModel(\Hubleto\Framework\Models\UserHasRole::class);
+
+    $this->user = [];
   }
 
   public function init(): void
@@ -22,6 +26,54 @@ class DefaultProvider extends \Hubleto\Framework\Auth {
     $userLanguage = $this->getUserLanguage();
     if (empty($userLanguage)) $userLanguage = 'en';
     $this->main->config->set('language', $userLanguage);
+  }
+
+  public function getUserFromSession(): array
+  {
+    $tmp = $this->main->session->get('userProfile') ?? [];
+    return [
+      'id' => (int) ($tmp['id'] ?? 0),
+      'login' => (string) ($tmp['login'] ?? ''),
+      'is_active' => (bool) ($tmp['is_active'] ?? false),
+    ];
+  }
+
+  public function updateUserInSession(array $user): void
+  {
+    $this->main->session->set('userProfile', $user);
+  }
+
+  public function isUserInSession(): bool
+  {
+    $user = $this->getUserFromSession();
+    return isset($user['id']) && $user['id'] > 0;
+  }
+
+  public function loadUserFromSession()
+  {
+    $this->user = $this->getUserFromSession();
+  }
+
+  function deleteSession()
+  {
+    $this->main->session->clear();
+    $this->user = [];
+
+    setcookie($this->main->session->getSalt() . '-user', '', 0);
+    setcookie($this->main->session->getSalt() . '-language', '', 0);
+  }
+
+  public function signIn(array $user)
+  {
+    $this->user = $user;
+    $this->updateUserInSession($user);
+  }
+
+  public function signOut()
+  {
+    $this->deleteSession();
+    $this->main->router->redirectTo('?signed-out');
+    exit;
   }
 
   public function createUserModel(): \Hubleto\Framework\Model
@@ -98,4 +150,53 @@ class DefaultProvider extends \Hubleto\Framework\Auth {
     }
 
   }
+
+  public function getUser(): array
+  {
+    return is_array($this->user) ? $this->user : [];
+  }
+
+  public function getUserType(): int
+  {
+    $user = $this->getUser();
+    return $user['type'];
+  }
+
+  public function getUserRoles(): array
+  {
+    if (isset($this->user['ROLES']) && is_array($this->user['ROLES'])) return $this->user['ROLES'];
+    else if (isset($this->user['roles']) && is_array($this->user['roles'])) return $this->user['roles'];
+    else return [];
+  }
+
+  public function userHasRole(int $idRole): bool
+  {
+    return in_array($idRole, $this->getUserRoles());
+  }
+
+  public function getUserId(): int
+  {
+    return (int) ($this->user['id'] ?? 0);
+  }
+
+  public function getUserLanguage(): string
+  {
+    $language = (string) ($this->user['language'] ?? $this->main->config->getAsString('language'));
+    return (strlen($language) == 2 ? $language : 'en');
+  }
+
+  public function forgotPassword(): void
+  {
+  }
+
+  public function resetPassword(): void
+  {
+  }
+
+  public function setUserLanguage(string $language): void {
+    $user = $this->user;
+    $user['language'] = $language;
+    $this->user = $user;
+  }
+
 }

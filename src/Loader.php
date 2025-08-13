@@ -38,7 +38,7 @@ class Loader
   public Router $router;
   public Permissions $permissions;
   public Test $test;
-  public Auth $auth;
+  public Interfaces\AuthInterface $auth;
   public Translator $translator;
   public PDO $pdo;
   public Interfaces\AppManagerInterface $apps;
@@ -225,7 +225,7 @@ class Loader
     return $this->di->create(PDO::class);
   }
 
-  public function createAuthProvider(): Auth
+  public function createAuthProvider(): Interfaces\AuthInterface
   {
     return $this->di->create(Auth\DefaultProvider::class);
   }
