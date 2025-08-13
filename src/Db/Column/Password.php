@@ -11,9 +11,9 @@ class Password extends \Hubleto\Framework\Db\Column\Varchar
   public function normalize(mixed $value): mixed
   {
     if (is_array($value)) {
-      return $this->model->hashPassword((string) $value[0]);
+      return $this->model->encryptPassword((string) $value[0]);
     } else {
-      return $this->model->hashPassword((string) $value);
+      return (string) $value;
     }
   }
 

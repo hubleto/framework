@@ -184,7 +184,7 @@ class User extends \Hubleto\Framework\Model {
     return !empty($user) ? $user->toArray() : [];
   }
 
-  public function hashPassword(string $password): string {
+  public function encryptPassword(string $password): string {
     return password_hash($password, PASSWORD_DEFAULT);
   }
 
@@ -192,7 +192,7 @@ class User extends \Hubleto\Framework\Model {
     return $this->record
       ->where('id', $idUser)
       ->update(
-        ["password" => $this->hasPassword($password)]
+        ["password" => $this->encryptPassword($password)]
       )
     ;
   }

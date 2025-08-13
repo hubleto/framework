@@ -671,7 +671,7 @@ class Model
    * @return string
    * 
    */
-  public function hashPassword(string $original): string
+  public function encryptPassword(string $original): string
   {
     return password_hash($original, PASSWORD_DEFAULT);
   }

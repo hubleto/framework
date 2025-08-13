@@ -14,7 +14,6 @@ class Router {
   {
 
     $this->httpGet([
-      'about' => \Hubleto\Framework\Controllers\About::class,
       '/^api\/form\/describe\/?$/' => \Hubleto\Framework\Controllers\Api\Form\Describe::class,
       '/^api\/table\/describe\/?$/' => \Hubleto\Framework\Controllers\Api\Table\Describe::class,
       '/^api\/record\/get\/?$/' => \Hubleto\Framework\Controllers\Api\Record\Get::class,
@@ -121,7 +120,7 @@ class Router {
 
   public function routeVarAsBool($varIndex): bool
   {
-    if (isset($this->params[$paramName])) {
+    if (isset($this->params[$varIndex])) {
       if (strtolower($this->routeVars[$varIndex]) === 'false') return false;
       else return (bool) ($this->routeVars[$varIndex] ?? false);
     } else {
@@ -147,7 +146,7 @@ class Router {
 
   public function createNotFoundController(): \Hubleto\Framework\Controller
   {
-    return $this->main(\Hubleto\Framework\Controllers\NotFoundController::class);
+    return $this->main->di->create(\Hubleto\Framework\Controllers\NotFoundController::class);
     $controller = new \Hubleto\Framework\Controller($this->main);
     $controller->requiresUserAuthentication = FALSE;
     $controller->hideDefaultDesktop = TRUE;
