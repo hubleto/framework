@@ -29,8 +29,6 @@ class App
   public bool $isActivated = false;
   public bool $hasCustomSettings = false;
 
-  public Interfaces\AppMenuManagerInterface $appMenu;
-
   /** @var array<int, array<\Hubleto\Framework\App, array>> */
   private array $settings = [];
 
@@ -118,32 +116,6 @@ class App
   public function getNotificationsCount(): int
   {
     return 0;
-  }
-
-  public function createTestInstance(string $test): \Hubleto\Framework\AppTest
-  {
-    $reflection = new \ReflectionClass($this);
-    $testClass = $reflection->getNamespaceName() . '\\Tests\\' . $test;
-    return new $testClass($this);
-  }
-
-  public function test(string $test): void
-  {
-    ($this->createTestInstance($test))->run();
-  }
-
-  /** @return array<string> */
-  public function getAllTests(): array
-  {
-    $tests = [];
-    $testFiles = (array) @scandir($this->srcFolder . '/Tests');
-    foreach ($testFiles as $testFile) {
-      if (substr($testFile, -4) == '.php') {
-        $tests[] = substr($testFile, 0, -4);
-      }
-    }
-
-    return $tests;
   }
 
   public static function getDictionaryFilename(string $language): string

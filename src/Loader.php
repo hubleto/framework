@@ -128,6 +128,11 @@ class Loader
     return $this->config->getAsArray('serviceProviders');
   }
 
+  public function setParam(string $pName, mixed $pValue): void
+  {
+    $this->params[$pName] = $pValue;
+  }
+
   /**
    * Set $this as the global instance of Hubleto.
    *

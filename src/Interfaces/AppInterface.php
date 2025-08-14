@@ -29,8 +29,6 @@ interface AppInterface
   public bool $isActivated { get; set; }
   public bool $hasCustomSettings { get; set; }
 
-  public AppMenuManagerInterface $appMenu { get; set; }
-
   /** @var array<int, array<\Hubleto\Framework\App, array>> */
   public array $settings { get; set; }
 
@@ -41,9 +39,6 @@ interface AppInterface
   public function hook(string $hook): void;
   public function getRootUrlSlug(): string;
   public function getNotificationsCount(): int;
-  public function createTestInstance(string $test): \Hubleto\Framework\AppTest;
-  public function test(string $test): void;
-  public function getAllTests(): array;
   public static function getDictionaryFilename(string $language): string;
   public static function loadDictionary(string $language): array;
   public static function addToDictionary(string $language, string $contextInner, string $string): void;
