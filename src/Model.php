@@ -288,8 +288,6 @@ class Model
         }
       }
 
-      $this->createSqlForeignKeys();
-
       $this->main->config->save(
         'models/' . str_replace("/", "-", $this->fullName) . '/installed-version',
         max(array_keys($this->upgrades()))

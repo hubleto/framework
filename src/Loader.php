@@ -20,6 +20,7 @@ class Loader
   public string $projectUrl = '';
 
   public string $secureFolder = '';
+  public string $uploadFolder = '';
 
   public string $requestedUri = "";
   public string $controller = "";
@@ -79,6 +80,9 @@ class Loader
 
       $this->secureFolder = $this->config->getAsString('secureFolder');
       if (empty($this->secureFolder)) $this->secureFolder = $this->projectFolder . '/secure';
+
+      $this->uploadFolder = $this->config->getAsString('uploadFolder');
+      if (empty($this->uploadFolder)) $this->secureFolder = $this->projectFolder . '/upload';
 
       if (php_sapi_name() !== 'cli') {
         if (!empty($_GET['route'])) {
