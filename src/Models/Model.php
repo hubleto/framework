@@ -29,7 +29,6 @@ class Model extends \Hubleto\Framework\Model
     if ($this->isExtendableByCustomColumns) {
       $customColumnsCfg = $this->getConfigAsArray('customColumns') ?? [];
       foreach ($customColumnsCfg as $colName => $colCfg) {
-        $customColumn = null;
         $colClass = $colCfg['class'] ?? '';
         if (class_exists($colClass)) {
           $customColumns[$colName] = (new $colClass($this, ''))->loadFromArray($colCfg)->setProperty('isCustom', true);

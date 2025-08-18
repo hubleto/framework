@@ -200,10 +200,10 @@
 
   .modal > .modal-inner { @apply flex flex-col w-full h-full; }
   .modal > .modal-inner > .modal-header { @apply flex items-center border-b border-b-primary/20 text-primary dark:text-white dark:bg-slate-900 dark:border-slate-800 items-baseline w-full justify-between p-2 bg-primary/5; }
-  .modal > .modal-inner > .modal-header > .modal-header-left { @apply flex flex-1 gap-1; }
-  .modal > .modal-inner > .modal-header > .modal-header-title { @apply flex-10 text-center text-sm md:text-xl; }
+  .modal > .modal-inner > .modal-header > .modal-header-left { @apply flex grow-1 gap-1; }
+  .modal > .modal-inner > .modal-header > .modal-header-title { @apply grow-1 text-center text-sm md:text-xl; }
   .modal > .modal-inner > .modal-header > .modal-header-title h2 { @apply m-0 p-0 text-sm md:text-xl text-primary; }
-  .modal > .modal-inner > .modal-header > .modal-header-right { @apply flex flex-1 gap-1 justify-end; }
+  .modal > .modal-inner > .modal-header > .modal-header-right { @apply flex grow-1 gap-1 justify-end; }
   .modal > .modal-inner > .modal-header .btn { @apply flex-nowrap }
   .modal > .modal-inner > .modal-header .btn .text { @apply hidden md:flex }
   .modal > .modal-inner > .modal-top-menu { @apply flex border-b border-gray-100 mb-2 bg-white border-b border-b-primary/20; }
