@@ -22,6 +22,8 @@ class Loader
   public string $secureFolder = '';
   public string $uploadFolder = '';
 
+  public string $assetsUrl = '';
+
   public string $requestedUri = "";
   public string $controller = "";
   public string $permission = "";
@@ -83,6 +85,8 @@ class Loader
 
       $this->uploadFolder = $this->config->getAsString('uploadFolder');
       if (empty($this->uploadFolder)) $this->secureFolder = $this->projectFolder . '/upload';
+
+      $this->assetsUrl = $this->config->getAsString('assetsUrl');
 
       if (php_sapi_name() !== 'cli') {
         if (!empty($_GET['route'])) {
@@ -301,6 +305,12 @@ class Loader
     $this->twig->addExtension(new \Twig\Extension\StringLoaderExtension());
     $this->twig->addExtension(new \Twig\Extension\DebugExtension());
 
+    $this->twig->addFunction(new \Twig\TwigFunction(
+      'htmlentities',
+      function ($string) {
+        return mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8');
+      }
+    ));
     $this->twig->addFunction(new \Twig\TwigFunction(
       'str2url',
       function ($string) {
