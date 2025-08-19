@@ -58,6 +58,7 @@ class Loader
   public ?array $uploadedFiles = null;
 
   public string $srcFolder = '';
+  public string $releaseFolder = '';
 
   public int $mode = 0;
 
