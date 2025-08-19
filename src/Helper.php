@@ -91,7 +91,7 @@ class Helper
       $error = 'CURL is not available';
     }
 
-    return '' == $error ? $html : false;
+    return '' == self::$loadUrlError ? $html : false;
   }
 
   /**
