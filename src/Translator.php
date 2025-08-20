@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class Translator
+class Translator implements Interfaces\TranslatorInterface
 {
 
   public string $dictionaryFilename = "Core-Loader";
@@ -27,7 +27,8 @@ class Translator
     return $dictionaryFile;
   }
 
-  public function addToDictionary(string $string, string $context, string $toLanguage) {
+  public function addToDictionary(string $string, string $context, string $toLanguage): void
+  {
     $dictionaryFile = $this->getDictionaryFilename($context, $toLanguage);
     $this->dictionary[$toLanguage][$context][$string] = '';
 

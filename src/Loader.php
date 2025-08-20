@@ -996,7 +996,7 @@ class Loader
 
   public function load(string $service): mixed
   {
-    return $this->di->create($service);
+    return $this->di->create(str_replace('/', '\\', $service));
   }
 
 }

@@ -157,7 +157,7 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
   public function getUserType(): int
   {
     $user = $this->getUser();
-    return $user['type'];
+    return $user['type'] ?? 0;
   }
 
   public function getUserRoles(): array

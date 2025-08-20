@@ -20,6 +20,7 @@ class Router {
       '/^api\/record\/get-list\/?$/' => \Hubleto\Framework\Controllers\Api\Record\GetList::class,
       '/^api\/record\/lookup\/?$/' => \Hubleto\Framework\Controllers\Api\Record\Lookup::class,
       '/^api\/record\/save\/?$/' => \Hubleto\Framework\Controllers\Api\Record\Save::class,
+      '/^api\/record\/save-junction\/?$/' => \Hubleto\Framework\Controllers\Api\Record\SaveJunction::class,
       '/^api\/record\/delete\/?$/' => \Hubleto\Framework\Controllers\Api\Record\Delete::class,
     ]);
   }
