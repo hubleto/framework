@@ -148,23 +148,25 @@ class App
   */
   public static function addToDictionary(string $language, string $contextInner, string $string): void
   {
-    $dictFilename = static::getDictionaryFilename($language);
+    // $dictFilename = static::getDictionaryFilename($language);
 
-    $dict = static::loadDictionary($language);
+    // $dict = static::loadDictionary($language);
 
-    $main = \Hubleto\Framework\Loader::getGlobalApp();
+    // $main = \Hubleto\Framework\Loader::getGlobalApp();
 
-    if ($main->config->getAsBool('autoTranslate')) {
-      /** @disregard P1009 */
-      $tr = new \Stichoza\GoogleTranslate\GoogleTranslate();
-      $tr->setSource('en'); // Translate from
-      $tr->setTarget($language); // Translate to
-      $dict[$contextInner][$string] = $tr->translate($string);
-    } else {
-      $dict[$contextInner][$string] = '';
-    }
+    // if (!empty($dict[$contextInner][$string])) return;
 
-    @file_put_contents($dictFilename, json_encode($dict, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    // if ($main->config->getAsBool('autoTranslate')) {
+    //   /** @disregard P1009 */
+    //   $tr = new \Stichoza\GoogleTranslate\GoogleTranslate();
+    //   $tr->setSource('en'); // Translate from
+    //   $tr->setTarget($language); // Translate to
+    //   $dict[$contextInner][$string] = $tr->translate($string);
+    // } else {
+    //   $dict[$contextInner][$string] = '';
+    // }
+
+    // @file_put_contents($dictFilename, json_encode($dict, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
   }
 
   public function translate(string $string, array $vars = [], string $context = 'root'): string

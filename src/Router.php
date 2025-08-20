@@ -138,7 +138,7 @@ class Router {
     $controller = new \Hubleto\Framework\Controller($this->main);
     $controller->requiresUserAuthentication = FALSE;
     $controller->hideDefaultDesktop = TRUE;
-    $controller->translationContext = 'Hubleto\\Core\\Loader::Controllers\\SignIn';
+    $controller->translationContext = 'HubletoMain\\Loader::Controllers\\SignIn';
 
     $controller->setView('@app/SignIn.twig', ['status' => $_GET['incorrectLogin'] ?? '' == "1"]);
     return $controller;
@@ -150,7 +150,7 @@ class Router {
     $controller = new \Hubleto\Framework\Controller($this->main);
     $controller->requiresUserAuthentication = FALSE;
     $controller->hideDefaultDesktop = TRUE;
-    $controller->translationContext = 'Hubleto\\Core\\Loader::Controllers\\NotFound';
+    $controller->translationContext = 'HubletoMain\\Loader::Controllers\\NotFound';
     $controller->setView('@app/NotFound.twig');
     return $controller;
   }

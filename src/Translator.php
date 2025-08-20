@@ -67,7 +67,7 @@ class Translator
     if (strlen($language) == 2) {
       $dictFilename = __DIR__ . '/../../lang/' . $language . '.json';
       if (is_file($dictFilename)) {
-        $dictionary['HubletoMain\\Core'] = $this->loadDictionaryFromJsonFile($dictFilename);
+        $dictionary['HubletoMain\\Loader'] = $this->loadDictionaryFromJsonFile($dictFilename);
       }
     }
 
@@ -80,7 +80,7 @@ class Translator
       }
     }
 
-    $dictionary['Hubleto\\Core\\Loader'] = Loader::loadDictionary($language);
+    $dictionary['Hubleto\\Framework\\Core\\Loader'] = Loader::loadDictionary($language);
 
     return $dictionary;
   }
@@ -111,7 +111,7 @@ class Translator
   /**
   * @param array<string, string> $vars
   */
-  public function translate(string $string, array $vars = [], string $context = "HubletoMain::root", string $toLanguage = ""): string
+  public function translate(string $string, array $vars = [], string $context = "Hubleto\\Framework\\Loader::root", string $toLanguage = ""): string
   {
     if (empty($toLanguage)) {
       $toLanguage = $this->main->getLanguage();
