@@ -41,7 +41,7 @@ class Loader
   public Permissions $permissions;
   public Test $test;
   public Interfaces\AuthInterface $auth;
-  public Translator $translator;
+  public Interfaces\TranslatorInterface $translator;
   public PDO $pdo;
   public Interfaces\AppManagerInterface $apps;
 
@@ -270,7 +270,7 @@ class Loader
     return $this->di->create(Locale::class);
   }
 
-  public function createTranslator(): Translator
+  public function createTranslator(): Interfaces\TranslatorInterface
   {
     return $this->di->create(Translator::class);
   }
