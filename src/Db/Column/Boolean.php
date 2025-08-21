@@ -21,6 +21,11 @@ class Boolean extends \Hubleto\Framework\Db\Column
     parent::__construct($model, $title);
   }
 
+  public function getNullValue(): mixed
+  {
+    return false;
+  }
+  
   public function normalize(mixed $value): mixed
   {
     if (empty($value) || !((bool) $value) || $value === $this->getNoValue()) {
