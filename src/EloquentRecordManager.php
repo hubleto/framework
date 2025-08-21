@@ -416,7 +416,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       ($id < 0 && !$permissions[0]) // cannot create
       || ($id >= 0 && !$permissions[2]) // cannot update
     ) {
-      throw new \ADIOS\Core\Exceptions\NotEnoughPermissionsException("Cannot save. Not enough permissions.");
+      throw new \Hubleto\Framework\Exceptions\NotEnoughPermissionsException("Cannot save. Not enough permissions.");
     }
 
     $savedRecord = $record;
