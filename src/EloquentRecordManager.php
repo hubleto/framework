@@ -22,26 +22,6 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     parent::__construct($attributes);
   }
 
-  // public function getRelationsToRead(): array
-  // {
-  //   return $this->relationsToRead;
-  // }
-
-  // public function setRelationsToRead(array $relationsToRead): void
-  // {
-  //   $this->relationsToRead = $relationsToRead;
-  // }
-
-  public function getMaxReadLevel(): array
-  {
-    return $this->maxReadLevel;
-  }
-
-  public function setMaxReadLevel(array $maxReadLevel): void
-  {
-    $this->maxReadLevel = $maxReadLevel;
-  }
-
   public function getPermissions(array $record): array
   {
     return [true, true, true, true];
@@ -399,7 +379,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return 1; // TODO: return $rowsAffected
   }
 
-  public function recordSave(array $record, int $idMasterRecord = 0): array
+  public function recordSave(array $record, int $idMasterRecord = 0, bool $saveRelationsRecursively = false): array
   {
 
     $id = (int) ($record['id'] ?? 0);
@@ -420,7 +400,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     }
 
     $savedRecord = $record;
-    if ($idMasterRecord == 0) $this->recordValidate($savedRecord);
+    if ($idMasterRecord == 0) $this->recordValidate($savedRecord, $saveRelationsRecursively);
 
     try {
 
@@ -443,60 +423,52 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
         $savedRecord = $this->recordUpdate($savedRecord, $originalRecord);
       }
 
-      foreach ($this->model->relations as $relName => $relDefinition) {
-        if (isset($record[$relName]) && is_array($record[$relName])) {
-          list($relType, $relModelClass) = $relDefinition;
-          $relModel = new $relModelClass($this->main);
-          switch ($relType) {
-            case Model::HAS_MANY:
-              foreach ($record[$relName] as $subKey => $subRecord) {
-                if (is_array($subRecord)) {
-                  $subRecord = $relModel->record->recordSave($subRecord, $savedRecord['id']);
-                  $savedRecord[$relName][$subKey] = $subRecord;
+      if ($saveRelationsRecursively) {
+        foreach ($this->model->relations as $relName => $relDefinition) {
+          if (isset($record[$relName]) && is_array($record[$relName])) {
+            list($relType, $relModelClass) = $relDefinition;
+            $relModel = new $relModelClass($this->main);
+            switch ($relType) {
+              case Model::HAS_MANY:
+                foreach ($record[$relName] as $subKey => $subRecord) {
+                  if (is_array($subRecord)) {
+                    $subRecord = $relModel->record->recordSave($subRecord, $savedRecord['id'], $saveRelationsRecursively);
+                    $savedRecord[$relName][$subKey] = $subRecord;
+                  }
                 }
-              }
-            break;
-            case Model::HAS_ONE:
-              if (is_array($record[$relName])) {
-                $subRecord = $relModel->record->recordSave($record[$relName], $savedRecord['id']);
-                $savedRecord[$relName] = $subRecord;
-              }
-            break;
+              break;
+              case Model::HAS_ONE:
+                if (is_array($record[$relName])) {
+                  $subRecord = $relModel->record->recordSave($record[$relName], $savedRecord['id'], $saveRelationsRecursively);
+                  $savedRecord[$relName] = $subRecord;
+                }
+              break;
+            }
           }
         }
       }
-    } catch (\Exception $e) {
-      $exceptionClass = get_class($e);
+    } catch (\Illuminate\Database\QueryException $e) {
+      throw new Exceptions\RecordSaveException($e->getConnectionName(), $e->getSql(), $e);
+    } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+      if ($e->errorInfo[1] == 1062) {
+        $columns = $this->model->getColumns();
 
-      switch ($exceptionClass) {
-        case 'Illuminate\\Database\\QueryException':
-          throw new $exceptionClass($e->getConnectionName(), $e->getSql(), $e->getBindings(), $e);
-        break;
-        case 'Illuminate\\Database\\UniqueConstraintViolationException';
-          if ($e->errorInfo[1] == 1062) {
-            $columns = $this->model->getColumns();
+        preg_match("/Duplicate entry '(.*?)' for key '(.*?)'/", $e->errorInfo[2], $m);
+        $invalidIndex = $m[2];
+        $invalidValue = $m[1];
+        $invalidIndexName = $columns[$invalidIndex]->getTitle();
 
-            preg_match("/Duplicate entry '(.*?)' for key '(.*?)'/", $e->errorInfo[2], $m);
-            $invalidIndex = $m[2];
-            $invalidValue = $m[1];
-            $invalidIndexName = $columns[$invalidIndex]->getTitle();
+        $errorMessage = "Value '{$invalidValue}' for {$invalidIndexName} already exists.";
 
-            $errorMessage = "Value '{$invalidValue}' for {$invalidIndexName} already exists.";
-
-            throw new Exceptions\RecordSaveException(
-              $errorMessage,
-              $e->errorInfo[1]
-            );
-          } else {
-            throw new Exceptions\RecordSaveException(
-              $e->errorInfo[2],
-              $e->errorInfo[1]
-            );
-          }
-        break;
-        default:
-          throw new $exceptionClass($e->getMessage(), $e->getCode(), $e);
-        break;
+        throw new Exceptions\RecordSaveException(
+          $errorMessage,
+          $e->errorInfo[1]
+        );
+      } else {
+        throw new Exceptions\RecordSaveException(
+          $e->errorInfo[2],
+          $e->errorInfo[1]
+        );
       }
     }
 
@@ -509,7 +481,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    * @param array<string, mixed> $record
    * @return array<string, mixed>
    */
-  public function recordValidate(array $record): array
+  public function recordValidate(array $record, bool $validateRelationsRecursively = false): array
   {
     $invalidInputs = [];
 
@@ -534,23 +506,25 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       throw new Exceptions\RecordSaveException(json_encode($invalidInputs), 87335);
     }
 
-    foreach ($this->model->relations as $relName => $relDefinition) {
-      if (isset($record[$relName]) && is_array($record[$relName])) {
-        list($relType, $relModelClass) = $relDefinition;
-        $relModel = new $relModelClass($this->main);
-        switch ($relType) {
-          case Model::HAS_MANY:
-            foreach ($record[$relName] as $subKey => $subRecord) {
-              if (is_array($subRecord)) {
-                $subRecord = $relModel->record->recordValidate($subRecord, $record['id']);
+    if ($validateRelationsRecursively) {
+      foreach ($this->model->relations as $relName => $relDefinition) {
+        if (isset($record[$relName]) && is_array($record[$relName])) {
+          list($relType, $relModelClass) = $relDefinition;
+          $relModel = new $relModelClass($this->main);
+          switch ($relType) {
+            case Model::HAS_MANY:
+              foreach ($record[$relName] as $subKey => $subRecord) {
+                if (is_array($subRecord)) {
+                  $subRecord = $relModel->record->recordValidate($subRecord, $record['id'], $validateRelationsRecursively);
+                }
               }
-            }
-          break;
-          case Model::HAS_ONE:
-            if (is_array($record[$relName])) {
-              $subRecord = $relModel->record->recordValidate($record[$relName], $record['id']);
-            }
-          break;
+            break;
+            case Model::HAS_ONE:
+              if (is_array($record[$relName])) {
+                $subRecord = $relModel->record->recordValidate($record[$relName], $record['id'], $validateRelationsRecursively);
+              }
+            break;
+          }
         }
       }
     }

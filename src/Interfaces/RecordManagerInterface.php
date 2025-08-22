@@ -9,11 +9,6 @@ namespace Hubleto\Framework\Interfaces;
 
 interface RecordManagerInterface {
 
-  // public function getRelationsToRead(): array;
-  // public function setRelationsToRead(array $relationsToRead): void;
-  public function getMaxReadLevel(): array;
-  public function setMaxReadLevel(array $maxReadLevel): void;
-
   /**
    * prepareReadQuery
    * @param mixed $query Leave empty for default behaviour.
