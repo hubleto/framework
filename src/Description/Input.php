@@ -49,7 +49,7 @@ class Input implements \JsonSerializable
   public function setPlaceholder(bool $placeholder = true): Input { $this->placeholder = $placeholder; return $this; }
 
   public function getDecimals(): int { return $this->decimals; }
-  public function setDecimals(int $decimals): Decimal { $this->decimals = $decimals; return $this; }
+  public function setDecimals(int $decimals): Input { $this->decimals = $decimals; return $this; }
 
   public function getUnit(): string { return $this->unit; }
   public function setUnit(string $unit): Input { $this->unit = $unit; return $this; }

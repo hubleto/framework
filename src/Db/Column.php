@@ -30,6 +30,8 @@ abstract class Column implements \JsonSerializable
   protected string $tableCellRenderer = '';
   protected string $lookupModel = '';
   protected string $reactComponent = '';
+  protected int $decimals = 4;
+  protected int $byteSize = 14;
 
   protected array $properties = [];
 
@@ -55,6 +57,9 @@ abstract class Column implements \JsonSerializable
 
   public function getReactComponent(): string { return $this->reactComponent; }
   public function setReactComponent(string $reactComponent): Column { $this->reactComponent = $reactComponent; return $this; }
+
+  public function getByteSize(): int { return $this->byteSize; }
+  public function setByteSize(int $byteSize): Column { $this->byteSize = $byteSize; return $this; }
 
   public function getType(): string { return $this->type; }
   public function setType(string $type): Column { $this->type = $type; return $this; }
@@ -116,6 +121,9 @@ abstract class Column implements \JsonSerializable
   public function getLookupModel(): string { return $this->lookupModel; }
   public function setLookupModel(string $lookupModel): Column { $this->lookupModel = $lookupModel; return $this; }
 
+  public function getDecimals(): int { return $this->decimals; }
+  public function setDecimals(int $decimals): Column { $this->decimals = $decimals; return $this; }
+
   public function describeInput(): \Hubleto\Framework\Description\Input
   {
     $description = new \Hubleto\Framework\Description\Input();
@@ -129,10 +137,11 @@ abstract class Column implements \JsonSerializable
     if (!empty($this->getDescription())) $description->setDescription($this->getDescription());
     if (!empty($this->getUnit())) $description->setUnit($this->getUnit());
     if (!empty($this->getFormat())) $description->setFormat($this->getFormat());
-    if (!empty($this->getTableCellRenderer())) $description->setTableCellRenderer($this->getTableCellRenderer());
+    // if (!empty($this->getTableCellRenderer())) $description->setTableCellRenderer($this->getTableCellRenderer());
     if (!empty($this->getLookupModel())) $description->setLookupModel($this->getLookupModel());
     if ($this->defaultValue !== null) $description->setDefaultValue($this->defaultValue);
     $description->setExamples($this->examples);
+    $description->setDecimals($this->decimals);
     $description->setEnumValues($this->enumValues);
     $description->setEnumCssClasses($this->enumCssClasses);
     $description->setPredefinedValues($this->predefinedValues);
@@ -158,6 +167,8 @@ abstract class Column implements \JsonSerializable
     if (isset($columnConfig['enumCssClasses'])) $this->setEnumCssClasses($columnConfig['enumCssClasses']);
     if (isset($columnConfig['predefinedValues'])) $this->setPredefinedValues($columnConfig['predefinedValues']);
     if (isset($columnConfig['lookupModel'])) $this->setLookupModel($columnConfig['lookupModel']);
+    if (isset($columnConfig['decimals'])) $this->setLookupModel($columnConfig['decimals']);
+    if (isset($columnConfig['byteSize'])) $this->setLookupModel($columnConfig['byteSize']);
     return $this;
   }
 
@@ -177,6 +188,8 @@ abstract class Column implements \JsonSerializable
       'cssClass' => $this->cssClass,
       'tableCellRenderer' => $this->tableCellRenderer,
       'reactComponent' => $this->reactComponent,
+      'decimals' => $this->decimals,
+      'byteSize' => $this->byteSize,
     ];
 
     if (count($this->enumValues) > 0) $column['enumValues'] = $this->enumValues;

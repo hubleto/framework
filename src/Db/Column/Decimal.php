@@ -7,29 +7,6 @@ class Decimal extends \Hubleto\Framework\Db\Column
 
   protected string $type = 'float';
   protected string $sqlDataType = 'decimal';
-  protected int $byteSize = 14;
-  protected int $decimals = 4;
-
-  public function __construct(\Hubleto\Framework\Model $model, string $title, int $byteSize = 14, int $decimals = 4)
-  {
-    parent::__construct($model, $title);
-    $this->byteSize = $byteSize;
-    $this->decimals = $decimals;
-  }
-
-  public function getByteSize(): int { return $this->byteSize; }
-  public function setByteSize(int $byteSize): Decimal { $this->byteSize = $byteSize; return $this; }
-
-  public function getDecimals(): int { return $this->decimals; }
-  public function setDecimals(int $decimals): Decimal { $this->decimals = $decimals; return $this; }
-
-  public function jsonSerialize(): array
-  {
-    $column = parent::jsonSerialize();
-    $column['byteSize'] = $this->byteSize;
-    $column['decimals'] = $this->decimals;
-    return $column;
-  }
 
   public function normalize(mixed $value): mixed
   {
