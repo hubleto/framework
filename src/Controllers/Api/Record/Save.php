@@ -17,13 +17,18 @@ class Save extends \Hubleto\Framework\Controllers\ApiController {
   {
     $originalRecord = $this->main->urlParamAsArray('record');
     $modelClass = $this->main->urlParamAsString('model');
+    $saveRelationsRecursively = $this->main->urlParamAsBool('saveRecursively');
 
     if (empty($modelClass)) throw new \Exception("Master model is not specified.");
 
     $model = $this->main->getModel($modelClass);
     if (!is_object($model)) throw new \Exception("Unable to create model {$model}.");
 
-    $savedRecord = $this->model->record->recordSave($originalRecord);
+    $savedRecord = $this->model->record->recordSave(
+      $originalRecord,
+      0, // $idMasterRecord
+      $saveRelationsRecursively
+    );
 
     return [
       'status' => 'success',
