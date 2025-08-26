@@ -2,16 +2,14 @@
 
 namespace Hubleto\Framework;
 
-class Config
+class Config extends CoreClass
 {
   protected array $config = [];
 
-  public function __construct(public \Hubleto\Framework\Loader $main, array $config)
+  public function setConfig(array $config)
   {
     $this->config = $config;
-
     $this->set('requestUri', $_SERVER['REQUEST_URI'] ?? "");
-
   }
 
   public function empty(string $path): bool

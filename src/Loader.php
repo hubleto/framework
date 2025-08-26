@@ -9,7 +9,7 @@ register_shutdown_function(function() {
   }
 });
 
-class Loader
+class Loader extends CoreClass
 {
   const HUBLETO_MODE_FULL = 1;
   const HUBLETO_MODE_LITE = 2;
@@ -64,6 +64,11 @@ class Loader
 
   public function __construct(array $config = [], int $mode = self::HUBLETO_MODE_FULL)
   {
+    parent::__construct($this);
+
+    // initialize dependency injector
+    $this->di = $this->createDependencyInjection();
+
     $this->setAsGlobal();
 
     $this->params = $this->extractParamsFromRequest();
@@ -76,7 +81,8 @@ class Loader
     try {
 
       // load config
-      $this->config = $this->createConfigManager($config);
+      $this->config = $this->createConfigManager();
+      $this->config->setConfig($config);
 
       $this->projectFolder = $this->getConfig()->getAsString('projectFolder');
       $this->projectUrl = $this->getConfig()->getAsString('projectUrl');
@@ -104,9 +110,6 @@ class Loader
 
       }
 
-      // initialize dependency injector
-      $this->di = $this->createDependencyInjection();
-
       foreach ($this->getServiceProviders() as $service => $provider) {
         $this->di->setServiceProvider($service, $provider);
       }
@@ -121,6 +124,7 @@ class Loader
       $this->auth = $this->createAuthProvider();
       $this->test = $this->createTestProvider();
       $this->pdo = $this->createDbProvider();
+      $this->apps = $this->createAppManager();
 
       $this->createRenderer();
 
@@ -142,38 +146,38 @@ class Loader
     $this->params[$pName] = $pValue;
   }
 
-  /**
-   * [Description for getAppManager]
-   *
-   * @return Interfaces\AppManagerInterface
-   * 
-   */
-  public function getAppManager(): Interfaces\AppManagerInterface
-  {
-    return $this->apps;
-  }
+  // /**
+  //  * [Description for getAppManager]
+  //  *
+  //  * @return Interfaces\AppManagerInterface
+  //  * 
+  //  */
+  // public function getAppManager(): Interfaces\AppManagerInterface
+  // {
+  //   return $this->apps;
+  // }
 
-  /**
-   * [Description for getRouter]
-   *
-   * @return Router
-   * 
-   */
-  public function getRouter(): Router
-  {
-    return $this->router;
-  }
+  // /**
+  //  * [Description for getRouter]
+  //  *
+  //  * @return Router
+  //  * 
+  //  */
+  // public function getRouter(): Router
+  // {
+  //   return $this->router;
+  // }
 
-  /**
-   * [Description for getConfig]
-   *
-   * @return Config
-   * 
-   */
-  public function getConfig(): Config
-  {
-    return $this->config;
-  }
+  // /**
+  //  * [Description for getConfig]
+  //  *
+  //  * @return Config
+  //  * 
+  //  */
+  // public function getConfig(): Config
+  // {
+  //   return $this->config;
+  // }
 
   /**
    * Set $this as the global instance of Hubleto.
@@ -196,7 +200,7 @@ class Loader
   {
 
     try {
-      $this->router->init();
+      $this->getRouter()->init();
       $this->permissions->init();
       $this->auth->init();
 
@@ -268,6 +272,11 @@ class Loader
     return $this->di->create(PDO::class);
   }
 
+  public function createAppManager(): AppManager
+  {
+    return $this->di->create(AppManager::class);
+  }
+
   public function createAuthProvider(): Interfaces\AuthInterface
   {
     return $this->di->create(Auth\DefaultProvider::class);
@@ -278,9 +287,9 @@ class Loader
     return $this->di->create(Session::class);
   }
 
-  public function createConfigManager(array $config): Config
+  public function createConfigManager(): Config
   {
-    return new Config($this, $config);
+    return $this->di->create(Config::class);
   }
 
   public function createPermissionsManager(): Permissions
@@ -478,25 +487,25 @@ class Loader
 
       // Apply routing and find-out which controller, permision and rendering params will be used
       // First, try the new routing principle with httpGet
-      $routeData = $this->router->parseRoute(Router::HTTP_GET, $this->route);
+      $routeData = $this->getRouter()->parseRoute(Router::HTTP_GET, $this->route);
 
       $this->controller = $routeData['controller'];
       $this->permission = '';
 
       $routeVars = $routeData['vars'];
-      $this->router->setRouteVars($params);
-      $this->router->setRouteVars($routeVars);
+      $this->getRouter()->setRouteVars($params);
+      $this->getRouter()->setRouteVars($routeVars);
 
       foreach ($routeVars as $varName => $varValue) {
         $this->params[$varName] = $varValue;
       }
 
-      if ($this->router->isUrlParam('sign-out')) {
+      if ($this->getRouter()->isUrlParam('sign-out')) {
         $this->auth->signOut();
       }
 
-      if ($this->router->isUrlParam('signed-out')) {
-        $this->router->redirectTo('');
+      if ($this->getRouter()->isUrlParam('signed-out')) {
+        $this->getRouter()->redirectTo('');
         exit;
       }
 
@@ -535,7 +544,7 @@ class Loader
 
       if ($controllerObject->requiresUserAuthentication) {
         if (!$this->auth->isUserInSession()) {
-          $controllerObject = $this->router->createSignInController();
+          $controllerObject = $this->getRouter()->createSignInController();
           $this->permission = $controllerObject->permission;
         }
       }
@@ -604,12 +613,12 @@ class Loader
         }
 
         // In some cases the result of the view will be used as-is ...
-        if (php_sapi_name() == 'cli' || $this->router->urlParamAsBool('__IS_AJAX__') || $controllerObject->hideDefaultDesktop) {
+        if (php_sapi_name() == 'cli' || $this->getRouter()->urlParamAsBool('__IS_AJAX__') || $controllerObject->hideDefaultDesktop) {
           $html = $contentHtml;
 
         // ... But in most cases it will be "encapsulated" in the desktop.
         } else {
-          $desktopControllerObject = $this->router->createDesktopController();
+          $desktopControllerObject = $this->getRouter()->createDesktopController();
           $desktopControllerObject->prepareView();
 
           if (isset($desktopControllerObject->renderer) && !empty($desktopControllerObject->getView())) {

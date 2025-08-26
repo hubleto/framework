@@ -2,26 +2,33 @@
 
 namespace Hubleto\Framework;
 
-class Session
+class Session extends CoreClass
 {
 
   private string $salt = '';
 
   public function __construct(public \Hubleto\Framework\Loader $main)
   {
+    parent::__construct($main);
 
     if (isset($_SESSION) && is_array($_SESSION) && !is_array($_SESSION[$this->salt])) $_SESSION[$this->salt] = [];
 
-    $this->salt = $this->main->getConfig()->getAsString('sessionSalt');
+    $this->salt = $this->getConfig()->getAsString('sessionSalt');
   }
 
+  /**
+   * [Description for getSalt]
+   *
+   * @return string
+   * 
+   */
   public function getSalt(): string
   {
     return $this->salt;
   }
 
   public function start(bool $persist, array $options = []): void
-  {
+  { 
     if (session_status() == PHP_SESSION_NONE && !headers_sent()) {
       if (empty($this->salt)) throw new \Exception('Hubleto: Cannot start session, salt is empty.');
 

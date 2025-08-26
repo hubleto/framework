@@ -8,7 +8,7 @@ use ReflectionClass;
 /**
  * Core implementation of model.
  */
-class Model
+class Model extends CoreClass
 {
   const HAS_ONE = 'hasOne';
   const HAS_MANY = 'hasMany';
@@ -101,16 +101,6 @@ class Model
     return 'models/' . $this->fullName . '/' . $configName;
   }
 
-  public function getRouter(): Router
-  {
-    return $this->main->getRouter();
-  }
-
-  public function getConfig(): Config
-  {
-    return $this->main->getConfig();
-  }
-
   // /**
   //  * Retrieves value of configuration parameter.
   //  *
@@ -118,7 +108,7 @@ class Model
   //  */
   // public function getConfig(string $configName): string
   // {
-  //   return $this->main->getConfig()->getAsString($this->getConfigFullPath($configName));
+  //   return $this->getConfig()->getAsString($this->getConfigFullPath($configName));
   // }
 
   /**
@@ -128,7 +118,7 @@ class Model
    */
   public function configAsString(string $configName): string
   {
-    return $this->main->getConfig()->getAsString($this->getConfigFullPath($configName));
+    return $this->getConfig()->getAsString($this->getConfigFullPath($configName));
   }
 
   /**
@@ -138,7 +128,7 @@ class Model
    */
   public function configAsInteger(string $configName): int
   {
-    return $this->main->getConfig()->getAsInteger($this->getConfigFullPath($configName));
+    return $this->getConfig()->getAsInteger($this->getConfigFullPath($configName));
   }
 
   /**
@@ -148,7 +138,7 @@ class Model
    */
   public function configAsArray(string $configName): array
   {
-    return $this->main->getConfig()->getAsArray($this->getConfigFullPath($configName));
+    return $this->getConfig()->getAsArray($this->getConfigFullPath($configName));
   }
 
 
@@ -295,7 +285,7 @@ class Model
         }
       }
 
-      $this->main->getConfig()->save(
+      $this->getConfig()->save(
         'models/' . str_replace("/", "-", $this->fullName) . '/installed-version',
         max(array_keys($this->upgrades()))
       );

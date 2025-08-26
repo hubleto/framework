@@ -26,14 +26,26 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
   {
     $userLanguage = $this->getUserLanguage();
     if (empty($userLanguage)) $userLanguage = 'en';
-    $this->main->getConfig()->set('language', $userLanguage);
+    $this->getConfig()->set('language', $userLanguage);
   }
 
+  /**
+   * [Description for getRouter]
+   *
+   * @return Router
+   * 
+   */
   public function getRouter(): Router
   {
     return $this->main->getRouter();
   }
 
+  /**
+   * [Description for getConfig]
+   *
+   * @return Config
+   * 
+   */
   public function getConfig(): Config
   {
     return $this->main->getConfig();
@@ -192,7 +204,7 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
 
   public function getUserLanguage(): string
   {
-    $language = (string) ($this->user['language'] ?? $this->main->getConfig()->getAsString('language'));
+    $language = (string) ($this->user['language'] ?? $this->getConfig()->getAsString('language'));
     return (strlen($language) == 2 ? $language : 'en');
   }
 

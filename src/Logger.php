@@ -7,7 +7,7 @@ use Monolog\Handler\RotatingFileHandler;
 /**
  * Debugger console.
  */
-class Logger {
+class Logger extends CoreClass {
 
   public array $loggers = [];
 
@@ -16,7 +16,9 @@ class Logger {
   public bool $enabled = false;
  
   public function __construct(public Loader $main) {
-    $this->logFolder = $this->main->getConfig()->getAsString('logFolder');
+    parent::__construct($main);
+
+    $this->logFolder = $this->getConfig()->getAsString('logFolder');
     $this->enabled = !empty($this->logFolder) && is_dir($this->logFolder);
 
     $this->initLogger('core');

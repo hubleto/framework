@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class Permissions
+class Permissions extends CoreClass
 {
 
   protected bool $grantAllPermissions = false;
@@ -22,7 +22,7 @@ class Permissions
     $this->administratorTypes = $this->loadAdministratorTypes();
   }
 
-  public function createUserRoleModel(): Model
+  public function createUserRoleModel(): null|Model
   {
     return null; //new \HubletoApp\Community\Settings\Models\UserRole($this->main);
   }
@@ -67,7 +67,7 @@ class Permissions
 
   public function set(string $permission, int $idUserRole, bool $isEnabled)
   {
-    $this->main->getConfig()->save(
+    $this->getConfig()->save(
       "permissions/{$idUserRole}/".str_replace("/", ":", $permission),
       $isEnabled ? "1" : "0"
     );

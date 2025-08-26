@@ -20,7 +20,7 @@ class Delete extends \Hubleto\Framework\Controllers\ApiController {
     $ok = false;
     $rowsAffected = 0;
 
-    if ($this->main->getConfig()->getAsBool('encryptRecordIds')) {
+    if ($this->getConfig()->getAsBool('encryptRecordIds')) {
       $hash = $this->getRouter()->urlParamAsString('hash');
       $ok = $hash == \Hubleto\Framework\Helper::encrypt($this->getRouter()->urlParamAsString('id'), '', true);
     } else {

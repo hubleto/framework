@@ -9,7 +9,7 @@ namespace Hubleto\Framework;
  * be rendered using Twig template or using custom render() method.
  * 
  */
-class Controller {
+class Controller extends CoreClass {
 
   const RETURN_TYPE_VIEW = 0;
   const RETURN_TYPE_JSON = 1;
@@ -85,21 +85,6 @@ class Controller {
     if (empty($this->translationContext)) {
       $this->translationContext = trim(str_replace('/', '\\', $this->fullName), '\\');
     }
-  }
-
-  public function getRouter(): Router
-  {
-    return $this->main->getRouter();
-  }
-
-  public function getConfig(): Config
-  {
-    return $this->main->getConfig();
-  }
-
-  public function prepareParams(): array
-  {
-    return [];
   }
 
   /**

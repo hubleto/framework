@@ -2,12 +2,14 @@
 
 namespace Hubleto\Framework;
 
-class Locale {
+class Locale extends CoreClass
+{
 
   private array $locale = [];
   
   public function __construct(public \Hubleto\Framework\Loader $main) {
-    $this->locale = $this->main->getConfig()->getAsArray('locale');
+    parent::__construct($main);
+    $this->locale = $this->getConfig()->getAsArray('locale');
   }
 
   public function getDateShortFormat(): string
@@ -37,7 +39,8 @@ class Locale {
 
   public function getAll(string $keyBy = "") {
     return [
-      "dateFormat" => $this->getDateFormat(),
+      "dateShortFormat" => $this->getDateShortFormat(),
+      "dateLongFormat" => $this->getDateLongFormat(),
       "timeFormat" => $this->getTimeFormat(),
       "datetimeFormat" => $this->getDatetimeFormat(),
       "currencySymbol" => $this->getCurrencySymbol(),
@@ -66,7 +69,7 @@ class Locale {
 
   public function formatDatetime(string|int $datetimeOrTimestamp): string
   {
-    if (is_string($dateOrTimestamp)) $ts = strtotime($datetimeOrTimestamp);
+    if (is_string($datetimeOrTimestamp)) $ts = strtotime($datetimeOrTimestamp);
     else $ts = $datetimeOrTimestamp;
     return date($this->getDatetimeFormat(), $ts);
   }

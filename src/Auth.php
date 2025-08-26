@@ -2,7 +2,8 @@
 
 namespace Hubleto\Framework;
 
-class Auth {
+class Auth extends CoreClass
+{
   protected ?array $user = null;
 
   function __construct(public \Hubleto\Framework\Loader $main)
@@ -11,16 +12,6 @@ class Auth {
 
   public function init(): void
   {
-  }
-
-  public function getRouter(): Router
-  {
-    return $this->main->getRouter();
-  }
-
-  public function getConfig(): Config
-  {
-    return $this->main->getConfig();
   }
 
   public function getUserFromSession(): array
@@ -129,7 +120,7 @@ class Auth {
 
   public function getUserLanguage(): string
   {
-    $language = (string) ($this->user['language'] ?? $this->main->getConfig()->getAsString('language'));
+    $language = (string) ($this->user['language'] ?? $this->getConfig()->getAsString('language'));
     return (strlen($language) == 2 ? $language : 'en');
   }
 }
