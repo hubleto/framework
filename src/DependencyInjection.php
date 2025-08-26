@@ -10,30 +10,37 @@ class DependencyInjection
    *
    * @var array<string, string>
    */
-  private array $serviceProviders = [];
+  private static array $serviceProviders = [];
 
-  private array $services = [];
+  private static array $services = [];
   
-  public function __construct(public \Hubleto\Framework\Loader $main) {
-    $this->setServiceProvider('model.user', \Hubleto\Framework\Models\User::class);
-  }
+  // public static function __construct(public \Hubleto\Framework\Loader $main) {
+  //   self::setServiceProvider('model.user', \Hubleto\Framework\Models\User::class);
+  // }
   
-  public function setServiceProvider(string $service, string $provider): void
+  public static function setServiceProvider(string $service, string $provider): void
   {
-    $this->serviceProviders[$service] = $provider;
+    self::$serviceProviders[$service] = $provider;
   }
 
-  public function create(string $service, bool $noSingleton = false): mixed
+  public static function setServiceProviders(array $providers): void
   {
-    $class = $this->serviceProviders[$service] ?? $service;
+    foreach ($providers as $service => $provider) {
+      self::setServiceProvider($service, $provider);
+    }
+  }
+
+  public static function create(\Hubleto\Framework\Loader $main, string $service, bool $noSingleton = false): mixed
+  {
+    $class = self::$serviceProviders[$service] ?? $service;
 
     if ($noSingleton) {
-      $serviceObj = new $class($this->main);
+      $serviceObj = new $class($main);
     } else {
-      if (!isset($this->services[$service])) {
-        $this->services[$service] = (new $class($this->main));
+      if (!isset(self::$services[$service])) {
+        self::$services[$service] = (new $class($main));
       }
-      $serviceObj = $this->services[$service];
+      $serviceObj = self::$services[$service];
     }
 
     return $serviceObj;

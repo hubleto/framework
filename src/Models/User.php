@@ -107,7 +107,7 @@ class User extends \Hubleto\Framework\Model {
   }
 
   public function authCookieGetLogin() {
-    list($tmpHash, $tmpLogin) = explode(",", $_COOKIE[$this->main->session->getSalt() . '-user']);
+    list($tmpHash, $tmpLogin) = explode(",", $_COOKIE[$this->getSessionManager()->getSalt() . '-user']);
     return $tmpLogin;
   }
 

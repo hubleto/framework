@@ -2,11 +2,11 @@
 
 namespace Hubleto\Framework;
 
-class Permissions extends CoreClass
+class PermissionsManager extends CoreClass implements Interfaces\PermissionsManagerInterface
 {
 
   protected bool $grantAllPermissions = false;
-  protected array $permissions = [];
+  protected array $permissionsData = [];
   public array $administratorRoles = [];
   public array $administratorTypes = [];
 
@@ -16,7 +16,7 @@ class Permissions extends CoreClass
 
   public function init(): void
   {
-    $this->permissions = $this->loadPermissions();
+    $this->permissionsData = $this->loadPermissions();
     $this->expandPermissionGroups();
     $this->administratorRoles = $this->loadAdministratorRoles();
     $this->administratorTypes = $this->loadAdministratorTypes();
@@ -27,12 +27,12 @@ class Permissions extends CoreClass
     return null; //new \HubletoApp\Community\Settings\Models\UserRole($this->main);
   }
 
-  public function DANGEROUS__grantAllPermissions()
+  public function DANGEROUS__grantAllPermissions(): void
   {
     $this->grantAllPermissions = true;
   }
 
-  public function revokeGrantAllPermissions()
+  public function revokeGrantAllPermissions(): void
   {
     $this->grantAllPermissions = false;
   }
@@ -47,8 +47,9 @@ class Permissions extends CoreClass
     return [];
   }
 
-  public function expandPermissionGroups() {
-    foreach ($this->permissions as $idUserRole => $permissionsByRole) {
+  public function expandPermissionGroups(): void
+  {
+    foreach ($this->permissionsData as $idUserRole => $permissionsByRole) {
       foreach ($permissionsByRole as $permission) {
         if (strpos($permission, ':') !== FALSE) {
           list($pGroup, $pGroupItems) = explode(':', $permission);
@@ -56,7 +57,7 @@ class Permissions extends CoreClass
             $pGroupItemsArr = explode(',', $pGroupItems);
             if (count($pGroupItemsArr) > 1) {
               foreach ($pGroupItemsArr as $item) {
-                $this->permissions[$idUserRole][] = $pGroup . ':' . $item;
+                $this->permissionsData[$idUserRole][] = $pGroup . ':' . $item;
               }
             }
           }
@@ -73,7 +74,8 @@ class Permissions extends CoreClass
     );
   }
 
-  public function hasRole(int|string $role) {
+  public function hasRole(int|string $role): bool
+  {
     if (is_string($role)) {
       $userRoleModel = $this->createUserRoleModel();
       if ($userRoleModel) {
@@ -86,14 +88,14 @@ class Permissions extends CoreClass
       $idRole = (int) $role;
     }
 
-    return in_array($idRole, $this->main->auth->getUserRoles());
+    return in_array($idRole, $this->getAuth()->getUserRoles());
   }
 
   public function grantedForRole(string $permission, int|string $userRole): bool
   {
     if (empty($permission)) return TRUE;
 
-    $granted = (bool) in_array($permission, (array) ($this->permissions[$userRole] ?? []));
+    $granted = (bool) in_array($permission, (array) ($this->permissionsData[$userRole] ?? []));
 
     if (!$granted) {
     }
@@ -107,8 +109,8 @@ class Permissions extends CoreClass
       return true;
     } else {
       if (empty($permission)) return true;
-      if (count($userRoles) == 0) $userRoles = $this->main->auth->getUserRoles();
-      if ($userType == 0) $userType = $this->main->auth->getUserType();
+      if (count($userRoles) == 0) $userRoles = $this->getAuth()->getUserRoles();
+      if ($userType == 0) $userType = $this->getAuth()->getUserType();
 
       $granted = false;
 
@@ -133,7 +135,8 @@ class Permissions extends CoreClass
 
   }
 
-  public function check(string $permission) {
+  public function check(string $permission): void
+  {
     if (!$this->granted($permission) && !$this->granted(str_replace('\\', '/', $permission))) {
       throw new Exceptions\NotEnoughPermissionsException("Not enough permissions ({$permission}).");
     }
@@ -147,10 +150,10 @@ class Permissions extends CoreClass
     return [];
   }
 
-  public function isAppPermittedForActiveUser(\Hubleto\Framework\Interfaces\AppInterface $app)
+  public function isAppPermittedForActiveUser(\Hubleto\Framework\Interfaces\AppInterface $app): bool
   {
-    $userRoles = $this->main->auth->getUserRoles();
-    $userType = $this->main->auth->getUserType();
+    $userRoles = $this->getAuth()->getUserRoles();
+    $userType = $this->getAuth()->getUserType();
 
     if (
       $this->grantAllPermissions
@@ -161,7 +164,7 @@ class Permissions extends CoreClass
       return true;
     }
 
-    $user = $this->main->auth->getUser();
+    $user = $this->getAuth()->getUser();
     $userApps = @json_decode($user['apps'], true);
 
     return is_array($userApps) && in_array($app->namespace, $userApps);

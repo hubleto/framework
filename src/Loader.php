@@ -16,15 +16,6 @@ class Loader extends CoreClass
 
   const RELATIVE_DICTIONARY_PATH = '../lang';
 
-  public string $projectFolder = '';
-  public string $projectUrl = '';
-
-  public string $secureFolder = '';
-  public string $uploadFolder = '';
-
-  public string $assetsUrl = '';
-
-  public string $requestedUri = "";
   public string $controller = "";
   public string $permission = "";
   public string $uid = "";
@@ -32,18 +23,9 @@ class Loader extends CoreClass
 
   public array $modelObjects = [];
 
-  protected Config $config;
-  public DependencyInjection $di;
-  public Session $session;
   public Logger $logger;
   public Locale $locale;
-  protected Router $router;
-  public Permissions $permissions;
-  public Test $test;
-  public Interfaces\AuthInterface $auth;
   public Interfaces\TranslatorInterface $translator;
-  public PDO $pdo;
-  protected Interfaces\AppManagerInterface $apps;
 
   public \Illuminate\Database\Capsule\Manager $eloquent;
 
@@ -52,13 +34,10 @@ class Loader extends CoreClass
 
   public string $translationContext = '';
 
-  /** @property array<string, string> */
-  protected array $params = [];
+  // /** @property array<string, string> */
+  // protected array $params = [];
 
   public ?array $uploadedFiles = null;
-
-  public string $srcFolder = '';
-  public string $releaseFolder = '';
 
   public int $mode = 0;
 
@@ -66,65 +45,24 @@ class Loader extends CoreClass
   {
     parent::__construct($this);
 
-    // initialize dependency injector
-    $this->di = $this->createDependencyInjection();
-
     $this->setAsGlobal();
 
-    $this->params = $this->extractParamsFromRequest();
+    // $this->params = $this->extractParamsFromRequest();
 
     $this->mode = $mode;
 
-    $reflection = new \ReflectionClass($this);
-    $this->srcFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
-
     try {
 
-      // load config
-      $this->config = $this->createConfigManager();
-      $this->config->setConfig($config);
-
-      $this->projectFolder = $this->getConfig()->getAsString('projectFolder');
-      $this->projectUrl = $this->getConfig()->getAsString('projectUrl');
-
-      $this->secureFolder = $this->getConfig()->getAsString('secureFolder');
-      if (empty($this->secureFolder)) $this->secureFolder = $this->projectFolder . '/secure';
-
-      $this->uploadFolder = $this->getConfig()->getAsString('uploadFolder');
-      if (empty($this->uploadFolder)) $this->secureFolder = $this->projectFolder . '/upload';
-
-      $this->assetsUrl = $this->getConfig()->getAsString('assetsUrl');
-
-      if (php_sapi_name() !== 'cli') {
-        if (!empty($_GET['route'])) {
-          $this->requestedUri = $_GET['route'];
-        } else if ($this->getConfig()->getAsString('rewriteBase') == "/") {
-          $this->requestedUri = ltrim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), "/");
-        } else {
-          $this->requestedUri = str_replace(
-            $this->getConfig()->getAsString('rewriteBase'),
-            "",
-            parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
-          );
-        }
-
-      }
-
       foreach ($this->getServiceProviders() as $service => $provider) {
-        $this->di->setServiceProvider($service, $provider);
+        DependencyInjection::setServiceProvider($service, $provider);
       }
+
+      $this->getConfig()->setConfig($config);
 
       // create required services
-      $this->session = $this->createSessionManager();
       $this->logger = $this->createLogger();
       $this->translator = $this->createTranslator();
-      $this->router = $this->createRouter();
       $this->locale = $this->createLocale();
-      $this->permissions = $this->createPermissionsManager();
-      $this->auth = $this->createAuthProvider();
-      $this->test = $this->createTestProvider();
-      $this->pdo = $this->createDbProvider();
-      $this->apps = $this->createAppManager();
 
       $this->createRenderer();
 
@@ -141,42 +79,9 @@ class Loader extends CoreClass
     return $this->getConfig()->getAsArray('serviceProviders');
   }
 
-  public function setParam(string $pName, mixed $pValue): void
-  {
-    $this->params[$pName] = $pValue;
-  }
-
-  // /**
-  //  * [Description for getAppManager]
-  //  *
-  //  * @return Interfaces\AppManagerInterface
-  //  * 
-  //  */
-  // public function getAppManager(): Interfaces\AppManagerInterface
+  // public function setParam(string $pName, mixed $pValue): void
   // {
-  //   return $this->apps;
-  // }
-
-  // /**
-  //  * [Description for getRouter]
-  //  *
-  //  * @return Router
-  //  * 
-  //  */
-  // public function getRouter(): Router
-  // {
-  //   return $this->router;
-  // }
-
-  // /**
-  //  * [Description for getConfig]
-  //  *
-  //  * @return Config
-  //  * 
-  //  */
-  // public function getConfig(): Config
-  // {
-  //   return $this->config;
+  //   $this->params[$pName] = $pValue;
   // }
 
   /**
@@ -195,23 +100,21 @@ class Loader extends CoreClass
     return $GLOBALS['hubleto'];
   }
 
-
   public function init(): void
   {
 
     try {
-      $this->getRouter()->init();
-      $this->permissions->init();
-      $this->auth->init();
-
       if ($this->mode == self::HUBLETO_MODE_FULL) {
         $this->initDatabaseConnections();
-
-        $this->session->start(true);
-
-        $this->getConfig()->loadFromDB();
-
+        $this->getSessionManager()->start(true);
       }
+
+      $this->getConfig()->init();
+      $this->getRouter()->init();
+      $this->getAuth()->init();
+      $this->getPermissionsManager()->init();
+      $this->getAppManager()->init();
+      $this->getHookManager()->init();
 
     } catch (\Exception $e) {
       echo "Hubleto init failed: [".get_class($e)."] ".$e->getMessage() . "\n";
@@ -253,68 +156,23 @@ class Loader extends CoreClass
         "collation" => 'utf8mb4_unicode_ci',
       ], 'default');
 
-      $this->pdo->connect();
+      $this->getPdo()->connect();
     }
-  }
-
-  public function createDependencyInjection(): DependencyInjection
-  {
-    return new DependencyInjection($this);
-  }
-
-  public function createTestProvider(): Test
-  {
-    return $this->di->create(Test::class);
-  }
-
-  public function createDbProvider(): PDO
-  {
-    return $this->di->create(PDO::class);
-  }
-
-  public function createAppManager(): AppManager
-  {
-    return $this->di->create(AppManager::class);
-  }
-
-  public function createAuthProvider(): Interfaces\AuthInterface
-  {
-    return $this->di->create(Auth\DefaultProvider::class);
-  }
-
-  public function createSessionManager(): Session
-  {
-    return $this->di->create(Session::class);
-  }
-
-  public function createConfigManager(): Config
-  {
-    return $this->di->create(Config::class);
-  }
-
-  public function createPermissionsManager(): Permissions
-  {
-    return $this->di->create(Permissions::class);
-  }
-
-  public function createRouter(): Router
-  {
-    return $this->di->create(Router::class);
   }
 
   public function createLogger(): Logger
   {
-    return $this->di->create(Logger::class);
+    return DependencyInjection::create($this, Logger::class);
   }
 
   public function createLocale(): Locale
   {
-    return $this->di->create(Locale::class);
+    return DependencyInjection::create($this, Locale::class);
   }
 
   public function createTranslator(): Interfaces\TranslatorInterface
   {
-    return $this->di->create(Translator::class);
+    return DependencyInjection::create($this, Translator::class);
   }
 
   public function createRenderer(): void
@@ -338,7 +196,7 @@ class Loader extends CoreClass
   {
 
     try {
-      $this->twigLoader->addPath($this->projectFolder . '/views', 'app');
+      $this->twigLoader->addPath($this->getEnv()->projectFolder . '/views', 'app');
     } catch (\Exception $e) { }
     try {
       $this->twigLoader->addPath(realpath(__DIR__ . '/../views'), 'framework');
@@ -363,13 +221,13 @@ class Loader extends CoreClass
     $this->twig->addFunction(new \Twig\TwigFunction(
       'hasPermission',
       function (string $permission, array $idUserRoles = []) {
-        return $this->permissions->granted($permission, $idUserRoles);
+        return $this->getPermissionsManager()->granted($permission, $idUserRoles);
       }
     ));
     $this->twig->addFunction(new \Twig\TwigFunction(
       'hasRole',
       function (int|string $role) {
-        return $this->permissions->hasRole($role);
+        return $this->getPermissionsManager()->hasRole($role);
       }
     ));
     $this->twig->addFunction(new \Twig\TwigFunction(
@@ -414,7 +272,7 @@ class Loader extends CoreClass
   public function getModel(string $modelName): Model
   {
     $modelClassName = $this->getModelClassName($modelName);
-    return $this->di->create($modelClassName);
+    return DependencyInjection::create($this, $modelClassName);
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -501,7 +359,7 @@ class Loader extends CoreClass
       }
 
       if ($this->getRouter()->isUrlParam('sign-out')) {
-        $this->auth->signOut();
+        $this->getAuth()->signOut();
       }
 
       if ($this->getRouter()->isUrlParam('signed-out')) {
@@ -519,11 +377,11 @@ class Loader extends CoreClass
       }
 
       // authenticate user, if any
-      $this->auth->auth();
+      $this->getAuth()->auth();
       $this->getConfig()->filterByUser();
 
       // Create the object for the controller
-      $controllerObject = $this->di->create($controllerClassName);
+      $controllerObject = DependencyInjection::create($this, $controllerClassName);
 
       if (empty($this->permission) && !empty($controllerObject->permission)) {
         $this->permission = $controllerObject->permission;
@@ -543,14 +401,14 @@ class Loader extends CoreClass
       }
 
       if ($controllerObject->requiresUserAuthentication) {
-        if (!$this->auth->isUserInSession()) {
+        if (!$this->getAuth()->isUserInSession()) {
           $controllerObject = $this->getRouter()->createSignInController();
           $this->permission = $controllerObject->permission;
         }
       }
 
       if ($controllerObject->requiresUserAuthentication) {
-        $this->permissions->check($this->permission);
+        $this->getPermissionsManager()->check($this->permission);
       }
 
       $controllerObject->preInit();
@@ -592,12 +450,12 @@ class Loader extends CoreClass
         $contentParams = [
           'app' => $this,
           'uid' => $this->uid,
-          'user' => $this->auth->getUser(),
+          'user' => $this->getAuth()->getUser(),
           'config' => $this->getConfig()->get(),
           'routeUrl' => $this->route,
           'routeParams' => $this->params,
           'route' => $this->route,
-          'session' => $this->session->get(),
+          'session' => $this->getSessionManager()->get(),
           'controller' => $controllerObject,
           'viewParams' => $controllerObject->getViewParams(),
           'windowParams' => $controllerObject->getViewParams()['windowParams'] ?? null,
@@ -648,8 +506,8 @@ class Loader extends CoreClass
       return $this->renderFatal('Controller not found: ' . $e->getMessage(), false);
     } catch (Exceptions\NotEnoughPermissionsException $e) {
       $message = $e->getMessage();
-      if ($this->auth->isUserInSession()) {
-        $message .= " Hint: Sign out at {$this->projectUrl}?sign-out and sign in again or check your permissions.";
+      if ($this->getAuth()->isUserInSession()) {
+        $message .= " Hint: Sign out at {$this->getEnv()->projectUrl}?sign-out and sign in again or check your permissions.";
       }
       return $this->renderFatal($message, false);
       // header('HTTP/1.1 401 Unauthorized', true, 401);
@@ -928,7 +786,7 @@ class Loader extends CoreClass
 
   public function getLanguage(): string
   {
-    $user = (isset($this->auth) ? $this->auth->getUserFromSession() : []);
+    $user = $this->getAuth()->getUserFromSession() ?? [];
     if (isset($user['language']) && strlen($user['language']) == 2) {
       return $user['language'];
     } else if (isset($_COOKIE['language']) && strlen($_COOKIE['language']) == 2) {
@@ -979,7 +837,7 @@ class Loader extends CoreClass
 
   public function load(string $service, bool $noSingleton = false): mixed
   {
-    return $this->di->create(str_replace('/', '\\', $service), $noSingleton);
+    return DependencyInjection::create($this, str_replace('/', '\\', $service), $noSingleton);
   }
 
 }

@@ -93,7 +93,7 @@ class Model extends CoreClass
 
   public function isDatabaseConnected(): bool
   {
-    return $this->main->pdo->isConnected;
+    return $this->getPdo()->isConnected;
   }
 
   public function getConfigFullPath(string $configName): string
@@ -226,11 +226,11 @@ class Model extends CoreClass
   public function createSqlTable()
   {
 
-    $this->main->pdo->startTransaction();
+    $this->getPdo()->startTransaction();
     foreach ($this->getSqlCreateTableCommands() as $command) {
-      $this->main->pdo->execute($command);
+      $this->getPdo()->execute($command);
     }
-    $this->main->pdo->commit();
+    $this->getPdo()->commit();
   }
 
   /**
@@ -271,13 +271,13 @@ class Model extends CoreClass
 
         switch ($indexDef["type"]) {
           case "index":
-            $this->main->pdo->execute("
+            $this->getPdo()->execute("
               alter table `" . $this->table . "`
               add index `{$indexOrConstraintName}` ({$tmpColumns})
             ");
             break;
           case "unique":
-            $this->main->pdo->execute("
+            $this->getPdo()->execute("
               alter table `" . $this->table . "`
               add constraint `{$indexOrConstraintName}` unique ({$tmpColumns})
             ");
@@ -317,22 +317,22 @@ class Model extends CoreClass
   //     $lastVersion = $this->getLastAvailableVersion();
 
   //     try {
-  //       $this->main->pdo->startTransaction();
+  //       $this->getPdo()->startTransaction();
 
   //       $upgrades = $this->upgrades();
 
   //       for ($v = $currentVersion + 1; $v <= $lastVersion; $v++) {
   //         if (is_array($upgrades[$v])) {
   //           foreach ($upgrades[$v] as $query) {
-  //             $this->main->pdo->execute($query);
+  //             $this->getPdo()->execute($query);
   //           }
   //         }
   //       }
 
-  //       $this->main->pdo->commit();
+  //       $this->getPdo()->commit();
   //       $this->saveConfig('installed-version', $lastVersion);
   //     } catch (DBException $e) {
-  //       $this->main->pdo->rollback();
+  //       $this->getPdo()->rollback();
   //       throw new DBException($e->getMessage());
   //     }
   //   }
@@ -340,9 +340,9 @@ class Model extends CoreClass
 
   public function dropTableIfExists(): Model
   {
-    $this->main->pdo->execute("set foreign_key_checks = 0");
-    $this->main->pdo->execute("drop table if exists `" . $this->table . "`");
-    $this->main->pdo->execute("set foreign_key_checks = 1");
+    $this->getPdo()->execute("set foreign_key_checks = 0");
+    $this->getPdo()->execute("drop table if exists `" . $this->table . "`");
+    $this->getPdo()->execute("set foreign_key_checks = 1");
     return $this;
   }
 
@@ -380,7 +380,7 @@ class Model extends CoreClass
 
     if (!empty($sql)) {
       foreach (explode(';;', $sql) as $query) {
-        $this->main->pdo->execute(trim($query));
+        $this->getPdo()->execute(trim($query));
       }
     }
 
@@ -500,10 +500,10 @@ class Model extends CoreClass
     }
 
     $description->permissions = [
-      'canRead' => $this->main->permissions->granted($this->fullName . ':Read'),
-      'canCreate' => $this->main->permissions->granted($this->fullName . ':Create'),
-      'canUpdate' => $this->main->permissions->granted($this->fullName . ':Update'),
-      'canDelete' => $this->main->permissions->granted($this->fullName . ':Delete'),
+      'canRead' => $this->getPermissionsManager()->granted($this->fullName . ':Read'),
+      'canCreate' => $this->getPermissionsManager()->granted($this->fullName . ':Create'),
+      'canUpdate' => $this->getPermissionsManager()->granted($this->fullName . ':Update'),
+      'canDelete' => $this->getPermissionsManager()->granted($this->fullName . ':Delete'),
     ];
 
     return $description;
@@ -526,10 +526,10 @@ class Model extends CoreClass
     }
 
     $description->permissions = [
-      'canRead' => $this->main->permissions->granted($this->fullName . ':Read'),
-      'canCreate' => $this->main->permissions->granted($this->fullName . ':Create'),
-      'canUpdate' => $this->main->permissions->granted($this->fullName . ':Update'),
-      'canDelete' => $this->main->permissions->granted($this->fullName . ':Delete'),
+      'canRead' => $this->getPermissionsManager()->granted($this->fullName . ':Read'),
+      'canCreate' => $this->getPermissionsManager()->granted($this->fullName . ':Create'),
+      'canUpdate' => $this->getPermissionsManager()->granted($this->fullName . ':Update'),
+      'canDelete' => $this->getPermissionsManager()->granted($this->fullName . ':Delete'),
     ];
 
     $description->includeRelations = array_keys($this->relations);

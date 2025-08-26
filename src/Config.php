@@ -4,25 +4,25 @@ namespace Hubleto\Framework;
 
 class Config extends CoreClass
 {
-  protected array $config = [];
+  protected array $configData = [];
 
-  public function setConfig(array $config)
+  public function setConfig(array $configData)
   {
-    $this->config = $config;
+    $this->configData = $configData;
     $this->set('requestUri', $_SERVER['REQUEST_URI'] ?? "");
   }
 
   public function empty(string $path): bool
   {
-    if (!isset($this->config[$path])) return false;
-    else return empty($this->config[$path]);
+    if (!isset($this->configData[$path])) return false;
+    else return empty($this->configData[$path]);
   }
 
   public function get(string $path = '', $default = null): mixed
   {
-    if ($path === '') return $this->config;
+    if ($path === '') return $this->configData;
     else {
-      $config = $this->config;
+      $config = $this->configData;
       foreach (explode('/', $path) as $key => $value) {
         if (isset($config[$value])) {
           $config = $config[$value];
@@ -67,7 +67,7 @@ class Config extends CoreClass
   {
     $path_array = explode('/', $path);
 
-    $cfg = &$this->config;
+    $cfg = &$this->configData;
     foreach ($path_array as $path_level => $path_slice) {
       if ($path_level == count($path_array) - 1) {
         $cfg[$path_slice] = $value;
@@ -84,7 +84,7 @@ class Config extends CoreClass
   {
     try {
       if (!empty($path)) {
-        $this->main->pdo->execute("
+        $this->getPdo()->execute("
           insert into `config` set `path` = :path, `value` = :value
           on duplicate key update `path` = :path, `value` = :value
         ", ['path' => $path, 'value' => $value]);
@@ -95,14 +95,14 @@ class Config extends CoreClass
 
   public function saveForUser(string $path, string $value): void
   {
-    $this->save('user/' . $this->main->auth->getUserId() . '/' . $path, $value);
+    $this->save('user/' . $this->getAuth()->getUserId() . '/' . $path, $value);
   }
 
   public function delete($path): void
   {
     try {
       if (!empty($path)) {
-        $this->main->pdo->execute("delete from `config` where `path` like ?", [$path . '%']);
+        $this->getPdo()->execute("delete from `config` where `path` like ?", [$path . '%']);
       }
     } catch (\Exception $e) {
       if ($e->getCode() == '42S02') { // Base table not found
@@ -113,15 +113,15 @@ class Config extends CoreClass
     }
   }
 
-  public function loadFromDB(): void
+  public function init(): void
   {
-    if (!$this->main->pdo->isConnected) return;
+    if (!$this->getPdo()->isConnected) return;
 
     try {
-      $cfgs = $this->main->pdo->fetchAll("select * from `config`");
+      $cfgs = $this->getPdo()->fetchAll("select * from `config`");
 
       foreach ($cfgs as $cfg) {
-        $tmp = &$this->config;
+        $tmp = &$this->configData;
         foreach (explode("/", $cfg['path']) as $tmp_path) {
           if (!isset($tmp[$tmp_path])) {
             $tmp[$tmp_path] = [];
@@ -141,10 +141,10 @@ class Config extends CoreClass
 
   public function filterByUser(): void
   {
-    $idUser = $this->main->auth->getUserId();
-    if (isset($this->config['user'][$idUser]) && is_array($this->config['user'][$idUser])) {
-      $this->config = array_merge_recursive($this->config, $this->config['user'][$idUser]);
-      unset($this->config['user']);
+    $idUser = $this->getAuth()->getUserId();
+    if (isset($this->configData['user'][$idUser]) && is_array($this->configData['user'][$idUser])) {
+      $this->configData = array_merge_recursive($this->configData, $this->configData['user'][$idUser]);
+      unset($this->configData['user']);
     }
   }
 

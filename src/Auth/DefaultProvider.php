@@ -5,7 +5,7 @@ namespace Hubleto\Framework\Auth;
 use Hubleto\Framework\Router;
 use Hubleto\Framework\Config;
 
-class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
+class DefaultProvider extends \Hubleto\Framework\CoreClass implements \Hubleto\Framework\Interfaces\AuthInterface
 {
   public array $user { get => $this->user; set (array $user) { $this->user = $user; } }
 
@@ -53,7 +53,7 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
 
   public function getUserFromSession(): array
   {
-    $tmp = $this->main->session->get('userProfile') ?? [];
+    $tmp = $this->getSessionManager()->get('userProfile') ?? [];
     return [
       'id' => (int) ($tmp['id'] ?? 0),
       'login' => (string) ($tmp['login'] ?? ''),
@@ -63,7 +63,7 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
 
   public function updateUserInSession(array $user): void
   {
-    $this->main->session->set('userProfile', $user);
+    $this->getSessionManager()->set('userProfile', $user);
   }
 
   public function isUserInSession(): bool
@@ -79,11 +79,11 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
 
   function deleteSession()
   {
-    $this->main->session->clear();
+    $this->getSessionManager()->clear();
     $this->user = [];
 
-    setcookie($this->main->session->getSalt() . '-user', '', 0);
-    setcookie($this->main->session->getSalt() . '-language', '', 0);
+    setcookie($this->getSessionManager()->getSalt() . '-user', '', 0);
+    setcookie($this->getSessionManager()->getSalt() . '-language', '', 0);
   }
 
   public function signIn(array $user)
@@ -143,7 +143,7 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
 
       $login = trim($login);
 
-      if (empty($login) && !empty($_COOKIE[$this->main->session->getSalt() . '-user'])) {
+      if (empty($login) && !empty($_COOKIE[$this->getSessionManager()->getSalt() . '-user'])) {
         $login = $userModel->authCookieGetLogin();
       }
 
@@ -159,7 +159,7 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
 
             if ($rememberLogin) {
               setcookie(
-                $this->main->session->getSalt() . '-user',
+                $this->getSessionManager()->getSalt() . '-user',
                 $userModel->authCookieSerialize($user[$this->loginAttribute], $user[$this->passwordAttribute]),
                 time() + (3600 * 24 * 30)
               );

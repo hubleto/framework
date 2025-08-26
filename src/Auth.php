@@ -16,7 +16,7 @@ class Auth extends CoreClass
 
   public function getUserFromSession(): array
   {
-    $tmp = $this->main->session->get('userProfile') ?? [];
+    $tmp = $this->getSessionManager()->get('userProfile') ?? [];
     return [
       'id' => (int) ($tmp['id'] ?? 0),
       'login' => (string) ($tmp['login'] ?? ''),
@@ -26,7 +26,7 @@ class Auth extends CoreClass
 
   public function updateUserInSession(array $user): void
   {
-    $this->main->session->set('userProfile', $user);
+    $this->getSessionManager()->set('userProfile', $user);
   }
 
   public function isUserInSession(): bool
@@ -42,11 +42,11 @@ class Auth extends CoreClass
 
   function deleteSession()
   {
-    $this->main->session->clear();
+    $this->getSessionManager()->clear();
     $this->user = null;
 
-    setcookie($this->main->session->getSalt() . '-user', '', 0);
-    setcookie($this->main->session->getSalt() . '-language', '', 0);
+    setcookie($this->getSessionManager()->getSalt() . '-user', '', 0);
+    setcookie($this->getSessionManager()->getSalt() . '-language', '', 0);
   }
 
   public function signIn(array $user)

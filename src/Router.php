@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class Router {
+class Router extends CoreClass implements Interfaces\RouterInterface {
   const HTTP_GET = 'HTTP_GET';
 
   public $routing = [];
@@ -129,8 +129,9 @@ class Router {
     }
   }
 
-  public function redirectTo(string $url, int $code = 302) {
-    header("Location: " . $this->main->projectUrl . "/" . trim($url, "/"), true, $code);
+  public function redirectTo(string $url, int $code = 302): void
+  {
+    header("Location: " . $this->getEnv()->projectUrl . "/" . trim($url, "/"), true, $code);
     exit;
   }
 

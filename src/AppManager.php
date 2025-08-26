@@ -10,7 +10,7 @@ class AppManager extends CoreClass implements Interfaces\AppManagerInterface
   public Interfaces\AppInterface $activatedApp;
 
   /** @var array<Interfaces\AppInterface> */
-  public array $apps = [];
+  public array $enabledApps = [];
 
   /** @var array<Interfaces\AppInterface> */
   public array $disabledApps = [];
@@ -33,8 +33,8 @@ class AppManager extends CoreClass implements Interfaces\AppManagerInterface
       ) {
         try {
           if ($appConfig['enabled'] ?? false) {
-            $this->apps[$appNamespace] = $this->createAppInstance($appNamespace);
-            $this->apps[$appNamespace]->enabled = true;
+            $this->enabledApps[$appNamespace] = $this->createAppInstance($appNamespace);
+            $this->enabledApps[$appNamespace]->enabled = true;
           } else {
             $this->disabledApps[$appNamespace] = $this->createAppInstance($appNamespace);
           }
@@ -48,8 +48,8 @@ class AppManager extends CoreClass implements Interfaces\AppManagerInterface
     $apps = $this->getEnabledApps();
     array_walk($apps, function ($app) {
       if (
-        $this->main->requestedUri == $app->manifest['rootUrlSlug']
-        || str_starts_with($this->main->requestedUri, $app->manifest['rootUrlSlug'] . '/')
+        $this->getEnv()->requestedUri == $app->manifest['rootUrlSlug']
+        || str_starts_with($this->getEnv()->requestedUri, $app->manifest['rootUrlSlug'] . '/')
       ) {
         $app->isActivated = true;
         $this->activatedApp = $app;
@@ -164,7 +164,7 @@ class AppManager extends CoreClass implements Interfaces\AppManagerInterface
     $appNamespaces = [];
 
     // community apps
-    $communityRepoFolder = $this->main->srcFolder . '/../../apps/src';
+    $communityRepoFolder = $this->getEnv()->srcFolder . '/../../apps/src';
     if (is_dir($communityRepoFolder)) {
       foreach (scandir($communityRepoFolder) as $folder) {
         $manifestFile = $communityRepoFolder . '/' . $folder . '/manifest.yaml';
@@ -183,7 +183,7 @@ class AppManager extends CoreClass implements Interfaces\AppManagerInterface
     $appRepositories = $this->getConfig()->getAsArray('appRepositories');
     if (count($appRepositories) == 0) {
       $appRepositories = [
-        $this->main->projectFolder . '/vendor'
+        $this->getEnv()->projectFolder . '/vendor'
       ];
     }
 
@@ -245,7 +245,7 @@ class AppManager extends CoreClass implements Interfaces\AppManagerInterface
   */
   public function getEnabledApps(): array
   {
-    return $this->apps;
+    return $this->enabledApps;
   }
 
   /**
@@ -261,7 +261,7 @@ class AppManager extends CoreClass implements Interfaces\AppManagerInterface
   */
   public function getInstalledApps(): array
   {
-    return array_merge($this->apps, $this->disabledApps);
+    return array_merge($this->enabledApps, $this->disabledApps);
   }
 
   /**
@@ -274,7 +274,7 @@ class AppManager extends CoreClass implements Interfaces\AppManagerInterface
   {
     $apps = $this->getEnabledApps();
     foreach ($apps as $app) {
-      if (str_starts_with($this->main->requestedUri, $app->getRootUrlSlug())) {
+      if (str_starts_with($this->getEnv()->requestedUri, $app->getRootUrlSlug())) {
         return $app;
       }
     }
@@ -291,7 +291,7 @@ class AppManager extends CoreClass implements Interfaces\AppManagerInterface
    */
   public function getApp(string $appNamespace): null|Interfaces\AppInterface
   {
-    return $this->apps[str_replace('\\Loader', '', $appNamespace)] ?? null;
+    return $this->enabledApps[str_replace('\\Loader', '', $appNamespace)] ?? null;
   }
 
   /**

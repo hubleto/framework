@@ -31,24 +31,24 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
       $this->deleteSession();
       header(
         "Location: " . $this->getConfig()->getAsString('auth/urlLogout') . 
-        "?id_token_hint=".\urlencode($idToken)."&post_logout_redirect_uri=".\urlencode($this->main->projectUrl . "?signed-out")
+        "?id_token_hint=".\urlencode($idToken)."&post_logout_redirect_uri=".\urlencode($this->getEnv()->projectUrl . "?signed-out")
       );
       exit;
     } catch (\Throwable $e) {
       $this->deleteSession();
-      header("Location: {$this->main->projectUrl}");
+      header("Location: {$this->getEnv()->projectUrl}");
       exit;
     }
   }
 
   public function getAccessToken()
   {
-    return $this->main->session->get('oauthAccessToken');
+    return $this->getSessionManager()->get('oauthAccessToken');
   }
 
   public function setAccessToken($accessToken)
   {
-    $this->main->session->set('oauthAccessToken', $accessToken);
+    $this->getSessionManager()->set('oauthAccessToken', $accessToken);
   }
 
   public function auth(): void
@@ -91,11 +91,11 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
         $authorizationUrl = $this->provider->getAuthorizationUrl(['scope' => ['openid']]);
 
         // Get the state generated for you and store it to the session.
-        $this->main->session->set('oauth2state', $this->provider->getState());
+        $this->getSessionManager()->set('oauth2state', $this->provider->getState());
 
         // Optional, only required when PKCE is enabled.
         // Get the PKCE code generated for you and store it to the session.
-        $this->main->session->set('oauth2pkceCode', $this->provider->getPkceCode());
+        $this->getSessionManager()->set('oauth2pkceCode', $this->provider->getPkceCode());
 
         // Redirect the user to the authorization URL.
         header('Location: ' . $authorizationUrl);
@@ -104,10 +104,10 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
       // Check given state against previously stored one to mitigate CSRF attack
       } elseif (
         empty($authState)
-        || empty($this->main->session->get('oauth2state'))
-        || $authState !== $this->main->session->get('oauth2state')
+        || empty($this->getSessionManager()->get('oauth2state'))
+        || $authState !== $this->getSessionManager()->get('oauth2state')
       ) {
-        if ($this->main->session->isset('oauth2state')) $this->main->session->unset('oauth2state');
+        if ($this->getSessionManager()->isset('oauth2state')) $this->getSessionManager()->unset('oauth2state');
         exit('Invalid state');
       } else {
 
@@ -115,7 +115,7 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
 
           // Optional, only required when PKCE is enabled.
           // Restore the PKCE code stored in the session.
-          $this->provider->setPkceCode($this->main->session->get('oauth2pkceCode'));
+          $this->provider->setPkceCode($this->getSessionManager()->get('oauth2pkceCode'));
 
           // Try to get an access token using the authorization code grant.
           $accessToken = $this->provider->getAccessToken('authorization_code', [

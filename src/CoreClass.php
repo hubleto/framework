@@ -6,9 +6,60 @@ class CoreClass
 {
   public Loader $main;
 
+  // protected DependencyInjection $di;
+
   public function __construct(Loader $main)
   {
     $this->main = $main;
+
+    // // initialize dependency injector
+    // $this->di = $this->createDependencyInjection();
+
+  }
+
+  // public function createDependencyInjection(): DependencyInjection
+  // {
+  //   return new DependencyInjection($this->main);
+  // }
+
+
+
+
+
+  
+
+
+  /**
+   * [Description for getEnv]
+   *
+   * @return Env
+   * 
+   */
+  public function getEnv(): Env
+  {
+    return DependencyInjection::create($this->main, Env::class);
+  }
+
+  /**
+   * [Description for getAuth]
+   *
+   * @return Interfaces\AuthInterface
+   * 
+   */
+  public function getAuth(): Interfaces\AuthInterface
+  {
+    return DependencyInjection::create($this->main, Auth\DefaultProvider::class);
+  }
+
+  /**
+   * [Description for getPdo]
+   *
+   * @return PDO
+   * 
+   */
+  public function getPdo(): PDO
+  {
+    return DependencyInjection::create($this->main, PDO::class);
   }
 
   /**
@@ -19,7 +70,7 @@ class CoreClass
    */
   public function getAppManager(): Interfaces\AppManagerInterface
   {
-    return $this->main->apps;
+    return DependencyInjection::create($this->main, AppManager::class);
   }
 
   /**
@@ -30,7 +81,51 @@ class CoreClass
    */
   public function getRouter(): Router
   {
-    return $this->main->router;
+    return DependencyInjection::create($this->main, Router::class);
+  }
+
+  /**
+   * [Description for getHookManager]
+   *
+   * @return HookManager
+   * 
+   */
+  public function getHookManager(): HookManager
+  {
+    return DependencyInjection::create($this->main, HookManager::class);
+  }
+
+  /**
+   * [Description for getSessionManager]
+   *
+   * @return SessionManager
+   * 
+   */
+  public function getSessionManager(): SessionManager
+  {
+    return DependencyInjection::create($this->main, SessionManager::class);
+  }
+
+  /**
+   * [Description for getPermissionsManager]
+   *
+   * @return PermissionsManager
+   * 
+   */
+  public function getPermissionsManager(): PermissionsManager
+  {
+    return DependencyInjection::create($this->main, PermissionsManager::class);
+  }
+
+  /**
+   * [Description for getCronManager]
+   *
+   * @return CronManager
+   * 
+   */
+  public function getCronManager(): CronManager
+  {
+    return DependencyInjection::create($this->main, CronManager::class);
   }
 
   /**
@@ -41,7 +136,7 @@ class CoreClass
    */
   public function getConfig(): Config
   {
-    return $this->main->config;
+    return DependencyInjection::create($this->main, Config::class);
   }
 
 }

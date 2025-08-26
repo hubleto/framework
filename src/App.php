@@ -4,7 +4,7 @@ namespace Hubleto\Framework;
 
 use Hubleto\Framework\Interfaces\AppManagerInterface;
 
-class App
+class App extends CoreClass
 {
   public const DEFAULT_INSTALLATION_CONFIG = [
     'sidebarOrder' => 500,
@@ -42,6 +42,8 @@ class App
 
   public function __construct(public \Hubleto\Framework\Loader $main)
   {
+    parent::__construct($main);
+
     $reflection = new \ReflectionClass($this);
 
     $this->srcFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
@@ -61,17 +63,6 @@ class App
 
     $this->validateManifest();
 
-  }
-
-  /**
-   * [Description for getAppManager]
-   *
-   * @return AppManagerInterface
-   * 
-   */
-  public function getAppManager(): AppManagerInterface
-  {
-    return $this->main->getAppManager();
   }
 
   /**
