@@ -43,7 +43,7 @@ class Loader
   public Interfaces\AuthInterface $auth;
   public Interfaces\TranslatorInterface $translator;
   public PDO $pdo;
-  public Interfaces\AppManagerInterface $apps;
+  protected Interfaces\AppManagerInterface $apps;
 
   public \Illuminate\Database\Capsule\Manager $eloquent;
 
@@ -140,6 +140,17 @@ class Loader
   public function setParam(string $pName, mixed $pValue): void
   {
     $this->params[$pName] = $pValue;
+  }
+
+  /**
+   * [Description for getAppManager]
+   *
+   * @return Interfaces\AppManagerInterface
+   * 
+   */
+  public function getAppManager(): Interfaces\AppManagerInterface
+  {
+    return $this->apps;
   }
 
   /**
@@ -994,9 +1005,9 @@ class Loader
     // }
   }
 
-  public function load(string $service): mixed
+  public function load(string $service, bool $noSingleton = false): mixed
   {
-    return $this->di->create(str_replace('/', '\\', $service));
+    return $this->di->create(str_replace('/', '\\', $service), $noSingleton);
   }
 
 }

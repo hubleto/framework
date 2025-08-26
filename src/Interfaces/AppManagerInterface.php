@@ -28,11 +28,11 @@ interface AppManagerInterface
   public function getDisabledApps(): array;
   public function getInstalledApps(): array;
   public function getActivatedApp(): null|AppInterface;
-  public function getAppInstance(string $appNamespace): null|AppInterface;
+  public function getApp(string $appNamespace): null|AppInterface;
   public function isAppInstalled(string $appNamespace): bool;
   public function isAppEnabled(string $appNamespace): bool;
-  public function community(string $appName): null|AppInterface;
-  public function custom(string $appName): null|AppInterface;
+  // public function community(string $appName): null|AppInterface;
+  // public function custom(string $appName): null|AppInterface;
   public function installApp(int $round, string $appNamespace, array $appConfig = [], bool $forceInstall = false): bool;
   public function disableApp(string $appNamespace): void;
   public function enableApp(string $appNamespace): void;

@@ -23,12 +23,19 @@ class DependencyInjection
     $this->serviceProviders[$service] = $provider;
   }
 
-  public function create(string $service): mixed
+  public function create(string $service, bool $noSingleton = false): mixed
   {
     $class = $this->serviceProviders[$service] ?? $service;
-    if (!isset($this->services[$service])) {
-      $this->services[$service] = (new $class($this->main));
+
+    if ($noSingleton) {
+      $serviceObj = new $class($this->main);
+    } else {
+      if (!isset($this->services[$service])) {
+        $this->services[$service] = (new $class($this->main));
+      }
+      $serviceObj = $this->services[$service];
     }
-    return $this->services[$service];
+
+    return $serviceObj;
   }
 }

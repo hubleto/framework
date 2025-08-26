@@ -2,6 +2,8 @@
 
 namespace Hubleto\Framework;
 
+use Hubleto\Framework\Interfaces\AppManagerInterface;
+
 class App
 {
   public const DEFAULT_INSTALLATION_CONFIG = [
@@ -61,6 +63,23 @@ class App
 
   }
 
+  /**
+   * [Description for getAppManager]
+   *
+   * @return AppManagerInterface
+   * 
+   */
+  public function getAppManager(): AppManagerInterface
+  {
+    return $this->main->getAppManager();
+  }
+
+  /**
+   * [Description for validateManifest]
+   *
+   * @return [type]
+   * 
+   */
   public function validateManifest()
   {
     $missing = [];
@@ -331,7 +350,7 @@ class App
 
   public function getFullConfigPath(string $path): string
   {
-    return 'apps/' . $this->main->apps->getAppNamespaceForConfig($this->namespace) . '/' . $path;
+    return 'apps/' . $this->getAppManager()->getAppNamespaceForConfig($this->namespace) . '/' . $path;
   }
 
   public function saveConfig(string $path, string $value = ''): void

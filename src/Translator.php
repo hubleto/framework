@@ -2,6 +2,8 @@
 
 namespace Hubleto\Framework;
 
+use Hubleto\Framework\Interfaces\AppManagerInterface;
+
 class Translator implements Interfaces\TranslatorInterface
 {
 
@@ -11,6 +13,17 @@ class Translator implements Interfaces\TranslatorInterface
   public function __construct(public \Hubleto\Framework\Loader $main)
   {
     $this->dictionary = [];
+  }
+
+  /**
+   * [Description for getAppManager]
+   *
+   * @return AppManagerInterface
+   * 
+   */
+  public function getAppManager(): AppManagerInterface
+  {
+    return $this->main->getAppManager();
   }
 
   public function getDictionaryFilename(string $context, string $language = ''): string
@@ -72,12 +85,10 @@ class Translator implements Interfaces\TranslatorInterface
       }
     }
 
-    if (isset($this->main->apps)) {
-      foreach ($this->main->apps->getEnabledApps() as $app) {
-        $appDict = $app->loadDictionary($language);
-        foreach ($appDict as $key => $value) {
-          $dictionary[$app->fullName][(string) $key] = $value;
-        }
+    foreach ($this->getAppManager()->getEnabledApps() as $app) {
+      $appDict = $app->loadDictionary($language);
+      foreach ($appDict as $key => $value) {
+        $dictionary[$app->fullName][(string) $key] = $value;
       }
     }
 
@@ -95,7 +106,7 @@ class Translator implements Interfaces\TranslatorInterface
     } elseif (str_starts_with($contextFileRef, 'HubletoApp')) {
       $appClass = str_replace('/', '\\', $contextFileRef);
 
-      $app = $this->main->apps->getAppInstance($appClass);
+      $app = $this->getAppManager()->getApp($appClass);
       if ($app) {
         $dictionaryFilename = $app->srcFolder . '/Lang/' . $language . '.json';
       }
