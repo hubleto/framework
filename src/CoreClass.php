@@ -41,9 +41,9 @@ class CoreClass
    * @return Interfaces\AuthInterface
    * 
    */
-  public function getAuth(): Interfaces\AuthInterface
+  public function getAuthProvider(): Interfaces\AuthInterface
   {
-    return $this->getService(Auth\DefaultProvider::class);
+    return $this->getService(AuthProvider::class);
   }
 
   /**

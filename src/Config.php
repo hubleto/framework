@@ -95,7 +95,7 @@ class Config extends CoreClass
 
   public function saveForUser(string $path, string $value): void
   {
-    $this->save('user/' . $this->getAuth()->getUserId() . '/' . $path, $value);
+    $this->save('user/' . $this->getAuthProvider()->getUserId() . '/' . $path, $value);
   }
 
   public function delete($path): void
@@ -141,7 +141,7 @@ class Config extends CoreClass
 
   public function filterByUser(): void
   {
-    $idUser = $this->getAuth()->getUserId();
+    $idUser = $this->getAuthProvider()->getUserId();
     if (isset($this->configData['user'][$idUser]) && is_array($this->configData['user'][$idUser])) {
       $this->configData = array_merge_recursive($this->configData, $this->configData['user'][$idUser]);
       unset($this->configData['user']);

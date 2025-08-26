@@ -97,7 +97,7 @@ class PermissionsManager extends CoreClass implements Interfaces\PermissionsMana
       $idRole = (int) $role;
     }
 
-    return in_array($idRole, $this->getAuth()->getUserRoles());
+    return in_array($idRole, $this->getAuthProvider()->getUserRoles());
   }
 
   public function grantedForRole(string $permission, int|string $userRole): bool
@@ -118,8 +118,8 @@ class PermissionsManager extends CoreClass implements Interfaces\PermissionsMana
       return true;
     } else {
       if (empty($permission)) return true;
-      if (count($userRoles) == 0) $userRoles = $this->getAuth()->getUserRoles();
-      if ($userType == 0) $userType = $this->getAuth()->getUserType();
+      if (count($userRoles) == 0) $userRoles = $this->getAuthProvider()->getUserRoles();
+      if ($userType == 0) $userType = $this->getAuthProvider()->getUserType();
 
       $granted = false;
 
@@ -166,8 +166,8 @@ class PermissionsManager extends CoreClass implements Interfaces\PermissionsMana
 
   public function isAppPermittedForActiveUser(\Hubleto\Framework\Interfaces\AppInterface $app): bool
   {
-    $userRoles = $this->getAuth()->getUserRoles();
-    $userType = $this->getAuth()->getUserType();
+    $userRoles = $this->getAuthProvider()->getUserRoles();
+    $userType = $this->getAuthProvider()->getUserType();
 
     if (
       $this->grantAllPermissions
@@ -178,7 +178,7 @@ class PermissionsManager extends CoreClass implements Interfaces\PermissionsMana
       return true;
     }
 
-    $user = $this->getAuth()->getUser();
+    $user = $this->getAuthProvider()->getUser();
     $userApps = @json_decode($user['apps'], true);
 
     return is_array($userApps) && in_array($app->namespace, $userApps);

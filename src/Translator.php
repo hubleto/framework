@@ -40,7 +40,7 @@ class Translator extends CoreClass implements Interfaces\TranslatorInterface
   // public function loadDictionary(string $language = ""): array
   // {
   //   if (empty($language)) {
-  //     $language = $this->getAuth()->getUserLanguage();
+  //     $language = $this->getAuthProvider()->getUserLanguage();
   //   }
   //   if ($language == 'en') {
   //     return [];
@@ -126,7 +126,7 @@ class Translator extends CoreClass implements Interfaces\TranslatorInterface
   public function loadDictionary(string $language = ""): array
   {
     if (empty($language)) {
-      $language = $this->getAuth()->getUserLanguage();
+      $language = $this->getAuthProvider()->getUserLanguage();
     }
 
     if ($language == 'en') {
@@ -153,7 +153,7 @@ class Translator extends CoreClass implements Interfaces\TranslatorInterface
   public function translate(string $string, array $vars = []): string
   {
     if (empty($toLanguage)) {
-      $toLanguage = $this->getAuth()->getUserLanguage();
+      $toLanguage = $this->getAuthProvider()->getUserLanguage();
     }
 
     if (strpos($this->context, '::')) {

@@ -136,7 +136,7 @@ class Renderer extends CoreClass
       $router->setRouteVars($routeVars);
 
       if ($router->isUrlParam('sign-out')) {
-        $this->getAuth()->signOut();
+        $this->getAuthProvider()->signOut();
       }
 
       if ($router->isUrlParam('signed-out')) {
@@ -153,7 +153,7 @@ class Renderer extends CoreClass
       $controllerObject = $this->getService($controllerClassName);
 
       // authenticate user, if any
-      $this->getAuth()->auth();
+      $this->getAuthProvider()->auth();
       $this->getConfig()->filterByUser();
 
       if (empty($this->permission) && !empty($controllerObject->permission)) {
@@ -174,7 +174,7 @@ class Renderer extends CoreClass
       }
 
       if ($controllerObject->requiresUserAuthentication) {
-        if (!$this->getAuth()->isUserInSession()) {
+        if (!$this->getAuthProvider()->isUserInSession()) {
           $controllerObject = $this->getService(Controllers\SignIn::class);
           $permissionManager->setPermission($controllerObject->permission);
         }
@@ -222,7 +222,7 @@ class Renderer extends CoreClass
 
         $contentParams = [
           'app' => $this,
-          'user' => $this->getAuth()->getUser(),
+          'user' => $this->getAuthProvider()->getUser(),
           'config' => $this->getConfig()->get(),
           'routeUrl' => $router->getRoute(),
           'routeParams' => $this->getRouter()->getRouteVars(),
@@ -278,7 +278,7 @@ class Renderer extends CoreClass
       return $this->renderFatal('Controller not found: ' . $e->getMessage(), false);
     } catch (Exceptions\NotEnoughPermissionsException $e) {
       $message = $e->getMessage();
-      if ($this->getAuth()->isUserInSession()) {
+      if ($this->getAuthProvider()->isUserInSession()) {
         $message .= " Hint: Sign out at {$this->getEnv()->projectUrl}?sign-out and sign in again or check your permissions.";
       }
       return $this->renderFatal($message, false);
