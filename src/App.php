@@ -224,7 +224,7 @@ class App extends CoreClass
         $mClass = str_replace('.php', '', $mClass);
         if (class_exists($mClass)) {
           try {
-            $mObj = $this->main->load($mClass);
+            $mObj = $this->getService($mClass);
             $modelClasses[] = $mClass;
           } catch (\Throwable) {
           }
@@ -261,7 +261,7 @@ class App extends CoreClass
       }
     }
 
-    $mPermission = $this->main->load(\HubletoApp\Community\Settings\Models\Permission::class);
+    $mPermission = $this->getService(\HubletoApp\Community\Settings\Models\Permission::class);
 
     foreach ($permissions as $permission) {
       $mPermission->record->recordCreate([
@@ -272,8 +272,8 @@ class App extends CoreClass
 
   public function assignPermissionsToRoles(): void
   {
-    $mUserRole = $this->main->load(\HubletoApp\Community\Settings\Models\UserRole::class);
-    $mRolePermission = $this->main->load(\HubletoApp\Community\Settings\Models\RolePermission::class);
+    $mUserRole = $this->getService(\HubletoApp\Community\Settings\Models\UserRole::class);
+    $mRolePermission = $this->getService(\HubletoApp\Community\Settings\Models\RolePermission::class);
 
     $userRoles = $mUserRole->record->get()->toArray();
     foreach ($userRoles as $role) {

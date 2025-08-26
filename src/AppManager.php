@@ -237,7 +237,7 @@ class AppManager extends CoreClass implements Interfaces\AppManagerInterface
   public function createAppInstance(string $appNamespace): Interfaces\AppInterface
   {
      if (!str_ends_with($appNamespace, '\Loader')) $appNamespace = $appNamespace . '\Loader';
-    return $this->main->load($appNamespace);
+    return $this->getService($appNamespace);
   }
 
   /**

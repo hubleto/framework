@@ -148,7 +148,7 @@ class Router extends CoreClass implements Interfaces\RouterInterface {
 
   public function createNotFoundController(): \Hubleto\Framework\Controller
   {
-    return $this->main->load(\Hubleto\Framework\Controllers\NotFoundController::class);
+    return $this->getService(\Hubleto\Framework\Controllers\NotFoundController::class);
     $controller = new \Hubleto\Framework\Controller($this->main);
     $controller->requiresUserAuthentication = FALSE;
     $controller->hideDefaultDesktop = TRUE;
@@ -159,12 +159,12 @@ class Router extends CoreClass implements Interfaces\RouterInterface {
 
   public function createResetPasswordController(): \Hubleto\Framework\Controller
   {
-    return $this->main->load(\Hubleto\Framework\Controller::class);
+    return $this->getService(\Hubleto\Framework\Controller::class);
   }
 
   public function createDesktopController(): \Hubleto\Framework\Controller
   {
-    return $this->main->load(\Hubleto\Framework\Controllers\DesktopController::class);
+    return $this->getService(\Hubleto\Framework\Controllers\DesktopController::class);
   }
 
 

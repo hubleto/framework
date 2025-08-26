@@ -6,28 +6,15 @@ class CoreClass
 {
   public Loader $main;
 
-  // protected DependencyInjection $di;
-
   public function __construct(Loader $main)
   {
     $this->main = $main;
-
-    // // initialize dependency injector
-    // $this->di = $this->createDependencyInjection();
-
   }
 
-  // public function createDependencyInjection(): DependencyInjection
-  // {
-  //   return new DependencyInjection($this->main);
-  // }
-
-
-
-
-
-  
-
+  public function getService(string $service): mixed
+  {
+    return DependencyInjection::create($this->main, $service);
+  }
 
   /**
    * [Description for getEnv]
