@@ -143,7 +143,7 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
 
       if ($authResult) {
         $this->signIn($authResult);
-        $this->main->router->redirectTo('');
+        $this->getRouter()->redirectTo('');
         exit;
       } else {
         $this->deleteSession();

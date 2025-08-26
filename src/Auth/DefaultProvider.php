@@ -2,6 +2,8 @@
 
 namespace Hubleto\Framework\Auth;
 
+use Hubleto\Framework\Router;
+
 class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
 {
   public array $user { get => $this->user; set (array $user) { $this->user = $user; } }
@@ -24,6 +26,11 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
     $userLanguage = $this->getUserLanguage();
     if (empty($userLanguage)) $userLanguage = 'en';
     $this->main->config->set('language', $userLanguage);
+  }
+
+  public function getRouter(): Router
+  {
+    return $this->main->getRouter();
   }
 
   public function getUserFromSession(): array
@@ -70,7 +77,7 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
   public function signOut()
   {
     $this->deleteSession();
-    $this->main->router->redirectTo('?signed-out');
+    $this->getRouter()->redirectTo('?signed-out');
     exit;
   }
 

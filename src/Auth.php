@@ -13,6 +13,11 @@ class Auth {
   {
   }
 
+  public function getRouter(): Router
+  {
+    return $this->main->getRouter();
+  }
+
   public function getUserFromSession(): array
   {
     $tmp = $this->main->session->get('userProfile') ?? [];
@@ -57,7 +62,7 @@ class Auth {
   public function signOut()
   {
     $this->deleteSession();
-    $this->main->router->redirectTo('?signed-out');
+    $this->getRouter()->redirectTo('?signed-out');
     exit;
   }
 

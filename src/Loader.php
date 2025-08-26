@@ -37,7 +37,7 @@ class Loader
   public Session $session;
   public Logger $logger;
   public Locale $locale;
-  public Router $router;
+  protected Router $router;
   public Permissions $permissions;
   public Test $test;
   public Interfaces\AuthInterface $auth;
@@ -151,6 +151,17 @@ class Loader
   public function getAppManager(): Interfaces\AppManagerInterface
   {
     return $this->apps;
+  }
+
+  /**
+   * [Description for getRouter]
+   *
+   * @return Router
+   * 
+   */
+  public function getRouter(): Router
+  {
+    return $this->router;
   }
 
   /**
