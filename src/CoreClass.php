@@ -7,6 +7,18 @@ class CoreClass
 
   public string $translationContext = '';
 
+  public function __construct()
+  {
+  }
+
+    /**
+   * [Description for getService]
+   *
+   * @param string $service
+   * 
+   * @return mixed
+   * 
+   */
   public function getService(string $service): mixed
   {
     return DependencyInjection::create($service);

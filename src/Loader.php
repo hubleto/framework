@@ -16,7 +16,7 @@ class Loader extends CoreClass
 
   public function __construct(array $config = [])
   {
-    parent::__construct($this);
+    parent::__construct();
 
     $this->setAsGlobal();
 
