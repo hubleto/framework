@@ -7,7 +7,7 @@ class Locale {
   private array $locale = [];
   
   public function __construct(public \Hubleto\Framework\Loader $main) {
-    $this->locale = $this->main->config->getAsArray('locale');
+    $this->locale = $this->main->getConfig()->getAsArray('locale');
   }
 
   public function getDateShortFormat(): string

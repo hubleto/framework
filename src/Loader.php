@@ -32,7 +32,7 @@ class Loader
 
   public array $modelObjects = [];
 
-  public Config $config;
+  protected Config $config;
   public DependencyInjection $di;
   public Session $session;
   public Logger $logger;
@@ -78,25 +78,25 @@ class Loader
       // load config
       $this->config = $this->createConfigManager($config);
 
-      $this->projectFolder = $this->config->getAsString('projectFolder');
-      $this->projectUrl = $this->config->getAsString('projectUrl');
+      $this->projectFolder = $this->getConfig()->getAsString('projectFolder');
+      $this->projectUrl = $this->getConfig()->getAsString('projectUrl');
 
-      $this->secureFolder = $this->config->getAsString('secureFolder');
+      $this->secureFolder = $this->getConfig()->getAsString('secureFolder');
       if (empty($this->secureFolder)) $this->secureFolder = $this->projectFolder . '/secure';
 
-      $this->uploadFolder = $this->config->getAsString('uploadFolder');
+      $this->uploadFolder = $this->getConfig()->getAsString('uploadFolder');
       if (empty($this->uploadFolder)) $this->secureFolder = $this->projectFolder . '/upload';
 
-      $this->assetsUrl = $this->config->getAsString('assetsUrl');
+      $this->assetsUrl = $this->getConfig()->getAsString('assetsUrl');
 
       if (php_sapi_name() !== 'cli') {
         if (!empty($_GET['route'])) {
           $this->requestedUri = $_GET['route'];
-        } else if ($this->config->getAsString('rewriteBase') == "/") {
+        } else if ($this->getConfig()->getAsString('rewriteBase') == "/") {
           $this->requestedUri = ltrim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), "/");
         } else {
           $this->requestedUri = str_replace(
-            $this->config->getAsString('rewriteBase'),
+            $this->getConfig()->getAsString('rewriteBase'),
             "",
             parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
           );
@@ -134,7 +134,7 @@ class Loader
 
   public function getServiceProviders(): array
   {
-    return $this->config->getAsArray('serviceProviders');
+    return $this->getConfig()->getAsArray('serviceProviders');
   }
 
   public function setParam(string $pName, mixed $pValue): void
@@ -162,6 +162,17 @@ class Loader
   public function getRouter(): Router
   {
     return $this->router;
+  }
+
+  /**
+   * [Description for getConfig]
+   *
+   * @return Config
+   * 
+   */
+  public function getConfig(): Config
+  {
+    return $this->config;
   }
 
   /**
@@ -194,7 +205,7 @@ class Loader
 
         $this->session->start(true);
 
-        $this->config->loadFromDB();
+        $this->getConfig()->loadFromDB();
 
       }
 
@@ -217,11 +228,11 @@ class Loader
 
   public function initDatabaseConnections()
   {
-    $dbHost = $this->config->getAsString('db_host', '');
-    $dbPort = $this->config->getAsInteger('db_port', 3306);
-    $dbName = $this->config->getAsString('db_name', '');
-    $dbUser = $this->config->getAsString('db_user', '');
-    $dbPassword = $this->config->getAsString('db_password', '');
+    $dbHost = $this->getConfig()->getAsString('db_host', '');
+    $dbPort = $this->getConfig()->getAsInteger('db_port', 3306);
+    $dbName = $this->getConfig()->getAsString('db_name', '');
+    $dbUser = $this->getConfig()->getAsString('db_user', '');
+    $dbPassword = $this->getConfig()->getAsString('db_password', '');
 
     if (!empty($dbHost) && !empty($dbPort) && !empty($dbUser)) {
       $this->eloquent = new \Illuminate\Database\Capsule\Manager;
@@ -324,7 +335,7 @@ class Loader
       $this->twigLoader->addPath(realpath(__DIR__ . '/../views'), 'framework');
     } catch (\Exception $e) { }
 
-    $this->twig->addGlobal('config', $this->config->get());
+    $this->twig->addGlobal('config', $this->getConfig()->get());
     $this->twig->addExtension(new \Twig\Extension\StringLoaderExtension());
     $this->twig->addExtension(new \Twig\Extension\DebugExtension());
 
@@ -500,7 +511,7 @@ class Loader
 
       // authenticate user, if any
       $this->auth->auth();
-      $this->config->filterByUser();
+      $this->getConfig()->filterByUser();
 
       // Create the object for the controller
       $controllerObject = $this->di->create($controllerClassName);
@@ -573,7 +584,7 @@ class Loader
           'app' => $this,
           'uid' => $this->uid,
           'user' => $this->auth->getUser(),
-          'config' => $this->config->get(),
+          'config' => $this->getConfig()->get(),
           'routeUrl' => $this->route,
           'routeParams' => $this->params,
           'route' => $this->route,
@@ -914,7 +925,7 @@ class Loader
     } else if (isset($_COOKIE['language']) && strlen($_COOKIE['language']) == 2) {
       return $_COOKIE['language'];
     } else {
-      $language = $this->config->getAsString('language', 'en');
+      $language = $this->getConfig()->getAsString('language', 'en');
       if (strlen($language) !== 2) $language = 'en';
       return $language;
     }

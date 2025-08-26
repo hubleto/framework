@@ -18,6 +18,11 @@ class Auth {
     return $this->main->getRouter();
   }
 
+  public function getConfig(): Config
+  {
+    return $this->main->getConfig();
+  }
+
   public function getUserFromSession(): array
   {
     $tmp = $this->main->session->get('userProfile') ?? [];
@@ -124,7 +129,7 @@ class Auth {
 
   public function getUserLanguage(): string
   {
-    $language = (string) ($this->user['language'] ?? $this->main->config->getAsString('language'));
+    $language = (string) ($this->user['language'] ?? $this->main->getConfig()->getAsString('language'));
     return (strlen($language) == 2 ? $language : 'en');
   }
 }

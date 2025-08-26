@@ -12,7 +12,7 @@ class Session
 
     if (isset($_SESSION) && is_array($_SESSION) && !is_array($_SESSION[$this->salt])) $_SESSION[$this->salt] = [];
 
-    $this->salt = $this->main->config->getAsString('sessionSalt');
+    $this->salt = $this->main->getConfig()->getAsString('sessionSalt');
   }
 
   public function getSalt(): string

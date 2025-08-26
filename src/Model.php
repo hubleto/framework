@@ -79,9 +79,6 @@ class Model
     $tmp = explode("\\", $this->fullName);
     $this->shortName = end($tmp);
 
-    $currentVersion = (int)$this->getCurrentInstalledVersion();
-    $lastVersion = $this->getLastAvailableVersion();
-
     $this->columns = $this->describeColumns();
 
   }
@@ -109,14 +106,29 @@ class Model
     return $this->main->getRouter();
   }
 
+  public function getConfig(): Config
+  {
+    return $this->main->getConfig();
+  }
+
+  // /**
+  //  * Retrieves value of configuration parameter.
+  //  *
+  //  * @return void
+  //  */
+  // public function getConfig(string $configName): string
+  // {
+  //   return $this->main->getConfig()->getAsString($this->getConfigFullPath($configName));
+  // }
+
   /**
    * Retrieves value of configuration parameter.
    *
    * @return void
    */
-  public function getConfig(string $configName): string
+  public function configAsString(string $configName): string
   {
-    return $this->main->config->getAsString($this->getConfigFullPath($configName));
+    return $this->main->getConfig()->getAsString($this->getConfigFullPath($configName));
   }
 
   /**
@@ -124,9 +136,9 @@ class Model
    *
    * @return void
    */
-  public function getConfigAsString(string $configName): string
+  public function configAsInteger(string $configName): int
   {
-    return $this->main->config->getAsString($this->getConfigFullPath($configName));
+    return $this->main->getConfig()->getAsInteger($this->getConfigFullPath($configName));
   }
 
   /**
@@ -134,19 +146,9 @@ class Model
    *
    * @return void
    */
-  public function getConfigAsInteger(string $configName): int
+  public function configAsArray(string $configName): array
   {
-    return $this->main->config->getAsInteger($this->getConfigFullPath($configName));
-  }
-
-  /**
-   * Retrieves value of configuration parameter.
-   *
-   * @return void
-   */
-  public function getConfigAsArray(string $configName): array
-  {
-    return $this->main->config->getAsArray($this->getConfigFullPath($configName));
+    return $this->main->getConfig()->getAsArray($this->getConfigFullPath($configName));
   }
 
 
@@ -163,30 +165,30 @@ class Model
     return $this->main->translate($string, $vars, $this->translationContext);
   }
 
-  /**
-   * Checks whether model is installed.
-   *
-   * @return bool TRUE if model is installed, otherwise FALSE.
-   */
-  public function isInstalled(): bool
-  {
-    return $this->getConfig('installed-version') != "";
-  }
+  // /**
+  //  * Checks whether model is installed.
+  //  *
+  //  * @return bool TRUE if model is installed, otherwise FALSE.
+  //  */
+  // public function isInstalled(): bool
+  // {
+  //   return $this->getConfig('installed-version') != "";
+  // }
 
-  /**
-   * Gets the current installed version of the model. Used during installing upgrades.
-   *
-   * @return void
-   */
-  private function getCurrentInstalledVersion(): int
-  {
-    return (int)($this->getConfig('installed-version') ?? 0);
-  }
+  // /**
+  //  * Gets the current installed version of the model. Used during installing upgrades.
+  //  *
+  //  * @return void
+  //  */
+  // private function getCurrentInstalledVersion(): int
+  // {
+  //   return (int)($this->getConfig('installed-version') ?? 0);
+  // }
 
-  private function getLastAvailableVersion(): int
-  {
-    return max(array_keys($this->upgrades()));
-  }
+  // private function getLastAvailableVersion(): int
+  // {
+  //   return max(array_keys($this->upgrades()));
+  // }
 
   /**
    * Returns list of available upgrades. This method must be overriden by each model.
@@ -293,7 +295,7 @@ class Model
         }
       }
 
-      $this->main->config->save(
+      $this->main->getConfig()->save(
         'models/' . str_replace("/", "-", $this->fullName) . '/installed-version',
         max(array_keys($this->upgrades()))
       );
@@ -304,12 +306,12 @@ class Model
     }
   }
 
-  public function hasAvailableUpgrades(): bool
-  {
-    $currentVersion = $this->getCurrentInstalledVersion();
-    $lastVersion = $this->getLastAvailableVersion();
-    return ($lastVersion > $currentVersion);
-  }
+  // public function hasAvailableUpgrades(): bool
+  // {
+  //   $currentVersion = $this->getCurrentInstalledVersion();
+  //   $lastVersion = $this->getLastAvailableVersion();
+  //   return ($lastVersion > $currentVersion);
+  // }
 
   /**
    * Installs all upgrades of the model. Internaly stores current version and

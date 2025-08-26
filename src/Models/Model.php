@@ -27,7 +27,7 @@ class Model extends \Hubleto\Framework\Model
   {
     $customColumns = [];
     if ($this->isExtendableByCustomColumns) {
-      $customColumnsCfg = $this->getConfigAsArray('customColumns') ?? [];
+      $customColumnsCfg = $this->configAsArray('customColumns') ?? [];
       foreach ($customColumnsCfg as $colName => $colCfg) {
         $colClass = $colCfg['class'] ?? '';
         if (class_exists($colClass)) {
@@ -82,7 +82,7 @@ class Model extends \Hubleto\Framework\Model
     // + vypocitat $description->columns (v principe asi unset() pre stlpce, ktore sa maju skryt)
 
     if (!empty($tag)) {
-      $allColumnsConfig = @json_decode($this->getConfigAsString('tableColumns') ?? '', true);
+      $allColumnsConfig = @json_decode($this->configAsString('tableColumns') ?? '', true);
 
       if (isset($allColumnsConfig[$tag])) {
         foreach ($allColumnsConfig[$tag] as $colName => $is_hidden) {

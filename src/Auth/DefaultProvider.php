@@ -3,6 +3,7 @@
 namespace Hubleto\Framework\Auth;
 
 use Hubleto\Framework\Router;
+use Hubleto\Framework\Config;
 
 class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
 {
@@ -25,12 +26,17 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
   {
     $userLanguage = $this->getUserLanguage();
     if (empty($userLanguage)) $userLanguage = 'en';
-    $this->main->config->set('language', $userLanguage);
+    $this->main->getConfig()->set('language', $userLanguage);
   }
 
   public function getRouter(): Router
   {
     return $this->main->getRouter();
+  }
+
+  public function getConfig(): Config
+  {
+    return $this->main->getConfig();
   }
 
   public function getUserFromSession(): array
@@ -186,7 +192,7 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
 
   public function getUserLanguage(): string
   {
-    $language = (string) ($this->user['language'] ?? $this->main->config->getAsString('language'));
+    $language = (string) ($this->user['language'] ?? $this->main->getConfig()->getAsString('language'));
     return (strlen($language) == 2 ? $language : 'en');
   }
 

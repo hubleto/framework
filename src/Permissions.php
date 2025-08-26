@@ -67,7 +67,7 @@ class Permissions
 
   public function set(string $permission, int $idUserRole, bool $isEnabled)
   {
-    $this->main->config->save(
+    $this->main->getConfig()->save(
       "permissions/{$idUserRole}/".str_replace("/", ":", $permission),
       $isEnabled ? "1" : "0"
     );

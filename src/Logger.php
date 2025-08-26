@@ -16,7 +16,7 @@ class Logger {
   public bool $enabled = false;
  
   public function __construct(public Loader $main) {
-    $this->logFolder = $this->main->config->getAsString('logFolder');
+    $this->logFolder = $this->main->getConfig()->getAsString('logFolder');
     $this->enabled = !empty($this->logFolder) && is_dir($this->logFolder);
 
     $this->initLogger('core');

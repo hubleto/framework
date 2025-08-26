@@ -92,6 +92,11 @@ class Controller {
     return $this->main->getRouter();
   }
 
+  public function getConfig(): Config
+  {
+    return $this->main->getConfig();
+  }
+
   public function prepareParams(): array
   {
     return [];

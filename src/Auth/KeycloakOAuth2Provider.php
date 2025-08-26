@@ -30,7 +30,7 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
 
       $this->deleteSession();
       header(
-        "Location: " . $this->main->config->getAsString('auth/urlLogout') . 
+        "Location: " . $this->main->getConfig()->getAsString('auth/urlLogout') . 
         "?id_token_hint=".\urlencode($idToken)."&post_logout_redirect_uri=".\urlencode($this->main->projectUrl . "?signed-out")
       );
       exit;
