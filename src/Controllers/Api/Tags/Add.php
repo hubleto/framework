@@ -10,10 +10,6 @@ use Illuminate\Database\QueryException;
 class Add extends \Hubleto\Framework\Controller {
   public bool $hideDefaultDesktop = true;
 
-  function __construct(\Hubleto\Framework\Loader $main, array $params = []) {
-    parent::__construct($main, $params);
-  }
-
   public function renderJson(): ?array { 
     try {
       $id = $this->getRouter()->urlParamAsInteger('id');

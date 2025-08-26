@@ -110,7 +110,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     foreach ($this->model->relations as $relName => $relDefinition) {
       // if (count($this->relationsToRead) > 0 && !in_array($relName, $this->relationsToRead)) continue;
 
-      $relModel = new $relDefinition[1]($this->main);
+      $relModel = new $relDefinition[1]();
 
       if ($level < $this->maxReadLevel) {
         $query->with([$relName => function($q) use($relModel, $level) {
@@ -325,7 +325,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       if (!isset($record[$relName]) || !is_array($record[$relName])) continue;
 
       list($relType, $relModelClass) = $relDefinition;
-      $relModel = new $relModelClass($this->main);
+      $relModel = new $relModelClass();
 
       switch ($relType) {
         case Model::HAS_MANY:
@@ -427,7 +427,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
         foreach ($this->model->relations as $relName => $relDefinition) {
           if (isset($record[$relName]) && is_array($record[$relName])) {
             list($relType, $relModelClass) = $relDefinition;
-            $relModel = new $relModelClass($this->main);
+            $relModel = new $relModelClass();
             switch ($relType) {
               case Model::HAS_MANY:
                 foreach ($record[$relName] as $subKey => $subRecord) {
@@ -510,7 +510,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       foreach ($this->model->relations as $relName => $relDefinition) {
         if (isset($record[$relName]) && is_array($record[$relName])) {
           list($relType, $relModelClass) = $relDefinition;
-          $relModel = new $relModelClass($this->main);
+          $relModel = new $relModelClass();
           switch ($relType) {
             case Model::HAS_MANY:
               foreach ($record[$relName] as $subKey => $subRecord) {

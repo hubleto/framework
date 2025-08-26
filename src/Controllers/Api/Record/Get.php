@@ -6,9 +6,9 @@ class Get extends \Hubleto\Framework\Controllers\ApiController {
 
   public \Hubleto\Framework\Model $model;
 
-  function __construct(\Hubleto\Framework\Loader $main, array $params = [])
+  function __construct()
   {
-    parent::__construct($main, $params);
+    parent::__construct();
 
     $model = $this->getRouter()->urlParamAsString('model');
     $this->model = $this->getModel($model);

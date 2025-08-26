@@ -5,7 +5,7 @@ namespace Hubleto\Framework;
 class Helper
 {
 
-  public function __construct(public \Hubleto\Framework\Loader $main)
+  public function __construct()
   {
   }
 

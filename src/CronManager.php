@@ -8,10 +8,6 @@ class CronManager extends CoreClass implements Interfaces\CronManagerInterface
   /** @var array<\HubletoMain\Cron> */
   protected array $enabledCrons = [];
 
-  public function __construct(public Loader $main)
-  {
-  }
-
   public function init(): void
   {
     $crons = @Helper::scanDirRecursively($this->getEnv()->srcFolder . '/crons');

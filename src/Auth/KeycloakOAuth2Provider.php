@@ -5,9 +5,9 @@ namespace Hubleto\Framework\Auth;
 class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
   public $provider;
 
-  function __construct(\Hubleto\Framework\Loader $main, array $config = [])
+  function __construct(array $config = [])
   {
-    parent::__construct($main, $config);
+    parent::__construct();
 
     $this->provider = new \League\OAuth2\Client\Provider\GenericProvider([
       'clientId'                => $config['clientId'],

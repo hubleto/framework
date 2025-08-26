@@ -7,8 +7,9 @@ class Lookup extends \Hubleto\Framework\Controllers\ApiController {
 
   public \Hubleto\Framework\Model $model;
 
-  function __construct(\Hubleto\Framework\Loader $main, array $params = []) {
-    parent::__construct($main, $params);
+  function __construct()
+  {
+    parent::__construct();
 
     $model = $this->getRouter()->urlParamAsString('model');
     // $this->permission = $model . ':Read';

@@ -18,10 +18,12 @@ class AppManager extends CoreClass implements Interfaces\AppManagerInterface
   /** @var array<string> */
   public array $registeredAppNamespaces = [];
 
-  public function __construct(public Loader $main)
-  {
-  }
-
+  /**
+   * [Description for init]
+   *
+   * @return void
+   * 
+   */
   public function init(): void
   {
     foreach ($this->getInstalledAppNamespaces() as $appNamespace => $appConfig) {

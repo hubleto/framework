@@ -62,7 +62,7 @@ class Controller extends CoreClass {
 
   public int $returnType = self::RETURN_TYPE_VIEW;
 
-  function __construct(public Loader $main, array $params = [])
+  function __construct()
   {
     $reflection = new \ReflectionClass($this);
 

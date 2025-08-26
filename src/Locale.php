@@ -7,8 +7,9 @@ class Locale extends CoreClass
 
   private array $locale = [];
   
-  public function __construct(public \Hubleto\Framework\Loader $main) {
-    parent::__construct($main);
+  public function __construct()
+  {
+    parent::__construct();
     $this->locale = $this->getConfig()->getAsArray('locale');
   }
 

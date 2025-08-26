@@ -10,8 +10,9 @@ use Illuminate\Database\QueryException;
 class Data extends \Hubleto\Framework\Controller {
   public bool $hideDefaultDesktop = true;
 
-  function __construct(\Hubleto\Framework\Loader $main, array $params = []) {
-    parent::__construct($main, $params);
+  function __construct()
+  {
+    parent::__construct();
   }
 
   public function renderJson(): ?array { 

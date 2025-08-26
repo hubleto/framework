@@ -14,8 +14,6 @@ class Loader extends CoreClass
 
   const RELATIVE_DICTIONARY_PATH = '../lang';
 
-  public \Illuminate\Database\Capsule\Manager $eloquent;
-
   public function __construct(array $config = [])
   {
     parent::__construct($this);
@@ -23,11 +21,6 @@ class Loader extends CoreClass
     $this->setAsGlobal();
 
     try {
-
-      foreach ($this->getServiceProviders() as $service => $provider) {
-        DependencyInjection::setServiceProvider($service, $provider);
-      }
-
       $this->getConfig()->setConfig($config);
 
     } catch (\Exception $e) {
@@ -36,11 +29,6 @@ class Loader extends CoreClass
       exit;
     }
 
-  }
-
-  public function getServiceProviders(): array
-  {
-    return $this->getConfig()->getAsArray('serviceProviders');
   }
 
   /**
@@ -63,7 +51,7 @@ class Loader extends CoreClass
   {
 
     try {
-      $this->initDatabaseConnections();
+      $this->getPdo()->init();
       $this->getSessionManager()->start(true);
 
       $this->getConfig()->init();
@@ -79,33 +67,6 @@ class Loader extends CoreClass
       echo "Hubleto init failed: [".get_class($e)."] ".$e->getMessage() . "\n";
       echo $e->getTraceAsString() . "\n";
       exit;
-    }
-  }
-
-  public function initDatabaseConnections()
-  {
-    $dbHost = $this->getConfig()->getAsString('db_host', '');
-    $dbPort = $this->getConfig()->getAsInteger('db_port', 3306);
-    $dbName = $this->getConfig()->getAsString('db_name', '');
-    $dbUser = $this->getConfig()->getAsString('db_user', '');
-    $dbPassword = $this->getConfig()->getAsString('db_password', '');
-
-    if (!empty($dbHost) && !empty($dbPort) && !empty($dbUser)) {
-      $this->eloquent = new \Illuminate\Database\Capsule\Manager;
-      $this->eloquent->setAsGlobal();
-      $this->eloquent->bootEloquent();
-      $this->eloquent->addConnection([
-        "driver"    => "mysql",
-        "host"      => $dbHost,
-        "port"      => $dbPort,
-        "database"  => $dbName ?? '',
-        "username"  => $dbUser,
-        "password"  => $dbPassword,
-        "charset"   => 'utf8mb4',
-        "collation" => 'utf8mb4_unicode_ci',
-      ], 'default');
-
-      $this->getPdo()->connect();
     }
   }
 

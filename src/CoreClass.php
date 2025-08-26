@@ -4,18 +4,12 @@ namespace Hubleto\Framework;
 
 class CoreClass
 {
-  public Loader $main;
 
   public string $translationContext = '';
 
-  public function __construct(Loader $main)
-  {
-    $this->main = $main;
-  }
-
   public function getService(string $service): mixed
   {
-    return DependencyInjection::create($this->main, $service);
+    return DependencyInjection::create($service);
   }
 
   /**

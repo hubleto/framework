@@ -15,8 +15,9 @@ class Logger extends CoreClass {
   public string $logFolder = "";
   public bool $enabled = false;
  
-  public function __construct(public Loader $main) {
-    parent::__construct($main);
+  public function __construct()
+  {
+    parent::__construct();
 
     $this->logFolder = $this->getConfig()->getAsString('logFolder');
     $this->enabled = !empty($this->logFolder) && is_dir($this->logFolder);

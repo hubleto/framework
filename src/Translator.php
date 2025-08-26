@@ -11,10 +11,10 @@ class Translator extends CoreClass implements Interfaces\TranslatorInterface
   public string $dictionaryFilename = "Core-Loader";
   public array $dictionary = [];
 
-  public function __construct(public \Hubleto\Framework\Loader $main)
-  {
-    $this->dictionary = [];
-  }
+  // public function __construct()
+  // {
+  //   $this->dictionary = [];
+  // }
 
   public function getContext(): string
   {

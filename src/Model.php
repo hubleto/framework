@@ -57,7 +57,7 @@ class Model extends CoreClass
    * @param mixed $main
    * @return void
    */
-  public function __construct(public \Hubleto\Framework\Loader $main)
+  public function __construct()
   {
     $reflection = new \ReflectionClass($this);
 
@@ -65,7 +65,6 @@ class Model extends CoreClass
     if (!empty($recordManagerClass) && $this->isDatabaseConnected()) {
       $this->record = $this->initRecordManager();
       $this->record->model = $this;
-      $this->record->main = $this->main;
     }
 
     $this->fullName = $reflection->getName();

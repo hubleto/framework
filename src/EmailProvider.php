@@ -17,10 +17,6 @@ class EmailProvider extends CoreClass implements Interfaces\EmailProviderInterfa
   private string $smtpUsername;
   private string $smtpPassword;
 
-  public function __construct(public \Hubleto\Framework\Loader $main)
-  {
-  }
-
   public function init(): void
   {
     $this->smtpHost = $this->getConfig()->getAsString('smtpHost', '');

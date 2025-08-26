@@ -12,14 +12,14 @@ class Model extends \Hubleto\Framework\Model
   public string $permission = '';
   public array $rolePermissions = []; // example: [ [UserRole::ROLE_CHIEF_OFFICER => [true, true, true, true]] ]
 
-  public function __construct(public \Hubleto\Framework\Loader $main)
+  public function __construct()
   {
 
     $reflection = new \ReflectionClass($this);
     preg_match('/^(.*?)\\\Models\\\(.*?)$/', $reflection->getName(), $m);
     $this->translationContext = $m[1] . '\\Loader::Models\\' . $m[2];
 
-    parent::__construct($main);
+    parent::__construct();
 
   }
 

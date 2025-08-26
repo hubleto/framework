@@ -12,10 +12,6 @@ class PermissionsManager extends CoreClass implements Interfaces\PermissionsMana
 
   protected string $permission = '';
 
-  public function __construct(public \Hubleto\Framework\Loader $main)
-  {
-  }
-
   public function init(): void
   {
     $this->permissionsData = $this->loadPermissions();

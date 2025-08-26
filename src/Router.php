@@ -11,7 +11,7 @@ class Router extends CoreClass implements Interfaces\RouterInterface {
   protected array $routesHttpGet = [];
   protected array $routeVars = [];
   
-  public function __construct(public \Hubleto\Framework\Loader $main)
+  public function __construct()
   {
 
     $this->httpGet([

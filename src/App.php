@@ -33,9 +33,9 @@ class App extends CoreClass
   private array $settings = [];
 
 
-  public function __construct(public \Hubleto\Framework\Loader $main)
+  public function __construct()
   {
-    parent::__construct($main);
+    parent::__construct();
 
     $reflection = new \ReflectionClass($this);
 

@@ -18,11 +18,11 @@ class Env extends CoreClass
 
   public string $requestedUri = "";
 
-  public function __construct(public \Hubleto\Framework\Loader $main)
+  public function __construct()
   {
-    parent::__construct($main);
+    parent::__construct();
 
-    $reflection = new \ReflectionClass($main);
+    $reflection = new \ReflectionClass($this);
     $this->srcFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
 
     $this->projectFolder = $this->getConfig()->getAsString('projectFolder');

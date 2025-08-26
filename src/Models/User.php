@@ -28,11 +28,12 @@ class User extends \Hubleto\Framework\Model {
   ];
 
 
-  public function __construct(public \Hubleto\Framework\Loader $main)
+  public function __construct()
   {
-    parent::__construct($main);
+    parent::__construct();
 
-    $tokenModel = $main->getModel("Hubleto/Framework/Models/Token");
+    /** @var \Hubleto\Framework\Models\Token $tokenModel */
+    $tokenModel = $this->getModel("Hubleto/Framework/Models/Token");
 
     if (!$tokenModel->isTokenTypeRegistered(self::TOKEN_TYPE_USER_FORGOT_PASSWORD)) {
       $tokenModel->registerTokenType(self::TOKEN_TYPE_USER_FORGOT_PASSWORD);
@@ -116,6 +117,7 @@ class User extends \Hubleto\Framework\Model {
   }
 
   public function generateToken($idUser, $tokenSalt, $tokenType) {
+    /** @var \Hubleto\Framework\Models\Token $tokenModel */
     $tokenModel = $this->getModel("Hubleto/Framework/Models/Token");
     $token = $tokenModel->generateToken($tokenSalt, $tokenType);
 
@@ -135,6 +137,7 @@ class User extends \Hubleto\Framework\Model {
   }
 
   public function validateToken($token, $deleteAfterValidation = TRUE) {
+    /** @var \Hubleto\Framework\Models\Token $tokenModel */
     $tokenModel = $this->getModel("Hubleto/Framework/Models/Token");
     $tokenData = $tokenModel->validateToken($token);
 

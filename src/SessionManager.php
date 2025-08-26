@@ -7,9 +7,9 @@ class SessionManager extends CoreClass implements Interfaces\SessionManagerInter
 
   private string $salt = '';
 
-  public function __construct(public \Hubleto\Framework\Loader $main)
+  public function __construct()
   {
-    parent::__construct($main);
+    parent::__construct();
 
     if (isset($_SESSION) && is_array($_SESSION) && !is_array($_SESSION[$this->salt])) $_SESSION[$this->salt] = [];
 
