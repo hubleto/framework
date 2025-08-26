@@ -37,9 +37,6 @@ interface AppInterface
   public function hook(string $hook): void;
   public function getRootUrlSlug(): string;
   public function getNotificationsCount(): int;
-  public static function getDictionaryFilename(string $language): string;
-  public static function loadDictionary(string $language): array;
-  public static function addToDictionary(string $language, string $contextInner, string $string): void;
   public function translate(string $string, array $vars = [], string $context = 'root'): string;
   public function installTables(int $round): void;
   public function getAvailableControllerClasses(): array;

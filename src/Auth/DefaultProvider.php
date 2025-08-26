@@ -202,12 +202,6 @@ class DefaultProvider extends \Hubleto\Framework\CoreClass implements \Hubleto\F
     return (int) ($this->user['id'] ?? 0);
   }
 
-  public function getUserLanguage(): string
-  {
-    $language = (string) ($this->user['language'] ?? $this->getConfig()->getAsString('language'));
-    return (strlen($language) == 2 ? $language : 'en');
-  }
-
   public function forgotPassword(): void
   {
   }
@@ -216,7 +210,20 @@ class DefaultProvider extends \Hubleto\Framework\CoreClass implements \Hubleto\F
   {
   }
 
-  public function setUserLanguage(string $language): void {
+  public function getUserLanguage(): string
+  {
+    $user = $this->getUserFromSession() ?? [];
+    if (isset($user['language']) && strlen($user['language']) == 2) {
+      return $user['language'];
+    } else if (isset($_COOKIE['language']) && strlen($_COOKIE['language']) == 2) {
+      return $_COOKIE['language'];
+    } else {
+      $language = $this->getConfig()->getAsString('language', 'en');
+      if (strlen($language) !== 2) $language = 'en';
+      return $language;
+    }
+  }
+    public function setUserLanguage(string $language): void {
     $user = $this->user;
     $user['language'] = $language;
     $this->user = $user;

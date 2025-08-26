@@ -444,7 +444,7 @@ class AppManager extends CoreClass implements Interfaces\AppManagerInterface
 
     $tplFolder = __DIR__ . '/../cli/Templates/app';
 
-    $this->main->addTwigViewNamespace($tplFolder, 'appTemplate');
+    $this->getRenderer()->addNamespace($tplFolder, 'appTemplate');
 
     if (!is_dir($appSrcFolder . '/Controllers')) {
       mkdir($appSrcFolder . '/Controllers');
@@ -456,15 +456,15 @@ class AppManager extends CoreClass implements Interfaces\AppManagerInterface
       mkdir($appSrcFolder . '/Extendibles');
     }
 
-    file_put_contents($appSrcFolder . '/Loader.php', $this->main->twig->render('@appTemplate/Loader.php.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Loader.tsx', $this->main->twig->render('@appTemplate/Loader.tsx.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Calendar.php', $this->main->twig->render('@appTemplate/Calendar.php.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/manifest.yaml', $this->main->twig->render('@appTemplate/manifest.yaml.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Controllers/Home.php', $this->main->twig->render('@appTemplate/Controllers/Home.php.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Controllers/Settings.php', $this->main->twig->render('@appTemplate/Controllers/Settings.php.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Views/Home.twig', $this->main->twig->render('@appTemplate/Views/Home.twig.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Views/Settings.twig', $this->main->twig->render('@appTemplate/Views/Settings.twig.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Extendibles/AppMenu.php', $this->main->twig->render('@appTemplate/Extendibles/AppMenu.php.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Loader.php', $this->getRenderer()->renderView('@appTemplate/Loader.php.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Loader.tsx', $this->getRenderer()->renderView('@appTemplate/Loader.tsx.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Calendar.php', $this->getRenderer()->renderView('@appTemplate/Calendar.php.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/manifest.yaml', $this->getRenderer()->renderView('@appTemplate/manifest.yaml.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Controllers/Home.php', $this->getRenderer()->renderView('@appTemplate/Controllers/Home.php.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Controllers/Settings.php', $this->getRenderer()->renderView('@appTemplate/Controllers/Settings.php.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Views/Home.twig', $this->getRenderer()->renderView('@appTemplate/Views/Home.twig.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Views/Settings.twig', $this->getRenderer()->renderView('@appTemplate/Views/Settings.twig.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Extendibles/AppMenu.php', $this->getRenderer()->renderView('@appTemplate/Extendibles/AppMenu.php.twig', $tplVars));
   }
 
   public function canAppDangerouslyInjectDesktopHtmlContent(string $appNamespace): bool

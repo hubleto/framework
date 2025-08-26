@@ -5,6 +5,96 @@ namespace Hubleto\Framework;
 class Renderer extends CoreClass
 {
 
+  public \Twig\Loader\FilesystemLoader $twigLoader;
+  public \Twig\Environment $twig;
+
+  public function init(): void
+  {
+    $this->twigLoader = new \Twig\Loader\FilesystemLoader();
+    $this->twig = new \Twig\Environment($this->twigLoader, array(
+      'cache' => false,
+      'debug' => true,
+    ));
+
+    try {
+      $this->twigLoader->addPath($this->getEnv()->projectFolder . '/views', 'app');
+    } catch (\Exception $e) { }
+    try {
+      $this->twigLoader->addPath(realpath(__DIR__ . '/../views'), 'framework');
+    } catch (\Exception $e) { }
+
+    $this->twig->addGlobal('config', $this->getConfig()->get());
+    $this->twig->addExtension(new \Twig\Extension\StringLoaderExtension());
+    $this->twig->addExtension(new \Twig\Extension\DebugExtension());
+
+    $this->twig->addFunction(new \Twig\TwigFunction(
+      'htmlentities',
+      function ($string) {
+        return mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8');
+      }
+    ));
+    $this->twig->addFunction(new \Twig\TwigFunction(
+      'str2url',
+      function ($string) {
+        return Helper::str2url($string ?? '');
+      }
+    ));
+    $this->twig->addFunction(new \Twig\TwigFunction(
+      'hasPermission',
+      function (string $permission, array $idUserRoles = []) {
+        return $this->getPermissionsManager()->granted($permission, $idUserRoles);
+      }
+    ));
+    $this->twig->addFunction(new \Twig\TwigFunction(
+      'hasRole',
+      function (int|string $role) {
+        return $this->getPermissionsManager()->hasRole($role);
+      }
+    ));
+    $this->twig->addFunction(new \Twig\TwigFunction(
+      'setTranslationContext',
+      function ($context) {
+        $this->translationContext = $context;
+      }
+    ));
+    $this->twig->addFunction(new \Twig\TwigFunction(
+      'translate',
+      function ($string, $context = '') {
+        if (empty($context)) $context = $this->translationContext;
+        return $this->translate($string, [], $context);
+      }
+    ));
+
+    $this->twig->addFunction(new \Twig\TwigFunction(
+      'number',
+      function (string $amount) {
+        return number_format((float) $amount, 2, ",", " ");
+      }
+    ));
+
+  }
+
+  /**
+   * Adds namespace for Twig renderer
+   *
+   * @param string $folder
+   * @param string $namespace
+   * 
+   * @return void
+   * 
+   */
+  public function addNamespace(string $folder, string $namespace)
+  {
+    if (isset($this->twigLoader) && is_dir($folder)) {
+      $this->twigLoader->addPath($folder, $namespace);
+    }
+  }
+
+  public function renderView(string $view, array $vars = []): string
+  {
+    return $this->twig->render($view, $vars);
+  }
+
   /**
    * Renders the requested content. It can be the (1) whole desktop with complete <html>
    * content; (2) the HTML of a controller requested dynamically using AJAX; or (3) a JSON
@@ -40,10 +130,6 @@ class Renderer extends CoreClass
       $router->setRouteVars($params);
       $router->setRouteVars($routeVars);
 
-      // foreach ($routeVars as $varName => $varValue) {
-      //   $this->params[$varName] = $varValue;
-      // }
-
       if ($router->isUrlParam('sign-out')) {
         $this->getAuth()->signOut();
       }
@@ -60,12 +146,6 @@ class Renderer extends CoreClass
       
       // Create the object for the controller
       $controllerObject = DependencyInjection::create($this->main, $controllerClassName);
-        
-      //   !$this->controllerExists($this->controller)) {
-      //   throw new Exceptions\ControllerNotFound($this->controller);
-      // } else {
-      //   $controllerClassName = $this->getControllerClassName($this->controller);
-      // }
 
       // authenticate user, if any
       $this->getAuth()->auth();
@@ -149,7 +229,7 @@ class Renderer extends CoreClass
         ];
 
         if ($view !== null) {
-          $contentHtml = $controllerObject->renderer->render(
+          $contentHtml = $this->renderView(
             $view,
             $contentParams
           );
@@ -166,12 +246,12 @@ class Renderer extends CoreClass
           $desktopControllerObject = $this->getRouter()->createDesktopController();
           $desktopControllerObject->prepareView();
 
-          if (isset($desktopControllerObject->renderer) && !empty($desktopControllerObject->getView())) {
+          if (!empty($desktopControllerObject->getView())) {
             $desktopParams = $contentParams;
             $desktopParams['viewParams'] = array_merge($desktopControllerObject->getViewParams(), $contentParams['viewParams']);
             $desktopParams['contentHtml'] = $contentHtml;
 
-            $html = $desktopControllerObject->renderer->render(
+            $html = $this->renderView(
               $desktopControllerObject->getView(),
               $desktopParams
             );
@@ -313,6 +393,22 @@ class Renderer extends CoreClass
         ";
       break;
       case 'Illuminate\Database\QueryException':
+        $dbQuery = $exception->getSql();
+        $dbError = $exception->errorInfo[2];
+        $errorNo = $exception->errorInfo[1];
+
+        if (in_array($errorNo, [1216, 1451])) {
+          $model = $args[0];
+          $errorMessage =
+            "{$model->shortName} cannot be deleted because other data is linked to it."
+          ;
+        } elseif (in_array($errorNo, [1062, 1217, 1452])) {
+          $errorMessage = "You are trying to save a record that is already existing.";
+        } else {
+          $errorMessage = $dbError;
+        }
+        $html = $this->translate($errorMessage);
+      break;
       case 'Hubleto\Framework\Exceptions\DBDuplicateEntryException':
 
         if (get_class($exception) == 'Illuminate\Database\QueryException') {

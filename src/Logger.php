@@ -21,10 +21,10 @@ class Logger extends CoreClass {
     $this->logFolder = $this->getConfig()->getAsString('logFolder');
     $this->enabled = !empty($this->logFolder) && is_dir($this->logFolder);
 
-    $this->initLogger('core');
+    $this->initInternalLogger('core');
   }
 
-  public function initLogger(string $loggerName = "") {
+  public function initInternalLogger(string $loggerName = "") {
     if (!class_exists("\\Monolog\\Logger")) return;
 
     // inicializacia loggerov
@@ -44,9 +44,9 @@ class Logger extends CoreClass {
 
   }
   
-  public function getLogger($loggerName) {
+  public function getInternalLogger($loggerName) {
     if (!isset($this->loggers[$loggerName])) {
-      $this->initLogger($loggerName);
+      $this->initInternalLogger($loggerName);
     }
 
     return $this->loggers[$loggerName];
@@ -60,19 +60,19 @@ class Logger extends CoreClass {
 
   public function info($message, array $context = [], $loggerName = 'core') {
     if (!$this->enabled) return;
-    $this->getLogger($loggerName)->info($message, $context);
+    $this->getInternalLogger($loggerName)->info($message, $context);
     $this->cliEcho($message, $loggerName, 'INFO');
   }
   
   public function warning($message, array $context = [], $loggerName = 'core') {
     if (!$this->enabled) return;
-    $this->getLogger($loggerName)->warning($message, $context);
+    $this->getInternalLogger($loggerName)->warning($message, $context);
     $this->cliEcho($message, $loggerName, 'WARNING');
   }
   
   public function error($message, array $context = [], $loggerName = 'core') {
     if (!$this->enabled) return;
-    $this->getLogger($loggerName)->error($message, $context);
+    $this->getInternalLogger($loggerName)->error($message, $context);
     $this->cliEcho($message, $loggerName, 'ERROR');
   }
 

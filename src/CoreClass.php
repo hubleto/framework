@@ -172,4 +172,52 @@ class CoreClass
     return $this->getTranslator()->translate($string, $vars);
   }
 
+  // public static function getDictionaryFilename(string $language): string
+  // {
+  //   if (strlen($language) == 2) {
+  //     $reflection = new \ReflectionClass(get_called_class());
+  //     $srcFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
+  //     return $srcFolder . '/Lang/' . $language . '.json';
+  //   } else {
+  //     return '';
+  //   }
+  // }
+
+  // /**
+  // * @return array|array<string, array<string, string>>
+  // */
+  // public static function loadDictionary(string $language): array
+  // {
+  //   $dict = [];
+  //   $dictFilename = static::getDictionaryFilename($language);
+  //   if (is_file($dictFilename)) $dict = (array) @json_decode((string) file_get_contents($dictFilename), true);
+  //   return $dict;
+  // }
+
+  // /**
+  // * @return array|array<string, array<string, string>>
+  // */
+  // public static function addToDictionary(string $language, string $contextInner, string $string): void
+  // {
+  //   $dictFilename = static::getDictionaryFilename($language);
+
+  //   $dict = static::loadDictionary($language);
+
+  //   $main = \Hubleto\Framework\Loader::getGlobalApp();
+
+  //   if (!empty($dict[$contextInner][$string])) return;
+
+  //   if ($main->getConfig()->getAsBool('autoTranslate')) {
+  //     /** @disregard P1009 */
+  //     $tr = new \Stichoza\GoogleTranslate\GoogleTranslate();
+  //     $tr->setSource('en'); // Translate from
+  //     $tr->setTarget($language); // Translate to
+  //     $dict[$contextInner][$string] = $tr->translate($string);
+  //   } else {
+  //     $dict[$contextInner][$string] = '';
+  //   }
+
+  //   @file_put_contents($dictFilename, json_encode($dict, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+  // }
+
 }

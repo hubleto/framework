@@ -105,7 +105,7 @@ class App extends CoreClass
     $this->manifest['nameTranslated'] = $this->translate($this->manifest['name'], [], 'manifest');
     $this->manifest['highlightTranslated'] = $this->translate($this->manifest['highlight'], [], 'manifest');
 
-    $this->main->addTwigViewNamespace($this->srcFolder . '/Views', $this->viewNamespace);
+    $this->getRenderer()->addNamespace($this->srcFolder . '/Views', $this->viewNamespace);
   }
 
   public function onBeforeRender(): void
@@ -124,38 +124,6 @@ class App extends CoreClass
   public function getNotificationsCount(): int
   {
     return 0;
-  }
-
-  public static function getDictionaryFilename(string $language): string
-  {
-    if (strlen($language) == 2) {
-      $appClass = get_called_class();
-      $reflection = new \ReflectionClass(get_called_class());
-      $srcFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
-      return $srcFolder . '/Lang/' . $language . '.json';
-    } else {
-      return '';
-    }
-  }
-
-  /**
-  * @return array|array<string, array<string, string>>
-  */
-  public static function loadDictionary(string $language): array
-  {
-    $dict = [];
-    $dictFilename = static::getDictionaryFilename($language);
-    if (is_file($dictFilename)) {
-      $dict = (array) @json_decode((string) file_get_contents($dictFilename), true);
-    }
-    return $dict;
-  }
-
-  /**
-  * @return array|array<string, array<string, string>>
-  */
-  public static function addToDictionary(string $language, string $contextInner, string $string): void
-  {
   }
 
   public function translate(string $string, array $vars = [], string $context = 'root'): string
