@@ -27,16 +27,16 @@ class Add extends \Hubleto\Framework\Controller {
       if ($dataKey == '') throw new \Exception("Unknown  model");
       if ($id == 0) throw new \Exception("Unknown id");
 
-      $tmpModel = $this->main->getModel($model);
+      $tmpModel = $this->getModel($model);
       $junctionData = $tmpModel->junctions[$junction] ?? null;
 
       if ($junctionData == null) {
         throw new \Exception("Junction {$junction} in {$model} not found");
       }
 
-      $junctionModel = $this->main->getModel($junctionData['junctionModel']);
+      $junctionModel = $this->getModel($junctionData['junctionModel']);
       $junctionOptionKeyColumn = $junctionModel->getColumns()[$junctionData['optionKeyColumn']]->toArray();
-      $junctionOptionKeyModel = $this->main->getModel($junctionOptionKeyColumn['model']);
+      $junctionOptionKeyModel = $this->getModel($junctionOptionKeyColumn['model']);
 
       $insertedId = $junctionOptionKeyModel->insertGetId([
         $dataKey => $this->getRouter()->urlParamAsString($dataKey)

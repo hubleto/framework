@@ -12,7 +12,7 @@ class Lookup extends \Hubleto\Framework\Controllers\ApiController {
 
     $model = $this->getRouter()->urlParamAsString('model');
     // $this->permission = $model . ':Read';
-    $this->model = $this->main->getModel($model);
+    $this->model = $this->getModel($model);
   }
 
   public function response(): array

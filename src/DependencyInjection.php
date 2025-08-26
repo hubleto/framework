@@ -32,6 +32,8 @@ class DependencyInjection
 
   public static function create(\Hubleto\Framework\Loader $main, string $service, bool $noSingleton = false): mixed
   {
+    $service = str_replace("/", "\\", $service);
+
     $class = self::$serviceProviders[$service] ?? $service;
 
     if ($noSingleton) {

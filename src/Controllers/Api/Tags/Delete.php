@@ -21,16 +21,16 @@ class Delete extends \Hubleto\Framework\Controller {
       if ($junction == '') throw new \Exception("Unknown junction model");
       if ($id == 0) throw new \Exception("Unknown id");
 
-      $tmpModel = $this->main->getModel($model);
+      $tmpModel = $this->getModel($model);
       $junctionData = $tmpModel->junctions[$junction] ?? null;
 
       if ($junctionData == null) {
         throw new \Exception("Junction {$junction} in {$model} not found");
       }
 
-      $junctionModel = $this->main->getModel($junctionData['junctionModel']);
+      $junctionModel = $this->getModel($junctionData['junctionModel']);
       $junctionOptionKeyColumn = $junctionModel->getColumns()[$junctionData['optionKeyColumn']]->toArray();
-      $junctionOptionKeyModel = $this->main->getModel($junctionOptionKeyColumn['model']);
+      $junctionOptionKeyModel = $this->getModel($junctionOptionKeyColumn['model']);
 
       $junctionItemsToDelete = $junctionModel->record->where($junctionData['optionKeyColumn'], $id)
         ->get();

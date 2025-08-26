@@ -11,8 +11,6 @@ register_shutdown_function(function() {
 
 class Loader extends CoreClass
 {
-  const HUBLETO_MODE_FULL = 1;
-  const HUBLETO_MODE_LITE = 2;
 
   const RELATIVE_DICTIONARY_PATH = '../lang';
 
@@ -39,17 +37,13 @@ class Loader extends CoreClass
 
   public ?array $uploadedFiles = null;
 
-  public int $mode = 0;
-
-  public function __construct(array $config = [], int $mode = self::HUBLETO_MODE_FULL)
+  public function __construct(array $config = [])
   {
     parent::__construct($this);
 
     $this->setAsGlobal();
 
     // $this->params = $this->extractParamsFromRequest();
-
-    $this->mode = $mode;
 
     try {
 
@@ -58,11 +52,6 @@ class Loader extends CoreClass
       }
 
       $this->getConfig()->setConfig($config);
-
-      // create required services
-      $this->logger = $this->createLogger();
-      $this->translator = $this->createTranslator();
-      $this->locale = $this->createLocale();
 
       $this->createRenderer();
 
@@ -104,10 +93,8 @@ class Loader extends CoreClass
   {
 
     try {
-      if ($this->mode == self::HUBLETO_MODE_FULL) {
-        $this->initDatabaseConnections();
-        $this->getSessionManager()->start(true);
-      }
+      $this->initDatabaseConnections();
+      $this->getSessionManager()->start(true);
 
       $this->getConfig()->init();
       $this->getRouter()->init();
@@ -126,11 +113,6 @@ class Loader extends CoreClass
   public function isAjax(): bool
   {
     return isset($_REQUEST['__IS_AJAX__']) && $_REQUEST['__IS_AJAX__'] == "1";
-  }
-
-  public function isWindow(): bool
-  {
-    return isset($_REQUEST['__IS_WINDOW__']) && $_REQUEST['__IS_WINDOW__'] == "1";
   }
 
   public function initDatabaseConnections()
@@ -254,33 +236,11 @@ class Loader extends CoreClass
   }
 
   //////////////////////////////////////////////////////////////////////////////
-  // MODELS
-
-  public function getModelClassName($modelName): string
-  {
-    return str_replace("/", "\\", $modelName);
-  }
-
-  /**
-   * Returns the object of the model referenced by $modelName.
-   * The returned object is cached into modelObjects property.
-   *
-   * @param  string $modelName Reference of the model. E.g. 'Hubleto/Framework/Models/User'.
-   * @throws Exception If $modelName is not available.
-   * @return object Instantiated object of the model.
-   */
-  public function getModel(string $modelName): Model
-  {
-    $modelClassName = $this->getModelClassName($modelName);
-    return DependencyInjection::create($this, $modelClassName);
-  }
-
-  //////////////////////////////////////////////////////////////////////////////
   // TRANSLATIONS
 
   public function translate(string $string, array $vars = [], string $context = "Hubleto\Framework\Loader::root", $toLanguage = ""): string
   {
-    return $this->translator->translate($string, $vars, $context, $toLanguage);
+    return $this->getTranslator()->translate($string, $vars, $context, $toLanguage);
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -354,9 +314,9 @@ class Loader extends CoreClass
       $this->getRouter()->setRouteVars($params);
       $this->getRouter()->setRouteVars($routeVars);
 
-      foreach ($routeVars as $varName => $varValue) {
-        $this->params[$varName] = $varValue;
-      }
+      // foreach ($routeVars as $varName => $varValue) {
+      //   $this->params[$varName] = $varValue;
+      // }
 
       if ($this->getRouter()->isUrlParam('sign-out')) {
         $this->getAuth()->signOut();
@@ -453,7 +413,7 @@ class Loader extends CoreClass
           'user' => $this->getAuth()->getUser(),
           'config' => $this->getConfig()->get(),
           'routeUrl' => $this->route,
-          'routeParams' => $this->params,
+          'routeParams' => $this->getRouter()->getRouteVars(),
           'route' => $this->route,
           'session' => $this->getSessionManager()->get(),
           'controller' => $controllerObject,
@@ -560,7 +520,7 @@ class Loader extends CoreClass
   }
 
   public function renderWarning($message, $isHtml = true) {
-    if ($this->isAjax() && !$this->isWindow()) {
+    if ($this->isAjax()) {
       return json_encode([
         "status" => "warning",
         "message" => $message,
@@ -575,7 +535,7 @@ class Loader extends CoreClass
   }
 
   public function renderFatal($message, $isHtml = true) {
-    if ($this->isAjax() && !$this->isWindow()) {
+    if ($this->isAjax()) {
       return json_encode([
         "status" => "error",
         "message" => $message,
@@ -614,7 +574,7 @@ class Loader extends CoreClass
       . "</div>"
     ;
 
-    $this->logger->error("{$errorHash}\t{$errorMessage}");
+    $this->getLogger()->error("{$errorHash}\t{$errorMessage}");
 
     switch (get_class($exception)) {
       case 'Hubleto\Framework\Exceptions\DBException':
@@ -644,7 +604,7 @@ class Loader extends CoreClass
 
         if (!empty($initiatingModelName)) {
           $initiatingModel = $this->getModel($initiatingModelName);
-          $columns = $initiatingModel->columns;
+          $columns = $initiatingModel->getColumns();
           $indexes = $initiatingModel->indexes();
 
           preg_match("/Duplicate entry '(.*?)' for key '(.*?)'/", $dbError, $m);

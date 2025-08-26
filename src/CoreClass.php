@@ -139,4 +139,25 @@ class CoreClass
     return DependencyInjection::create($this->main, Config::class);
   }
 
+  public function getLogger(): Logger
+  {
+    return DependencyInjection::create($this->main, Logger::class);
+  }
+
+  public function getLocale(): Locale
+  {
+    return DependencyInjection::create($this->main, Locale::class);
+  }
+
+  public function getTranslator(): Interfaces\TranslatorInterface
+  {
+    return DependencyInjection::create($this->main, Translator::class);
+  }
+
+  public function getModel(string $modelName): Model
+  {
+    return DependencyInjection::create($this->main, $modelName);
+  }
+
+
 }

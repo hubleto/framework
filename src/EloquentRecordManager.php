@@ -70,8 +70,8 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     foreach ($this->model->getColumns() as $columnName => $column) {
       $colDefinition = $column->toArray();
       if ($colDefinition['type'] == 'lookup') {
-        $lookupModel = $this->main->getModel($colDefinition['model']);
-        $lookupConnection = $lookupModel->record->getConnectionName();
+        $lookupModel = $this->model->getModel($colDefinition['model']);
+        // $lookupConnection = $lookupModel->record->getConnectionName();
         $lookupDatabase = $lookupModel->record->getConnection()->getDatabaseName();
         $lookupTableName = $lookupModel->getFullTableSqlName();
         $joinAlias = 'join_' . $columnName;

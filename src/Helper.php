@@ -17,11 +17,10 @@ class Helper
    */
   public function deleteTags(
     array $recordTagsIds,
-    string $crossTagModelName,
+    mixed $mCrossTag,
     string $lookupColumnName,
     int $lookupId
   ): void {
-    $mCrossTag = $this->main->getModel($crossTagModelName);
     $existingTagsIds = $mCrossTag->record
       ->where($lookupColumnName, $lookupId)
       ->pluck("id")

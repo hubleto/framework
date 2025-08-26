@@ -116,7 +116,7 @@ class User extends \Hubleto\Framework\Model {
   }
 
   public function generateToken($idUser, $tokenSalt, $tokenType) {
-    $tokenModel = $this->main->getModel("Hubleto/Framework/Models/Token");
+    $tokenModel = $this->getModel("Hubleto/Framework/Models/Token");
     $token = $tokenModel->generateToken($tokenSalt, $tokenType);
 
     $this->record->updateRow([
@@ -135,7 +135,7 @@ class User extends \Hubleto\Framework\Model {
   }
 
   public function validateToken($token, $deleteAfterValidation = TRUE) {
-    $tokenModel = $this->main->getModel("Hubleto/Framework/Models/Token");
+    $tokenModel = $this->getModel("Hubleto/Framework/Models/Token");
     $tokenData = $tokenModel->validateToken($token);
 
     $userData = $this->record->where(

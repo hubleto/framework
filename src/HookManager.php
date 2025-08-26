@@ -39,7 +39,7 @@ class HookManager extends CoreClass implements Interfaces\HookManagerInterface
 
   public function log(string $msg): void
   {
-    $this->main->logger->info($msg);
+    $this->getLogger()->info($msg);
   }
 
   public function addHook(string $hookClass): void

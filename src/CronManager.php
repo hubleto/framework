@@ -33,7 +33,7 @@ class CronManager extends CoreClass implements Interfaces\CronManagerInterface
 
   public function log(string $msg): void
   {
-    $this->main->logger->info($msg);
+    $this->getLogger()->info($msg);
   }
 
   public function addCron(string $cronClass): void

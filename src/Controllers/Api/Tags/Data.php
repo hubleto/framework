@@ -24,14 +24,14 @@ class Data extends \Hubleto\Framework\Controller {
       if ($model == '') throw new \Exception("Unknown model");
       if ($junction == '') throw new \Exception("Unknown junction model");
 
-      $tmpModel = $this->main->getModel($model);
+      $tmpModel = $this->getModel($model);
 
       $junctionData = $tmpModel->junctions[$junction] ?? null;
       if ($junctionData == null) {
         throw new \Exception("Junction {$junction} in {$model} not found");
       }
 
-      $junctionModel = $this->main->getModel($junctionData['junctionModel']);
+      $junctionModel = $this->getModel($junctionData['junctionModel']);
 
       if ($id > 0) {
         $selected = $junctionModel->record->where($junctionData['masterKeyColumn'], $id)
@@ -40,7 +40,7 @@ class Data extends \Hubleto\Framework\Controller {
 
       $junctionOptionKeyColumn = $junctionModel->getColumns()[$junctionData['optionKeyColumn']]->toArray();
 
-      $junctionOptionKeyModel = $this->main->getModel($junctionOptionKeyColumn['model']);
+      $junctionOptionKeyModel = $this->getModel($junctionOptionKeyColumn['model']);
       $data = $junctionOptionKeyModel->all();
 
       return [

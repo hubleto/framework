@@ -362,7 +362,7 @@ class Model extends CoreClass
         !($columnDefinition['disableForeignKey'] ?? false)
         && 'lookup' == $columnDefinition['type']
       ) {
-        $lookupModel = $this->main->getModel($columnDefinition['model']);
+        $lookupModel = $this->getModel($columnDefinition['model']);
         $foreignKeyColumn = $columnDefinition['foreignKeyColumn'] ?? "id";
         $foreignKeyOnDelete = $columnDefinition['foreignKeyOnDelete'] ?? "RESTRICT";
         $foreignKeyOnUpdate = $columnDefinition['foreignKeyOnUpdate'] ?? "RESTRICT";

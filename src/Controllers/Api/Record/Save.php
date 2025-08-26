@@ -10,7 +10,7 @@ class Save extends \Hubleto\Framework\Controllers\ApiController {
     parent::__construct($main, $params);
     $model = $this->getRouter()->urlParamAsString('model');
     // $this->permission = $model . ':Create';
-    $this->model = $this->main->getModel($model);
+    $this->model = $this->getModel($model);
   }
 
   public function response(): array
@@ -21,7 +21,7 @@ class Save extends \Hubleto\Framework\Controllers\ApiController {
 
     if (empty($modelClass)) throw new \Exception("Master model is not specified.");
 
-    $model = $this->main->getModel($modelClass);
+    $model = $this->getModel($modelClass);
     if (!is_object($model)) throw new \Exception("Unable to create model {$model}.");
 
     $savedRecord = $this->model->record->recordSave(
