@@ -73,6 +73,7 @@ class Loader extends CoreClass
       $this->getRenderer()->init();
       $this->getAppManager()->init();
       $this->getHookManager()->init();
+      $this->getEmailProvider()->init();
 
     } catch (\Exception $e) {
       echo "Hubleto init failed: [".get_class($e)."] ".$e->getMessage() . "\n";

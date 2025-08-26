@@ -21,10 +21,6 @@ interface RouterInterface {
   public function routeVarAsFloat($varIndex): float;
   public function routeVarAsBool($varIndex): bool;
   public function redirectTo(string $url, int $code = 302): void;
-  public function createSignInController(): \Hubleto\Framework\Controller;
-  public function createNotFoundController(): \Hubleto\Framework\Controller;
-  public function createResetPasswordController(): \Hubleto\Framework\Controller;
-  public function createDesktopController(): \Hubleto\Framework\Controller;
   public function getUrlParams(): array;
   public function isUrlParam(string $paramName): bool;
   public function urlParamNotEmpty(string $paramName): bool;

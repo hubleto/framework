@@ -10,7 +10,10 @@ class Delete extends \Hubleto\Framework\Controller {
 
   public function renderJson(): ?array {
     try {
-      $fileFullPath = $this->getConfig()->getAsString('uploadFolder') . '/' . $this->main->getRouter()->urlParamAsString('fileFullPath');
+      $fileFullPath =
+        $this->getConfig()->getAsString('uploadFolder')
+        . '/' . $this->getRouter()->urlParamAsString('fileFullPath')
+      ;
 
       if (is_file($fileFullPath)) {
         if (!unlink($fileFullPath)) throw new \Exception("The deletion of the file encountered an error");

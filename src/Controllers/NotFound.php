@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Controllers;
 
-class NotFoundController extends \Hubleto\Framework\Controller
+class NotFound extends \Hubleto\Framework\Controller
 {
   public bool $requiresUserAuthentication = false;
   public bool $hideDefaultDesktop = true;

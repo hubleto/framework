@@ -27,10 +27,7 @@ class AppManager extends CoreClass implements Interfaces\AppManagerInterface
     foreach ($this->getInstalledAppNamespaces() as $appNamespace => $appConfig) {
       $appNamespace = (string) $appNamespace;
       $appClass = $appNamespace . '\\Loader';
-      if (
-        is_array($appConfig)
-        && $appClass::canBeAdded($this->main)
-      ) {
+      if (is_array($appConfig)) {
         try {
           if ($appConfig['enabled'] ?? false) {
             $this->enabledApps[$appNamespace] = $this->createAppInstance($appNamespace);

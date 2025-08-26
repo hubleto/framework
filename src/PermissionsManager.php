@@ -34,9 +34,9 @@ class PermissionsManager extends CoreClass implements Interfaces\PermissionsMana
     $this->permission = $permission;
   }
 
-  public function createUserRoleModel(): null|Model
+  public function createUserRoleModel(): Model
   {
-    return null; //new \HubletoApp\Community\Settings\Models\UserRole($this->main);
+    return $this->getService(\Hubleto\Framework\Models\UserRole::class);
   }
 
   public function DANGEROUS__grantAllPermissions(): void

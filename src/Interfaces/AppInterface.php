@@ -30,7 +30,6 @@ interface AppInterface
   /** @var array<int, array<\Hubleto\Framework\App, array>> */
   public array $settings { get; set; }
 
-  public static function canBeAdded(\Hubleto\Framework\Loader $main): bool;
   public function validateManifest();
   public function init(): void;
   public function onBeforeRender(): void;

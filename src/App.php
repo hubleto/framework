@@ -33,11 +33,6 @@ class App extends CoreClass
   private array $settings = [];
 
 
-  public static function canBeAdded(\Hubleto\Framework\Loader $main): bool
-  {
-    return true;
-  }
-
   public function __construct(public \Hubleto\Framework\Loader $main)
   {
     parent::__construct($main);
@@ -185,14 +180,7 @@ class App extends CoreClass
 
   public function installDefaultPermissions(): void
   {
-    $permissions = [
-      // 'Api/Table/Describe',
-      // 'Api/Form/Describe',
-      // 'Api/Record/Get',
-      // 'Api/Record/GetList',
-      // 'Api/Record/Lookup',
-      // 'Api/Record/Save',
-    ];
+    $permissions = [];
 
     $controllersFolder = $this->srcFolder . '/Controllers';
     if (is_dir($controllersFolder)) {
@@ -202,7 +190,7 @@ class App extends CoreClass
         $cClass = str_replace('/', '\\', $cClass);
         $cClass = str_replace('.php', '', $cClass);
         if (class_exists($cClass)) {
-          $cObj = new $cClass($this->main);
+          $cObj = $this->getService($cClass);
           $permissions[] = $cObj->permission;
         }
       }
@@ -238,7 +226,7 @@ class App extends CoreClass
 
     $controllerClasses = $this->getAvailableControllerClasses();
     foreach ($controllerClasses as $controllerClass) {
-      $cObj = new $controllerClass($this->main);
+      $cObj = $this->getService($controllerClass);
       foreach ($userRoles as $role) {
         $mRolePermission->grantPermissionByString($role['id'], $cObj->fullName);
       }

@@ -192,41 +192,6 @@ class Router extends CoreClass implements Interfaces\RouterInterface {
     exit;
   }
 
-  public function createSignInController(): \Hubleto\Framework\Controller
-  {
-    $controller = new \Hubleto\Framework\Controller($this->main);
-    $controller->requiresUserAuthentication = FALSE;
-    $controller->hideDefaultDesktop = TRUE;
-    $controller->translationContext = 'HubletoMain\\Loader::Controllers\\SignIn';
-
-    $controller->setView('@app/SignIn.twig', ['status' => $_GET['incorrectLogin'] ?? '' == "1"]);
-    return $controller;
-  }
-
-  public function createNotFoundController(): \Hubleto\Framework\Controller
-  {
-    return $this->getService(\Hubleto\Framework\Controllers\NotFoundController::class);
-    $controller = new \Hubleto\Framework\Controller($this->main);
-    $controller->requiresUserAuthentication = FALSE;
-    $controller->hideDefaultDesktop = TRUE;
-    $controller->translationContext = 'HubletoMain\\Loader::Controllers\\NotFound';
-    $controller->setView('@app/NotFound.twig');
-    return $controller;
-  }
-
-  public function createResetPasswordController(): \Hubleto\Framework\Controller
-  {
-    return $this->getService(\Hubleto\Framework\Controller::class);
-  }
-
-  public function createDesktopController(): \Hubleto\Framework\Controller
-  {
-    return $this->getService(\Hubleto\Framework\Controllers\DesktopController::class);
-  }
-
-
-
-
 
   public function getUrlParams(): array
   {

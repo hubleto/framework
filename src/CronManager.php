@@ -39,7 +39,7 @@ class CronManager extends CoreClass implements Interfaces\CronManagerInterface
   public function addCron(string $cronClass): void
   {
     if (is_subclass_of($cronClass, \HubletoMain\Cron::class)) {
-      $this->enabledCrons[$cronClass] = new $cronClass($this->main);
+      $this->enabledCrons[$cronClass] = $this->getService($cronClass);
     }
   }
 

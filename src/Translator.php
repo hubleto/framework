@@ -27,17 +27,6 @@ class Translator extends CoreClass implements Interfaces\TranslatorInterface
   }
 
   /**
-   * [Description for getAppManager]
-   *
-   * @return AppManagerInterface
-   * 
-   */
-  public function getAppManager(): AppManagerInterface
-  {
-    return $this->main->getAppManager();
-  }
-
-  /**
   * @return array|array<string, array<string, string>>
   */
   public function loadDictionaryFromJsonFile(string $jsonFile): array

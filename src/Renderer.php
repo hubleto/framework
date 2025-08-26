@@ -74,6 +74,11 @@ class Renderer extends CoreClass
 
   }
 
+  public function getTwig(): \Twig\Environment
+  {
+    return $this->twig;
+  }
+
   /**
    * Adds namespace for Twig renderer
    *
@@ -141,11 +146,11 @@ class Renderer extends CoreClass
 
       // Check if controller exists and if it can be used
       if (empty($controllerClassName)) {
-        $controllerClassName = Controllers\NotFoundController::class;
+        $controllerClassName = Controllers\NotFound::class;
       };
       
       // Create the object for the controller
-      $controllerObject = DependencyInjection::create($this->main, $controllerClassName);
+      $controllerObject = $this->getService($controllerClassName);
 
       // authenticate user, if any
       $this->getAuth()->auth();
@@ -170,7 +175,7 @@ class Renderer extends CoreClass
 
       if ($controllerObject->requiresUserAuthentication) {
         if (!$this->getAuth()->isUserInSession()) {
-          $controllerObject = $this->getRouter()->createSignInController();
+          $controllerObject = $this->getService(Controllers\SignIn::class);
           $permissionManager->setPermission($controllerObject->permission);
         }
       }
@@ -243,7 +248,7 @@ class Renderer extends CoreClass
 
         // ... But in most cases it will be "encapsulated" in the desktop.
         } else {
-          $desktopControllerObject = $this->getRouter()->createDesktopController();
+          $desktopControllerObject = $this->getService(Controllers\Desktop::class);
           $desktopControllerObject->prepareView();
 
           if (!empty($desktopControllerObject->getView())) {

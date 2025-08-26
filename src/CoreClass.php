@@ -118,6 +118,17 @@ class CoreClass
   }
 
   /**
+   * [Description for getEmailProvider]
+   *
+   * @return EmailProvider
+   * 
+   */
+  public function getEmailProvider(): EmailProvider
+  {
+    return $this->getService(EmailProvider::class);
+  }
+
+  /**
    * [Description for getConfig]
    *
    * @return Config

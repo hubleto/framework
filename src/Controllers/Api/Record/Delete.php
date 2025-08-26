@@ -38,7 +38,7 @@ class Delete extends \Hubleto\Framework\Controllers\ApiController {
         $this->model->onAfterDelete((int) $id);
       } catch (\Throwable $e) {
         $error = $e->getMessage();
-        $errorHtml = $this->main->renderExceptionHtml($e, [$this->model]);
+        $errorHtml = $this->getRenderer()->renderExceptionHtml($e, [$this->model]);
       }
 
       $return = [

@@ -53,9 +53,7 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
 
   public function auth(): void
   {
-    // $this->main->logger->info('Keycloak: auth()');
     $accessToken = $this->getAccessToken();
-    // $this->main->logger->info('Keycloak: accessToken length = ' . strlen($accessToken));
 
     if ($accessToken && $accessToken->hasExpired()) {
       try {

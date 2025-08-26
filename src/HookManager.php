@@ -45,7 +45,7 @@ class HookManager extends CoreClass implements Interfaces\HookManagerInterface
   public function addHook(string $hookClass): void
   {
     if (is_subclass_of($hookClass, \HubletoMain\Hook::class)) {
-      $this->enabledHooks[$hookClass] = new $hookClass($this->main);
+      $this->enabledHooks[$hookClass] = $this->getService($hookClass);
     }
   }
 

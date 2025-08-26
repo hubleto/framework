@@ -62,17 +62,11 @@ class Controller extends CoreClass {
 
   public int $returnType = self::RETURN_TYPE_VIEW;
 
-  public object $renderer;
-
   function __construct(public Loader $main, array $params = [])
   {
     $reflection = new \ReflectionClass($this);
 
     $this->name = str_replace("\\", "/", str_replace("Hubleto\\Framework\\", "", get_class($this)));
-
-    if (isset($this->main->twig)) {
-      $this->renderer = $this->main->twig;
-    }
 
     $this->fullName = str_replace("\\", "/", $reflection->getName());
 
@@ -87,7 +81,7 @@ class Controller extends CoreClass {
   }
 
   /**
-    * Validates inputs ($this->main->params) used for the TWIG template.
+    * Validates inputs used for the TWIG template.
     *
     * return bool True if inputs are valid, otherwise false.
     */
@@ -158,19 +152,14 @@ class Controller extends CoreClass {
 
   public function prepareView(): void
   {
-    $this->main->translationContext = $this->translationContext;
+    $this->translationContext = $this->translationContext;
     $this->viewParams = $this->getRouter()->getUrlParams();
-    $this->viewParams['main'] = $this->main;
+    $this->viewParams['main'] = $this;
   }
   
   public function setView(string $view): void
   {
     $this->view = $view;
-  }
-
-  public function setRenderer(Object $renderer): void
-  {
-    $this->renderer = $renderer;
   }
 
   public function getView(): string
@@ -183,10 +172,10 @@ class Controller extends CoreClass {
     return $this->viewParams;
   }
 
-  public function render(array $params): string
-  {
-    return '';
-  }
+  // public function render(array $params): string
+  // {
+  //   return '';
+  // }
 
 }
 

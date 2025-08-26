@@ -2,12 +2,9 @@
 
 namespace Hubleto\Framework\Auth;
 
-use Hubleto\Framework\Router;
-use Hubleto\Framework\Config;
-
 class DefaultProvider extends \Hubleto\Framework\CoreClass implements \Hubleto\Framework\Interfaces\AuthInterface
 {
-  public array $user { get => $this->user; set (array $user) { $this->user = $user; } }
+  // public array $user { get => $this->user; set (array $user) { $this->user = $user; } }
 
   public \Hubleto\Framework\Loader $main;
 
@@ -16,39 +13,13 @@ class DefaultProvider extends \Hubleto\Framework\CoreClass implements \Hubleto\F
   public $activeAttribute = 'is_active';
   public $verifyMethod = 'password_verify';
 
-  function __construct(\Hubleto\Framework\Loader $main)
-  {
-    $this->main = $main;
-    $this->user = [];
-  }
+  public array $user = [];
 
   public function init(): void
   {
     $userLanguage = $this->getUserLanguage();
     if (empty($userLanguage)) $userLanguage = 'en';
     $this->getConfig()->set('language', $userLanguage);
-  }
-
-  /**
-   * [Description for getRouter]
-   *
-   * @return Router
-   * 
-   */
-  public function getRouter(): Router
-  {
-    return $this->main->getRouter();
-  }
-
-  /**
-   * [Description for getConfig]
-   *
-   * @return Config
-   * 
-   */
-  public function getConfig(): Config
-  {
-    return $this->main->getConfig();
   }
 
   public function getUserFromSession(): array
