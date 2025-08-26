@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class AuthProvider extends CoreClass implements Interfaces\AuthInterface
+class AuthProvider extends Core implements Interfaces\AuthInterface
 {
 
   public $loginAttribute = 'login';
@@ -69,7 +69,7 @@ class AuthProvider extends CoreClass implements Interfaces\AuthInterface
 
   public function createUserModel(): Model
   {
-    return $this->getService(Models\User::class);
+    return $this->getModel(Models\User::class);
   }
 
   public function findUsersByLogin(string $login): array

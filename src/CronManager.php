@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class CronManager extends CoreClass implements Interfaces\CronManagerInterface
+class CronManager extends Core implements Interfaces\CronManagerInterface
 {
 
   /** @var array<\HubletoMain\Cron> */

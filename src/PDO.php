@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class PDO extends CoreClass
+class PDO extends Core
 {
   public ?\PDO $connection = null;
   public bool $isConnected = false;

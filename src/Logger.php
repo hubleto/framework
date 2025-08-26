@@ -7,7 +7,7 @@ use Monolog\Handler\RotatingFileHandler;
 /**
  * Debugger console.
  */
-class Logger extends CoreClass {
+class Logger extends Core {
 
   public array $loggers = [];
 

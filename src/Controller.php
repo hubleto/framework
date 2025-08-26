@@ -9,7 +9,7 @@ namespace Hubleto\Framework;
  * be rendered using Twig template or using custom render() method.
  * 
  */
-class Controller extends CoreClass {
+class Controller extends Core {
 
   const RETURN_TYPE_VIEW = 0;
   const RETURN_TYPE_JSON = 1;

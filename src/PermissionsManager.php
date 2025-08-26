@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class PermissionsManager extends CoreClass implements Interfaces\PermissionsManagerInterface
+class PermissionsManager extends Core implements Interfaces\PermissionsManagerInterface
 {
 
   protected bool $grantAllPermissions = false;
@@ -32,7 +32,12 @@ class PermissionsManager extends CoreClass implements Interfaces\PermissionsMana
 
   public function createUserRoleModel(): Model
   {
-    return $this->getService(\Hubleto\Framework\Models\UserRole::class);
+    return $this->getModel(\Hubleto\Framework\Models\UserRole::class);
+  }
+
+  public function createRolePermissionModel(): Model
+  {
+    return $this->getModel(\Hubleto\Framework\Models\RolePermission::class);
   }
 
   public function DANGEROUS__grantAllPermissions(): void

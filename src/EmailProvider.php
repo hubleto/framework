@@ -6,7 +6,7 @@ use Hubleto\Framework\Exceptions\GeneralException;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-class EmailProvider extends CoreClass implements Interfaces\EmailProviderInterface
+class EmailProvider extends Core implements Interfaces\EmailProviderInterface
 {
 
   private string $defaultEmailTemplate = "@hubleto-main/layouts/Email.twig";

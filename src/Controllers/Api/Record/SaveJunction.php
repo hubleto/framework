@@ -13,7 +13,7 @@ class SaveJunction extends \Hubleto\Framework\Controllers\ApiController
     $junctionSourceRecordId = $this->getRouter()->urlParamAsInteger('junctionSourceRecordId');
     $junctionDestinationRecordId = $this->getRouter()->urlParamAsInteger('junctionDestinationRecordId');
 
-    $jModel = $this->getService($junctionModel);
+    $jModel = $this->getModel($junctionModel);
 
     $tmp = $jModel
       ->record

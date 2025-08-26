@@ -4,31 +4,31 @@ namespace Hubleto\Framework\Interfaces;
 
 interface AppInterface
 {
-  public const DEFAULT_INSTALLATION_CONFIG = [
-    'sidebarOrder' => 500,
-  ];
+  // public const DEFAULT_INSTALLATION_CONFIG = [
+  //   'sidebarOrder' => 500,
+  // ];
 
-  public const APP_TYPE_COMMUNITY = 'community';
-  public const APP_TYPE_PREMIUM = 'premium';
-  public const APP_TYPE_EXTERNAL = 'external';
+  // public const APP_TYPE_COMMUNITY = 'community';
+  // public const APP_TYPE_PREMIUM = 'premium';
+  // public const APP_TYPE_EXTERNAL = 'external';
 
-  public array $manifest { get; set; }
+  // public array $manifest { get; set; }
 
-  public bool $enabled { get; set; }
-  public bool $canBeDisabled { get; set; }
+  // public bool $enabled { get; set; }
+  // public bool $canBeDisabled { get; set; }
 
-  public bool $permittedForAllUsers { get; set; }
+  // public bool $permittedForAllUsers { get; set; }
 
-  public string $srcFolder { get; set; }
-  public string $viewNamespace { get; set; }
-  public string $namespace { get; set; }
-  public string $fullName { get; set; }
+  // public string $srcFolder { get; set; }
+  // public string $viewNamespace { get; set; }
+  // public string $namespace { get; set; }
+  // public string $fullName { get; set; }
 
-  public bool $isActivated { get; set; }
-  public bool $hasCustomSettings { get; set; }
+  // public bool $isActivated { get; set; }
+  // public bool $hasCustomSettings { get; set; }
 
-  /** @var array<int, array<\Hubleto\Framework\App, array>> */
-  public array $settings { get; set; }
+  // /** @var array<int, array<\Hubleto\Framework\App, array>> */
+  // public array $settings { get; set; }
 
   public function validateManifest();
   public function init(): void;
@@ -61,5 +61,8 @@ interface AppInterface
   public function setConfigAsBool(string $path, bool $value = false): void;
   public function setConfigAsArray(string $path, array $value = []): void;
   public function dangerouslyInjectDesktopHtmlContent(string $where): string;
+  public function collectExtendibles(string $extendibleName): array;
+  public function addSearchSwitch(string $switch, string $name): void;
+  public function canHandleSearchSwith(string $switch): bool;
 
 }

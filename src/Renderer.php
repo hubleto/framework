@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class Renderer extends CoreClass
+class Renderer extends Core
 {
 
   public \Twig\Loader\FilesystemLoader $twigLoader;

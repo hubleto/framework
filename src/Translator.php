@@ -4,7 +4,7 @@ namespace Hubleto\Framework;
 
 use Hubleto\Framework\Interfaces\AppManagerInterface;
 
-class Translator extends CoreClass implements Interfaces\TranslatorInterface
+class Translator extends Core implements Interfaces\TranslatorInterface
 {
 
   public string $context = '';

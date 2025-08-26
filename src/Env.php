@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class Env extends CoreClass
+class Env extends Core
 {
 
   public string $projectFolder = '';

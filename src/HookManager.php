@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class HookManager extends CoreClass implements Interfaces\HookManagerInterface
+class HookManager extends Core implements Interfaces\HookManagerInterface
 {
   /** @var array<\HubletoMain\Hook> */
   protected array $enabledHooks = [];

@@ -9,7 +9,7 @@ register_shutdown_function(function() {
   }
 });
 
-class Loader extends CoreClass
+class Loader extends Core
 {
 
   const RELATIVE_DICTIONARY_PATH = '../lang';

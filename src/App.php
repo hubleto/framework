@@ -4,7 +4,7 @@ namespace Hubleto\Framework;
 
 use Hubleto\Framework\Interfaces\AppManagerInterface;
 
-class App extends CoreClass
+class App extends Core implements Interfaces\AppInterface
 {
   public const DEFAULT_INSTALLATION_CONFIG = [
     'sidebarOrder' => 500,
@@ -32,6 +32,7 @@ class App extends CoreClass
   /** @var array<int, array<\Hubleto\Framework\App, array>> */
   private array $settings = [];
 
+  public array $searchSwitches = [];
 
   public function __construct()
   {
@@ -196,7 +197,7 @@ class App extends CoreClass
       }
     }
 
-    $mPermission = $this->getService(\HubletoApp\Community\Settings\Models\Permission::class);
+    $mPermission = $this->getModel(\HubletoApp\Community\Settings\Models\Permission::class);
 
     foreach ($permissions as $permission) {
       $mPermission->record->recordCreate([
@@ -207,8 +208,12 @@ class App extends CoreClass
 
   public function assignPermissionsToRoles(): void
   {
-    $mUserRole = $this->getService(\HubletoApp\Community\Settings\Models\UserRole::class);
-    $mRolePermission = $this->getService(\HubletoApp\Community\Settings\Models\RolePermission::class);
+
+    /** @var \Hubleto\Framework\Models\UserRole */
+    $mUserRole = $this->getPermissionsManager()->createUserRoleModel();
+
+    /** @var \Hubleto\Framework\Models\RolePermission */
+    $mRolePermission = $this->getPermissionsManager()->createRolePermissionModel();
 
     $userRoles = $mUserRole->record->get()->toArray();
     foreach ($userRoles as $role) {
@@ -345,6 +350,34 @@ class App extends CoreClass
   public function dangerouslyInjectDesktopHtmlContent(string $where): string
   {
     return '';
+  }
+
+  public function addSearchSwitch(string $switch, string $name): void
+  {
+    $this->searchSwitches[$switch] = $name;
+  }
+
+  public function canHandleSearchSwith(string $switch): bool
+  {
+    return isset($this->searchSwitches[$switch]);
+  }
+
+  public function collectExtendibles(string $extendibleName): array
+  {
+    $items = [];
+    foreach ($this->getAppManager()->getEnabledApps() as $app) {
+      try {
+        $extendible = $this->getService($app->namespace . '\\Extendibles\\' . $extendibleName);
+        $extendible->app = $app;
+        if ($extendible instanceof Extendible) {
+          $items = array_merge($items, $extendible->getItems());
+        }
+      } catch (\Throwable $e) {
+        // do nothing
+      }
+    }
+
+    return $items;
   }
 
 }

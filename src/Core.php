@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class CoreClass
+class Core
 {
 
   public string $translationContext = '';
@@ -11,7 +11,7 @@ class CoreClass
   {
   }
 
-    /**
+  /**
    * [Description for getService]
    *
    * @param string $service
@@ -167,9 +167,9 @@ class CoreClass
     return $translator;
   }
 
-  public function getModel(string $modelName): Model
+  public function getModel(string $model): Models\Model
   {
-    return $this->getService($modelName);
+    return $this->getService($model);
   }
 
 

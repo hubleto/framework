@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class SessionManager extends CoreClass implements Interfaces\SessionManagerInterface
+class SessionManager extends Core implements Interfaces\SessionManagerInterface
 {
 
   private string $salt = '';

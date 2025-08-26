@@ -11,7 +11,7 @@ use Hubleto\Framework\Db\Column\Varchar;
  *
  * @package DefaultModels
  */
-class Token extends \Hubleto\Framework\Model {
+class Token extends Model {
 
   public string $table = "tokens";
   public ?string $lookupSqlValue = "{%TABLE%}.token";
@@ -68,7 +68,7 @@ class Token extends \Hubleto\Framework\Model {
       throw new \Hubleto\Framework\Exceptions\GeneralException("Token validity can not be in the past.");
     }
 
-    $tokenId = $this->insertRow([
+    $tokenId = $this->record->insertRow([
       "type" => $tokenType,
       "valid_to" => $validTo,
       "token" => $token,
@@ -78,13 +78,13 @@ class Token extends \Hubleto\Framework\Model {
   }
 
   public function validateToken($token) {
-    $tokenQuery = $this->getQuery('*');
+    $tokenQuery = $this->record->getQuery('*');
     $tokenQuery
       ->where("token", "=", $token)
       ->whereDate("valid_to", ">=", date("Y-m-d H:i:s"))
     ;
 
-    $tokenData = reset($this->fetchRows($tokenQuery));
+    $tokenData = reset($this->record->fetchRows($tokenQuery));
 
     if (!is_array($tokenData)) {
       throw new \Hubleto\Framework\Exceptions\InvalidToken($token);
@@ -94,6 +94,6 @@ class Token extends \Hubleto\Framework\Model {
   }
 
   public function deleteToken($tokenId) {
-    $this->where('id', $tokenId)->delete();
+    $this->record->where('id', $tokenId)->delete();
   }
 }

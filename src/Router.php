@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class Router extends CoreClass implements Interfaces\RouterInterface {
+class Router extends Core implements Interfaces\RouterInterface {
   const HTTP_GET = 'HTTP_GET';
 
   public $routing = [];

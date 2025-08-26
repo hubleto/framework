@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class Locale extends CoreClass
+class Locale extends Core
 {
 
   private array $locale = [];

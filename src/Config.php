@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class Config extends CoreClass
+class Config extends Core
 {
   protected array $configData = [];
 

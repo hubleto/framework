@@ -8,7 +8,7 @@ use ReflectionClass;
 /**
  * Core implementation of model.
  */
-class Model extends CoreClass
+class Model extends Core
 {
   const HAS_ONE = 'hasOne';
   const HAS_MANY = 'hasMany';
@@ -253,48 +253,6 @@ class Model extends CoreClass
       return FALSE;
     }
   }
-
-  // public function hasAvailableUpgrades(): bool
-  // {
-  //   $currentVersion = $this->getCurrentInstalledVersion();
-  //   $lastVersion = $this->getLastAvailableVersion();
-  //   return ($lastVersion > $currentVersion);
-  // }
-
-  /**
-   * Installs all upgrades of the model. Internaly stores current version and
-   * compares it to list of available upgrades.
-   *
-   * @return void
-   * @throws DBException When an error occured during the upgrade.
-   */
-  // public function installUpgrades(): void
-  // {
-  //   if ($this->hasAvailableUpgrades()) {
-  //     $currentVersion = (int)$this->getCurrentInstalledVersion();
-  //     $lastVersion = $this->getLastAvailableVersion();
-
-  //     try {
-  //       $this->getPdo()->startTransaction();
-
-  //       $upgrades = $this->upgrades();
-
-  //       for ($v = $currentVersion + 1; $v <= $lastVersion; $v++) {
-  //         if (is_array($upgrades[$v])) {
-  //           foreach ($upgrades[$v] as $query) {
-  //             $this->getPdo()->execute($query);
-  //           }
-  //         }
-  //       }
-
-  //       $this->getPdo()->commit();
-  //       $this->saveConfig('installed-version', $lastVersion);
-  //     } catch (DBException $e) {
-  //       $this->getPdo()->rollback();
-  //       throw new DBException($e->getMessage());
-  //     }
-  //   }
-  // }
 
   public function dropTableIfExists(): Model
   {
