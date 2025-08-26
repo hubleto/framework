@@ -7,12 +7,23 @@ use Hubleto\Framework\Interfaces\AppManagerInterface;
 class Translator extends CoreClass implements Interfaces\TranslatorInterface
 {
 
+  public string $context = '';
   public string $dictionaryFilename = "Core-Loader";
   public array $dictionary = [];
 
   public function __construct(public \Hubleto\Framework\Loader $main)
   {
     $this->dictionary = [];
+  }
+
+  public function getContext(): string
+  {
+    return $this->context;
+  }
+
+  public function setContext(string $context): void
+  {
+    $this->context = $context;
   }
 
   /**
@@ -123,16 +134,17 @@ class Translator extends CoreClass implements Interfaces\TranslatorInterface
   /**
   * @param array<string, string> $vars
   */
-  public function translate(string $string, array $vars = [], string $context = "Hubleto\\Framework\\Loader::root", string $toLanguage = ""): string
+  public function translate(string $string, array $vars = []): string
   {
     if (empty($toLanguage)) {
       $toLanguage = $this->main->getLanguage();
     }
-    if (strpos($context, '::')) {
-      list($contextClass, $contextInner) = explode('::', $context);
+
+    if (strpos($this->context, '::')) {
+      list($contextClass, $contextInner) = explode('::', $this->context);
     } else {
       $contextClass = '';
-      $contextInner = $context;
+      $contextInner = $this->context;
     }
 
     if ($toLanguage == 'en') {
@@ -151,7 +163,7 @@ class Translator extends CoreClass implements Interfaces\TranslatorInterface
       }
 
       if (empty($translated)) {
-        $translated = 'translate(' . $context . '; ' . $string . ')';
+        $translated = 'translate(' . $this->context . '; ' . $string . ')';
       }
     }
 

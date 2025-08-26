@@ -26,8 +26,6 @@ class App extends CoreClass
   public string $namespace = '';
   public string $fullName = '';
 
-  public string $translationContext = '';
-
   public bool $isActivated = false;
   public bool $hasCustomSettings = false;
 
@@ -158,30 +156,11 @@ class App extends CoreClass
   */
   public static function addToDictionary(string $language, string $contextInner, string $string): void
   {
-    // $dictFilename = static::getDictionaryFilename($language);
-
-    // $dict = static::loadDictionary($language);
-
-    // $main = \Hubleto\Framework\Loader::getGlobalApp();
-
-    // if (!empty($dict[$contextInner][$string])) return;
-
-    // if ($getConfig()->getAsBool('autoTranslate')) {
-    //   /** @disregard P1009 */
-    //   $tr = new \Stichoza\GoogleTranslate\GoogleTranslate();
-    //   $tr->setSource('en'); // Translate from
-    //   $tr->setTarget($language); // Translate to
-    //   $dict[$contextInner][$string] = $tr->translate($string);
-    // } else {
-    //   $dict[$contextInner][$string] = '';
-    // }
-
-    // @file_put_contents($dictFilename, json_encode($dict, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
   }
 
   public function translate(string $string, array $vars = [], string $context = 'root'): string
   {
-    return $this->main->translate($string, $vars, $this->fullName . '::' . $context);
+    return $this->getTranslator()->translate($string, $vars, $this->fullName . '::' . $context);
   }
 
   public function installTables(int $round): void

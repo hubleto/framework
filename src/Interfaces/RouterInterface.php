@@ -5,9 +5,14 @@ namespace Hubleto\Framework\Interfaces;
 interface RouterInterface {
 
   public function init(): void;
+  public function isAjax(): bool;
+  public function extractParamsFromRequest(): array;
+  public function extractRouteFromRequest(): string;
   public function httpGet(array $routes);
   public function getRoutes(string $method): array;
   public function parseRoute(string $method, string $route): array;
+  public function getRoute(): string;
+  public function setRoute(string $route): void;
   public function setRouteVars(array $routeVars): void;
   public function getRouteVars(): array;
   public function getRouteVar($index): string;

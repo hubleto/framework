@@ -6,6 +6,8 @@ class CoreClass
 {
   public Loader $main;
 
+  public string $translationContext = '';
+
   public function __construct(Loader $main)
   {
     $this->main = $main;
@@ -136,9 +138,16 @@ class CoreClass
     return $this->getService(Locale::class);
   }
 
+  public function getRenderer(): Renderer
+  {
+    return $this->getService(Renderer::class);
+  }
+
   public function getTranslator(): Interfaces\TranslatorInterface
   {
-    return $this->getService(Translator::class);
+    $translator = $this->getService(Translator::class);
+    $translator->setContext($this->translationContext);
+    return $translator;
   }
 
   public function getModel(string $modelName): Model
@@ -146,5 +155,21 @@ class CoreClass
     return $this->getService($modelName);
   }
 
+
+
+
+
+  /**
+   * Shorthand for core translate() function. Uses own language dictionary.
+   *
+   * @param  string $string String to be translated
+   * @param  string $context Context where the string is used
+   * @param  string $toLanguage Output language
+   * @return string Translated string.
+   */
+  public function translate(string $string, array $vars = []): string
+  {
+    return $this->getTranslator()->translate($string, $vars);
+  }
 
 }

@@ -10,6 +10,8 @@ class PermissionsManager extends CoreClass implements Interfaces\PermissionsMana
   public array $administratorRoles = [];
   public array $administratorTypes = [];
 
+  protected string $permission = '';
+
   public function __construct(public \Hubleto\Framework\Loader $main)
   {
   }
@@ -20,6 +22,16 @@ class PermissionsManager extends CoreClass implements Interfaces\PermissionsMana
     $this->expandPermissionGroups();
     $this->administratorRoles = $this->loadAdministratorRoles();
     $this->administratorTypes = $this->loadAdministratorTypes();
+  }
+
+  public function getPermission(): string
+  {
+    return $this->permission;
+  }
+
+  public function setPermission(string $permission): void
+  {
+    $this->permission = $permission;
   }
 
   public function createUserRoleModel(): null|Model
@@ -79,6 +91,7 @@ class PermissionsManager extends CoreClass implements Interfaces\PermissionsMana
     if (is_string($role)) {
       $userRoleModel = $this->createUserRoleModel();
       if ($userRoleModel) {
+        /** @disregard P1012 */
         $idUserRoleByRoleName = array_flip($userRoleModel::USER_ROLES);
         $idRole = (int) $idUserRoleByRoleName[$role];
       } else {
@@ -133,6 +146,11 @@ class PermissionsManager extends CoreClass implements Interfaces\PermissionsMana
       return $granted;
     }
 
+  }
+
+  public function checkPermission(): void
+  {
+    $this->check($this->permission);
   }
 
   public function check(string $permission): void

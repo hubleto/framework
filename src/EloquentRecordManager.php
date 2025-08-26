@@ -490,12 +490,12 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
         $column->getRequired()
         && (!isset($record[$colName]) || $record[$colName] === null || $record[$colName] === '')
       ) {
-        $invalidInputs[] = $this->main->translate(
+        $invalidInputs[] = $this->translate(
           $this->model->shortName . ".{{ colTitle }} is required.",
           ['colTitle' => $column->getTitle()]
         );
       } else if (isset($record[$colName]) && !$column->validate($record[$colName])) {
-        $invalidInputs[] = $this->main->translate(
+        $invalidInputs[] = $this->translate(
           "`{{ colTitle }}` contains invalid value.",
           ['colTitle' => $column->getTitle()]
         );

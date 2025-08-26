@@ -40,8 +40,6 @@ class Model extends CoreClass
    */
   public bool $isJunctionTable = FALSE;
 
-  public string $translationContext = '';
-
   public string $sqlEngine = 'InnoDB';
 
   public string $table = '';
@@ -140,45 +138,6 @@ class Model extends CoreClass
   {
     return $this->getConfig()->getAsArray($this->getConfigFullPath($configName));
   }
-
-
-  /**
-   * Shorthand for core translate() function. Uses own language dictionary.
-   *
-   * @param string $string String to be translated
-   * @param string $context Context where the string is used
-   * @param string $toLanguage Output language
-   * @return string Translated string.
-   */
-  public function translate(string $string, array $vars = []): string
-  {
-    return $this->main->translate($string, $vars, $this->translationContext);
-  }
-
-  // /**
-  //  * Checks whether model is installed.
-  //  *
-  //  * @return bool TRUE if model is installed, otherwise FALSE.
-  //  */
-  // public function isInstalled(): bool
-  // {
-  //   return $this->getConfig('installed-version') != "";
-  // }
-
-  // /**
-  //  * Gets the current installed version of the model. Used during installing upgrades.
-  //  *
-  //  * @return void
-  //  */
-  // private function getCurrentInstalledVersion(): int
-  // {
-  //   return (int)($this->getConfig('installed-version') ?? 0);
-  // }
-
-  // private function getLastAvailableVersion(): int
-  // {
-  //   return max(array_keys($this->upgrades()));
-  // }
 
   /**
    * Returns list of available upgrades. This method must be overriden by each model.

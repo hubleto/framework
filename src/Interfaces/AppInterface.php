@@ -24,8 +24,6 @@ interface AppInterface
   public string $namespace { get; set; }
   public string $fullName { get; set; }
 
-  public string $translationContext { get; set; }
-
   public bool $isActivated { get; set; }
   public bool $hasCustomSettings { get; set; }
 

@@ -7,6 +7,7 @@ class Router extends CoreClass implements Interfaces\RouterInterface {
 
   public $routing = [];
 
+  protected string $route = '';
   protected array $routesHttpGet = [];
   protected array $routeVars = [];
   
@@ -29,6 +30,46 @@ class Router extends CoreClass implements Interfaces\RouterInterface {
   {
   }
 
+  public function extractParamsFromRequest(): array
+  {
+    $route = '';
+    $params = [];
+
+    if (php_sapi_name() === 'cli') {
+      $params = @json_decode($_SERVER['argv'][2] ?? "", true);
+      if (!is_array($params)) { // toto nastane v pripade, ked $_SERVER['argv'] nie je JSON string
+        $params = $_SERVER['argv'];
+      }
+      $route = $_SERVER['argv'][1] ?? "";
+    } else {
+      $params = Helper::arrayMergeRecursively(
+        array_merge($_GET, $_POST),
+        json_decode(file_get_contents("php://input"), true) ?? []
+      );
+      unset($params['route']);
+    }
+
+    return $params;
+  }
+
+  public function extractRouteFromRequest(): string
+  {
+    $route = '';
+
+    if (php_sapi_name() === 'cli') {
+      $route = $_SERVER['argv'][1] ?? "";
+    } else {
+      $route = $_REQUEST['route'] ?? '';
+    }
+
+    return $route;
+  }
+
+  public function isAjax(): bool
+  {
+    return isset($_REQUEST['__IS_AJAX__']) && $_REQUEST['__IS_AJAX__'] == "1";
+  }
+
   // configure routes for HTTP GET
   public function httpGet(array $routes)
   {
@@ -41,6 +82,16 @@ class Router extends CoreClass implements Interfaces\RouterInterface {
       self::HTTP_GET => $this->routesHttpGet,
       default => [],
     };
+  }
+
+  public function getRoute(): string
+  {
+    return $this->route;
+  }
+
+  public function setRoute(string $route): void
+  {
+    $this->route = $route;
   }
 
   /** array<string, array<string, string>> */
@@ -127,6 +178,12 @@ class Router extends CoreClass implements Interfaces\RouterInterface {
     } else {
       return false;
     }
+  }
+
+  public function getUploadedFile(string $paramName, ?array $defaultValue = null): null|array
+  {
+    if (isset($_FILES[$paramName])) return $_FILES[$paramName];
+    else return $defaultValue;
   }
 
   public function redirectTo(string $url, int $code = 302): void

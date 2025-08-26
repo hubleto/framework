@@ -63,7 +63,6 @@ class Controller extends CoreClass {
   public int $returnType = self::RETURN_TYPE_VIEW;
 
   public object $renderer;
-  public string $translationContext = '';
 
   function __construct(public Loader $main, array $params = [])
   {
@@ -164,19 +163,6 @@ class Controller extends CoreClass {
     $this->viewParams['main'] = $this->main;
   }
   
-  /**
-   * Shorthand for core translate() function. Uses own language dictionary.
-   *
-   * @param  string $string String to be translated
-   * @param  string $context Context where the string is used
-   * @param  string $toLanguage Output language
-   * @return string Translated string.
-   */
-  public function translate(string $string, array $vars = []): string
-  {
-    return $this->main->translate($string, $vars, $this->translationContext);
-  }
-
   public function setView(string $view): void
   {
     $this->view = $view;
