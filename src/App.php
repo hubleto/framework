@@ -231,7 +231,7 @@ class App extends Core implements Interfaces\AppInterface
 
     $controllerClasses = $this->getAvailableControllerClasses();
     foreach ($controllerClasses as $controllerClass) {
-      $cObj = $this->getService($controllerClass);
+      $cObj = $this->getController($controllerClass);
       foreach ($userRoles as $role) {
         $mRolePermission->grantPermissionByString($role['id'], $cObj->fullName);
       }

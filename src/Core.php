@@ -172,6 +172,10 @@ class Core
     return $this->getService($model);
   }
 
+  public function getController(string $controller): Controller
+  {
+    return $this->getService($controller);
+  }
 
 
 

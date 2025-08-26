@@ -113,6 +113,8 @@ class Renderer extends Core
   public function render(string $route = '', array $params = []): string
   {
 
+    /** @var Controller $controllerObject */
+
     try {
 
       $router = $this->getRouter();
@@ -150,7 +152,7 @@ class Renderer extends Core
       };
       
       // Create the object for the controller
-      $controllerObject = $this->getService($controllerClassName);
+      $controllerObject = $this->getController($controllerClassName);
 
       // authenticate user, if any
       $this->getAuthProvider()->auth();
@@ -175,7 +177,7 @@ class Renderer extends Core
 
       if ($controllerObject->requiresUserAuthentication) {
         if (!$this->getAuthProvider()->isUserInSession()) {
-          $controllerObject = $this->getService(Controllers\SignIn::class);
+          $controllerObject = $this->getController(Controllers\SignIn::class);
           $permissionManager->setPermission($controllerObject->permission);
         }
       }
@@ -233,14 +235,7 @@ class Renderer extends Core
           'windowParams' => $controllerObject->getViewParams()['windowParams'] ?? null,
         ];
 
-        if ($view !== null) {
-          $contentHtml = $this->renderView(
-            $view,
-            $contentParams
-          );
-        } else {
-          $contentHtml = $controllerObject->render($contentParams);
-        }
+        $contentHtml = $this->renderView($view, $contentParams);
 
         // In some cases the result of the view will be used as-is ...
         if (php_sapi_name() == 'cli' || $this->getRouter()->urlParamAsBool('__IS_AJAX__') || $controllerObject->hideDefaultDesktop) {
@@ -248,7 +243,7 @@ class Renderer extends Core
 
         // ... But in most cases it will be "encapsulated" in the desktop.
         } else {
-          $desktopControllerObject = $this->getService(Controllers\Desktop::class);
+          $desktopControllerObject = $this->getController(Controllers\Desktop::class);
           $desktopControllerObject->prepareView();
 
           if (!empty($desktopControllerObject->getView())) {
