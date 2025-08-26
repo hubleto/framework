@@ -24,7 +24,7 @@ class CoreClass
    */
   public function getEnv(): Env
   {
-    return DependencyInjection::create($this->main, Env::class);
+    return $this->getService(Env::class);
   }
 
   /**
@@ -35,7 +35,7 @@ class CoreClass
    */
   public function getAuth(): Interfaces\AuthInterface
   {
-    return DependencyInjection::create($this->main, Auth\DefaultProvider::class);
+    return $this->getService(Auth\DefaultProvider::class);
   }
 
   /**
@@ -46,7 +46,7 @@ class CoreClass
    */
   public function getPdo(): PDO
   {
-    return DependencyInjection::create($this->main, PDO::class);
+    return $this->getService(PDO::class);
   }
 
   /**
@@ -57,7 +57,7 @@ class CoreClass
    */
   public function getAppManager(): Interfaces\AppManagerInterface
   {
-    return DependencyInjection::create($this->main, AppManager::class);
+    return $this->getService(AppManager::class);
   }
 
   /**
@@ -68,7 +68,7 @@ class CoreClass
    */
   public function getRouter(): Router
   {
-    return DependencyInjection::create($this->main, Router::class);
+    return $this->getService(Router::class);
   }
 
   /**
@@ -79,7 +79,7 @@ class CoreClass
    */
   public function getHookManager(): HookManager
   {
-    return DependencyInjection::create($this->main, HookManager::class);
+    return $this->getService(HookManager::class);
   }
 
   /**
@@ -90,7 +90,7 @@ class CoreClass
    */
   public function getSessionManager(): SessionManager
   {
-    return DependencyInjection::create($this->main, SessionManager::class);
+    return $this->getService(SessionManager::class);
   }
 
   /**
@@ -101,7 +101,7 @@ class CoreClass
    */
   public function getPermissionsManager(): PermissionsManager
   {
-    return DependencyInjection::create($this->main, PermissionsManager::class);
+    return $this->getService(PermissionsManager::class);
   }
 
   /**
@@ -112,7 +112,7 @@ class CoreClass
    */
   public function getCronManager(): CronManager
   {
-    return DependencyInjection::create($this->main, CronManager::class);
+    return $this->getService(CronManager::class);
   }
 
   /**
@@ -123,27 +123,27 @@ class CoreClass
    */
   public function getConfig(): Config
   {
-    return DependencyInjection::create($this->main, Config::class);
+    return $this->getService(Config::class);
   }
 
   public function getLogger(): Logger
   {
-    return DependencyInjection::create($this->main, Logger::class);
+    return $this->getService(Logger::class);
   }
 
   public function getLocale(): Locale
   {
-    return DependencyInjection::create($this->main, Locale::class);
+    return $this->getService(Locale::class);
   }
 
   public function getTranslator(): Interfaces\TranslatorInterface
   {
-    return DependencyInjection::create($this->main, Translator::class);
+    return $this->getService(Translator::class);
   }
 
   public function getModel(string $modelName): Model
   {
-    return DependencyInjection::create($this->main, $modelName);
+    return $this->getService($modelName);
   }
 
 
