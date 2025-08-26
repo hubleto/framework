@@ -473,17 +473,18 @@ class Loader
       $this->permission = '';
 
       $routeVars = $routeData['vars'];
+      $this->router->setRouteVars($params);
       $this->router->setRouteVars($routeVars);
 
       foreach ($routeVars as $varName => $varValue) {
         $this->params[$varName] = $varValue;
       }
 
-      if ($this->isUrlParam('sign-out')) {
+      if ($this->router->isUrlParam('sign-out')) {
         $this->auth->signOut();
       }
 
-      if ($this->isUrlParam('signed-out')) {
+      if ($this->router->isUrlParam('signed-out')) {
         $this->router->redirectTo('');
         exit;
       }
@@ -592,7 +593,7 @@ class Loader
         }
 
         // In some cases the result of the view will be used as-is ...
-        if (php_sapi_name() == 'cli' || $this->urlParamAsBool('__IS_AJAX__') || $controllerObject->hideDefaultDesktop) {
+        if (php_sapi_name() == 'cli' || $this->router->urlParamAsBool('__IS_AJAX__') || $controllerObject->hideDefaultDesktop) {
           $html = $contentHtml;
 
         // ... But in most cases it will be "encapsulated" in the desktop.
@@ -898,66 +899,6 @@ class Loader
 
 
 
-
-  public function getUrlParams(): array
-  {
-    return $this->params;
-  }
-
-  public function isUrlParam(string $paramName): bool
-  {
-    return isset($this->params[$paramName]);
-  }
-
-  public function urlParamNotEmpty(string $paramName): bool
-  {
-    return $this->isUrlParam($paramName) && !empty($this->params[$paramName]);
-  }
-
-  public function setUrlParam(string $paramName, string $newValue): void
-  {
-    $this->params[$paramName] = $newValue;
-  }
-
-  public function removeUrlParam(string $paramName): void
-  {
-    if (isset($this->params[$paramName])) unset($this->params[$paramName]);
-  }
-
-  public function urlParamAsString(string $paramName, string $defaultValue = ''): string
-  {
-    if (isset($this->params[$paramName])) return (string) $this->params[$paramName];
-    else return $defaultValue;
-  }
-
-  public function urlParamAsInteger(string $paramName, int $defaultValue = 0): int
-  {
-    if (isset($this->params[$paramName])) return (int) $this->params[$paramName];
-    else return $defaultValue;
-  }
-
-  public function urlParamAsFloat(string $paramName, float $defaultValue = 0): float
-  {
-    if (isset($this->params[$paramName])) return (float) $this->params[$paramName];
-    else return $defaultValue;
-  }
-
-  public function urlParamAsBool(string $paramName, bool $defaultValue = false): bool
-  {
-    if (isset($this->params[$paramName])) {
-      if (strtolower($this->params[$paramName]) === 'false') return false;
-      else return (bool) $this->params[$paramName];
-    } else return $defaultValue;
-  }
-
-  /**
-  * @return array<string, string>
-  */
-  public function urlParamAsArray(string $paramName, array $defaultValue = []): array
-  {
-    if (isset($this->params[$paramName])) return (array) $this->params[$paramName];
-    else return $defaultValue;
-  }
 
   public function uploadedFile(string $paramName, ?array $defaultValue = null): null|array
   {

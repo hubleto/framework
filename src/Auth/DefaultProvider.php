@@ -119,9 +119,9 @@ class DefaultProvider implements \Hubleto\Framework\Interfaces\AuthInterface
     if ($this->isUserInSession()) {
       $this->loadUserFromSession();
     } else {
-      $login = $this->main->urlParamAsString('login');
-      $password = $this->main->urlParamAsString('password');
-      $rememberLogin = $this->main->urlParamAsBool('rememberLogin');
+      $login = $this->getRouter()->urlParamAsString('login');
+      $password = $this->getRouter()->urlParamAsString('password');
+      $rememberLogin = $this->getRouter()->urlParamAsBool('rememberLogin');
 
       $login = trim($login);
 

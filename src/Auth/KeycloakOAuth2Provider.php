@@ -79,8 +79,8 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
       }
     } else {
 
-      $authCode = $this->main->urlParamAsString('code');
-      $authState = $this->main->urlParamAsString('state');
+      $authCode = $this->getRouter()->urlParamAsString('code');
+      $authState = $this->getRouter()->urlParamAsString('state');
 
       // If we don't have an authorization code then get one
       if (empty($authCode)) {

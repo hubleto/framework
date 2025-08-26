@@ -58,7 +58,7 @@ class Model extends \Hubleto\Framework\Model
   {
     $description = parent::describeTable();
 
-    $tag = $this->main->urlParamAsString('tag');
+    $tag = $this->getRouter()->urlParamAsString('tag');
 
     // model-based permissions sa uz nepouzivaju
     // pouzivaju sa record-based permissions, vid recordManager->getPermissions()

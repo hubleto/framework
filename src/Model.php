@@ -104,6 +104,11 @@ class Model
     return 'models/' . $this->fullName . '/' . $configName;
   }
 
+  public function getRouter(): Router
+  {
+    return $this->main->getRouter();
+  }
+
   /**
    * Retrieves value of configuration parameter.
    *

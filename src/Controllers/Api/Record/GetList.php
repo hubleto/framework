@@ -10,7 +10,7 @@ class GetList extends \Hubleto\Framework\Controllers\ApiController {
   function __construct(\Hubleto\Framework\Loader $main, array $params = []) {
     parent::__construct($main, $params);
 
-    $model = $this->main->urlParamAsString('model');
+    $model = $this->getRouter()->urlParamAsString('model');
     // $this->permission = $model . ':Read';
     $this->model = $this->main->getModel($model);
   }
@@ -18,11 +18,11 @@ class GetList extends \Hubleto\Framework\Controllers\ApiController {
   public function response(): array
   {
     return $this->model->recordGetList(
-      $this->main->urlParamAsString('fulltextSearch'),
-      $this->main->urlParamAsArray('columnSearch'),
-      $this->main->urlParamAsArray('orderBy'),
-      $this->main->urlParamAsInteger('itemsPerPage', 15),
-      $this->main->urlParamAsInteger('page'),
+      $this->getRouter()->urlParamAsString('fulltextSearch'),
+      $this->getRouter()->urlParamAsArray('columnSearch'),
+      $this->getRouter()->urlParamAsArray('orderBy'),
+      $this->getRouter()->urlParamAsInteger('itemsPerPage', 15),
+      $this->getRouter()->urlParamAsInteger('page'),
     );
   }
 }

@@ -87,6 +87,11 @@ class Controller {
     }
   }
 
+  public function getRouter(): Router
+  {
+    return $this->main->getRouter();
+  }
+
   public function prepareParams(): array
   {
     return [];
@@ -159,13 +164,13 @@ class Controller {
    */
   public function prepareViewParams()
   {
-    $this->viewParams = $this->main->getUrlParams();
+    $this->viewParams = $this->getRouter()->getUrlParams();
   }
 
   public function prepareView(): void
   {
     $this->main->translationContext = $this->translationContext;
-    $this->viewParams = $this->main->getUrlParams();
+    $this->viewParams = $this->getRouter()->getUrlParams();
     $this->viewParams['main'] = $this->main;
   }
   

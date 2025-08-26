@@ -10,7 +10,7 @@ class Delete extends \Hubleto\Framework\Controllers\ApiController {
   {
     parent::__construct($main, $params);
 
-    $model = $this->main->urlParamAsString('model');
+    $model = $this->getRouter()->urlParamAsString('model');
     // $this->permission = $model . ':Read';
     $this->model = $this->main->getModel($model);
   }
@@ -21,10 +21,10 @@ class Delete extends \Hubleto\Framework\Controllers\ApiController {
     $rowsAffected = 0;
 
     if ($this->main->config->getAsBool('encryptRecordIds')) {
-      $hash = $this->main->urlParamAsString('hash');
-      $ok = $hash == \Hubleto\Framework\Helper::encrypt($this->main->urlParamAsString('id'), '', true);
+      $hash = $this->getRouter()->urlParamAsString('hash');
+      $ok = $hash == \Hubleto\Framework\Helper::encrypt($this->getRouter()->urlParamAsString('id'), '', true);
     } else {
-      $id = $this->main->urlParamAsInteger('id');
+      $id = $this->getRouter()->urlParamAsInteger('id');
       $ok = $id > 0;
     }
 

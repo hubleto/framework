@@ -91,7 +91,7 @@ class Router {
 
   public function setRouteVars(array $routeVars): void
   {
-    $this->routeVars = $routeVars;
+    $this->routeVars = array_merge($this->routeVars, $routeVars);
   }
 
   public function getRouteVars(): array
@@ -121,7 +121,7 @@ class Router {
 
   public function routeVarAsBool($varIndex): bool
   {
-    if (isset($this->params[$varIndex])) {
+    if (isset($this->routeVars[$varIndex])) {
       if (strtolower($this->routeVars[$varIndex]) === 'false') return false;
       else return (bool) ($this->routeVars[$varIndex] ?? false);
     } else {
@@ -165,5 +165,70 @@ class Router {
   {
     return $this->main->load(\Hubleto\Framework\Controllers\DesktopController::class);
   }
+
+
+
+
+
+  public function getUrlParams(): array
+  {
+    return $this->routeVars;
+  }
+
+  public function isUrlParam(string $paramName): bool
+  {
+    return isset($this->routeVars[$paramName]);
+  }
+
+  public function urlParamNotEmpty(string $paramName): bool
+  {
+    return $this->isUrlParam($paramName) && !empty($this->routeVars[$paramName]);
+  }
+
+  public function setUrlParam(string $paramName, string $newValue): void
+  {
+    $this->routeVars[$paramName] = $newValue;
+  }
+
+  public function removeUrlParam(string $paramName): void
+  {
+    if (isset($this->routeVars[$paramName])) unset($this->routeVars[$paramName]);
+  }
+
+  public function urlParamAsString(string $paramName, string $defaultValue = ''): string
+  {
+    if (isset($this->routeVars[$paramName])) return (string) $this->routeVars[$paramName];
+    else return $defaultValue;
+  }
+
+  public function urlParamAsInteger(string $paramName, int $defaultValue = 0): int
+  {
+    if (isset($this->routeVars[$paramName])) return (int) $this->routeVars[$paramName];
+    else return $defaultValue;
+  }
+
+  public function urlParamAsFloat(string $paramName, float $defaultValue = 0): float
+  {
+    if (isset($this->routeVars[$paramName])) return (float) $this->routeVars[$paramName];
+    else return $defaultValue;
+  }
+
+  public function urlParamAsBool(string $paramName, bool $defaultValue = false): bool
+  {
+    if (isset($this->routeVars[$paramName])) {
+      if (strtolower($this->routeVars[$paramName]) === 'false') return false;
+      else return (bool) $this->routeVars[$paramName];
+    } else return $defaultValue;
+  }
+
+  /**
+  * @return array<string, string>
+  */
+  public function urlParamAsArray(string $paramName, array $defaultValue = []): array
+  {
+    if (isset($this->routeVars[$paramName])) return (array) $this->routeVars[$paramName];
+    else return $defaultValue;
+  }
+
 
 }

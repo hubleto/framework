@@ -12,9 +12,9 @@ class Delete extends \Hubleto\Framework\Controller {
 
   public function renderJson(): ?array { 
     try {
-      $id = $this->main->urlParamAsInteger('id');
-      $model = $this->main->urlParamAsString('model');
-      $junction = $this->main->urlParamAsString('junction');
+      $id = $this->getRouter()->urlParamAsInteger('id');
+      $model = $this->getRouter()->urlParamAsString('model');
+      $junction = $this->getRouter()->urlParamAsString('junction');
 
       // Validate required params
       if ($model == '') throw new \Exception("Unknown model");
