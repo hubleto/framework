@@ -131,17 +131,19 @@ class Translator extends Core implements Interfaces\TranslatorInterface
     if ($toLanguage == 'en') {
       $translated = $string;
     } else {
-      if (empty($this->dictionary[$contextClass]) && class_exists($contextClass)) {
-        $this->dictionary[$contextClass] = $contextClass::loadDictionary($toLanguage);
-      }
+      // 27.8.2025: Docasne vypnute
+      // if (empty($this->dictionary[$contextClass]) && class_exists($contextClass)) {
+      //   $this->dictionary[$contextClass] = $contextClass::loadDictionary($toLanguage);
+      // }
 
       $translated = '';
 
-      if (!empty($this->dictionary[$contextClass][$contextInner][$string])) { // @phpstan-ignore-line
-        $translated = (string) $this->dictionary[$contextClass][$contextInner][$string];
-      } elseif (class_exists($contextClass)) {
-        $contextClass::addToDictionary($toLanguage, $contextInner, $string);
-      }
+      // 27.8.2025: Docasne vypnute
+      // if (!empty($this->dictionary[$contextClass][$contextInner][$string])) { // @phpstan-ignore-line
+      //   $translated = (string) $this->dictionary[$contextClass][$contextInner][$string];
+      // } elseif (class_exists($contextClass)) {
+      //   $contextClass::addToDictionary($toLanguage, $contextInner, $string);
+      // }
 
       if (empty($translated)) {
         $translated = 'translate(' . $this->context . '; ' . $string . ')';
