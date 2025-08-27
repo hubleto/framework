@@ -2,9 +2,6 @@
 
 namespace Hubleto\Framework;
 
-/**
- * @property \HubletoMain\Loader $main
- */
 class AppManager extends Core implements Interfaces\AppManagerInterface
 {
   public Interfaces\AppInterface $activatedApp;

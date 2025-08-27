@@ -224,9 +224,9 @@ class App extends Core implements Interfaces\AppInterface
       $mRolePermission->grantPermissionByString($role['id'], 'Hubleto/Framework/Controllers/Api/Record/GetList');
       $mRolePermission->grantPermissionByString($role['id'], 'Hubleto/Framework/Controllers/Api/Record/Lookup');
       $mRolePermission->grantPermissionByString($role['id'], 'Hubleto/Framework/Controllers/Api/Record/Save');
-      $mRolePermission->grantPermissionByString($role['id'], 'HubletoMain/Core/Api/GetTableColumnsCustomize');
-      $mRolePermission->grantPermissionByString($role['id'], 'HubletoMain/Core/Api/SaveTableColumnsCustomize');
-      $mRolePermission->grantPermissionByString($role['id'], 'HubletoMain/Core/Api/GetTemplateChartData');
+      $mRolePermission->grantPermissionByString($role['id'], 'Hubleto/Erp/Core/Api/GetTableColumnsCustomize');
+      $mRolePermission->grantPermissionByString($role['id'], 'Hubleto/Erp/Core/Api/SaveTableColumnsCustomize');
+      $mRolePermission->grantPermissionByString($role['id'], 'Hubleto/Erp/Core/Api/GetTemplateChartData');
     }
 
     $controllerClasses = $this->getAvailableControllerClasses();

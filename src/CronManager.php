@@ -5,7 +5,7 @@ namespace Hubleto\Framework;
 class CronManager extends Core implements Interfaces\CronManagerInterface
 {
 
-  /** @var array<\HubletoMain\Cron> */
+  /** @var array<\Hubleto\Erp\Cron> */
   protected array $enabledCrons = [];
 
   public function init(): void
@@ -13,7 +13,7 @@ class CronManager extends Core implements Interfaces\CronManagerInterface
     $crons = @Helper::scanDirRecursively($this->getEnv()->srcFolder . '/crons');
     foreach ($crons as $cron) {
       if (!\str_ends_with($cron, '.php')) continue;
-      $cronClass = '\\HubletoMain\\Cron\\' . str_replace('/', '\\', $cron);
+      $cronClass = '\\Hubleto\\Erp\\Cron\\' . str_replace('/', '\\', $cron);
       $cronClass = str_replace('.php', '', $cronClass);
       $this->addCron($cronClass);
     }
@@ -34,7 +34,7 @@ class CronManager extends Core implements Interfaces\CronManagerInterface
 
   public function addCron(string $cronClass): void
   {
-    if (is_subclass_of($cronClass, \HubletoMain\Cron::class)) {
+    if (is_subclass_of($cronClass, \Hubleto\Erp\Cron::class)) {
       $this->enabledCrons[$cronClass] = $this->getService($cronClass);
     }
   }

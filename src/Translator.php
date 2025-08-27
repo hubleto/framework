@@ -34,44 +34,11 @@ class Translator extends Core implements Interfaces\TranslatorInterface
     return (array) @json_decode((string) file_get_contents($jsonFile), true);
   }
 
-  // /**
-  // * @return array|array<string, array<string, string>>
-  // */
-  // public function loadDictionary(string $language = ""): array
-  // {
-  //   if (empty($language)) {
-  //     $language = $this->getAuthProvider()->getUserLanguage();
-  //   }
-  //   if ($language == 'en') {
-  //     return [];
-  //   }
-
-  //   $dictionary = [];
-
-  //   if (strlen($language) == 2) {
-  //     $dictFilename = __DIR__ . '/../../lang/' . $language . '.json';
-  //     if (is_file($dictFilename)) {
-  //       $dictionary['HubletoMain\\Loader'] = $this->loadDictionaryFromJsonFile($dictFilename);
-  //     }
-  //   }
-
-  //   foreach ($this->getAppManager()->getEnabledApps() as $app) {
-  //     $appDict = $app->loadDictionary($language);
-  //     foreach ($appDict as $key => $value) {
-  //       $dictionary[$app->fullName][(string) $key] = $value;
-  //     }
-  //   }
-
-  //   // $dictionary['Hubleto\\Framework\\Core\\Loader'] = Loader::loadDictionary($language);
-
-  //   return $dictionary;
-  // }
-
   public function loadDictionaryForContext(string $language, string $contextFileRef): array
   {
     $dictionaryFilename = '';
 
-    if ($contextFileRef == 'HubletoMain') {
+    if ($contextFileRef == 'Hubleto\\Erp') {
       $dictionaryFilename = __DIR__ . '/../../lang/' . $language . '.json';
     } elseif (str_starts_with($contextFileRef, 'HubletoApp')) {
       $appClass = str_replace('/', '\\', $contextFileRef);
@@ -141,8 +108,6 @@ class Translator extends Core implements Interfaces\TranslatorInterface
         $dictionary[$app->fullName][(string) $key] = $value;
       }
     }
-
-    // $dictionary['HubletoMain\\Loader'] = $this->loadDictionary($language);
 
     return $dictionary;
   }

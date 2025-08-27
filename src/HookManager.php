@@ -4,7 +4,7 @@ namespace Hubleto\Framework;
 
 class HookManager extends Core implements Interfaces\HookManagerInterface
 {
-  /** @var array<\HubletoMain\Hook> */
+  /** @var array<\Hubleto\Erp\Hook> */
   protected array $enabledHooks = [];
 
   public function init(): void
@@ -36,7 +36,7 @@ class HookManager extends Core implements Interfaces\HookManagerInterface
 
   public function addHook(string $hookClass): void
   {
-    if (is_subclass_of($hookClass, \HubletoMain\Hook::class)) {
+    if (is_subclass_of($hookClass, \Hubleto\Erp\Hook::class)) {
       $this->enabledHooks[$hookClass] = $this->getService($hookClass);
     }
   }
