@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Models;
 
-use HubletoApp\Community\Settings\Models\UserRole;
+use Hubleto\App\Community\Settings\Models\UserRole;
 
 class Model extends \Hubleto\Framework\Model
 {

@@ -67,7 +67,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
   {
     $appNamespace = trim($appNamespace, '\\');
     if (strpos($appNamespace, '\\') === false) {
-      $appNamespace = 'HubletoApp\\Custom\\' . $appNamespace;
+      $appNamespace = 'Hubleto\\App\\Custom\\' . $appNamespace;
     }
 
     if (str_ends_with($appNamespace, '\\Loader')) {
@@ -91,29 +91,32 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
     $appNamespace = trim($appNamespace, '\\');
     $appNamespaceParts = explode('\\', $appNamespace);
 
-    if ($appNamespaceParts[0] != 'HubletoApp') {
-      throw new \Exception('Application namespace must start with \'HubletoApp\'. See https://developer.hubleto.com/apps for more details.');
+    if (
+      $appNamespaceParts[0] != 'Hubleto'
+      && $appNamespaceParts[1] != 'App'
+    ) {
+      throw new \Exception('Application namespace must start with \'Hubleto\App\'. See https://developer.hubleto.com/apps for more details.');
     }
 
-    switch ($appNamespaceParts[1]) {
+    switch ($appNamespaceParts[2]) {
       case 'Community':
-        if (count($appNamespaceParts) != 3) {
-          throw new \Exception('Community app namespace must have exactly 3 parts');
+        if (count($appNamespaceParts) != 4) {
+          throw new \Exception('Community app namespace must have exactly 4 parts');
         }
         break;
       case 'Premium':
-        if (count($appNamespaceParts) != 3) {
-          throw new \Exception('Premium app namespace must have exactly 3 parts');
+        if (count($appNamespaceParts) != 4) {
+          throw new \Exception('Premium app namespace must have exactly 4 parts');
         }
         break;
       case 'External':
-        if (count($appNamespaceParts) != 4) {
+        if (count($appNamespaceParts) != 5) {
           throw new \Exception('External app namespace must have exactly 4 parts');
         }
         break;
       case 'Custom':
-        if (count($appNamespaceParts) != 3) {
-          throw new \Exception('Custom app namespace must have exactly 3 parts');
+        if (count($appNamespaceParts) != 4) {
+          throw new \Exception('Custom app namespace must have exactly 4 parts');
         }
         break;
       default:
@@ -166,7 +169,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
         if (@is_file($manifestFile)) {
           $manifestFileContent = file_get_contents($manifestFile);
           $manifest = (array) \Symfony\Component\Yaml\Yaml::parse((string) $manifestFileContent);
-          $appNamespaces['HubletoApp\\Community\\' . $folder] = $manifest;
+          $appNamespaces['Hubleto\\App\\Community\\' . $folder] = $manifest;
         }
       }
     }
@@ -174,7 +177,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
     // appRepositories are supposed to be composer's 'vendor' folders
     // Each repository is scanned, first for the vendor name ($vendorFolder), then for
     // the app name ($appFolder).
-    // The $appFolder represents the HubletoApp only if there is src/manifest.yaml file.
+    // The $appFolder represents the Hubleto\App only if there is src/manifest.yaml file.
     $appRepositories = $this->getConfig()->getAsArray('appRepositories');
     if (count($appRepositories) == 0) {
       $appRepositories = [
@@ -401,7 +404,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
     $appNamespace = trim($appNamespace, '\\');
     $appNamespaceParts = explode('\\', $appNamespace);
     $appName = $appNamespaceParts[count($appNamespaceParts) - 1];
-    $appType = strtolower($appNamespaceParts[1]);
+    $appType = strtolower($appNamespaceParts[2]);
 
     $tplVars = [
       'appNamespace' => $appNamespace,
@@ -441,7 +444,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
   public function canAppDangerouslyInjectDesktopHtmlContent(string $appNamespace): bool
   {
     $safeApps = [
-      'HubletoApp\\Community\\Cloud',
+      'Hubleto\\App\\Community\\Cloud',
     ];
 
     return in_array($appNamespace, $safeApps);

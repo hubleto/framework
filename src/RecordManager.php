@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-use HubletoApp\Community\Settings\Models\UserRole;
+use Hubleto\App\Community\Settings\Models\UserRole;
 
 class RecordManager extends EloquentRecordManager
 {

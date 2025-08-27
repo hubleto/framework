@@ -40,7 +40,7 @@ class Translator extends Core implements Interfaces\TranslatorInterface
 
     if ($contextFileRef == 'Hubleto\\Erp') {
       $dictionaryFilename = __DIR__ . '/../../lang/' . $language . '.json';
-    } elseif (str_starts_with($contextFileRef, 'HubletoApp')) {
+    } elseif (str_starts_with($contextFileRef, 'Hubleto\\App')) {
       $appClass = str_replace('/', '\\', $contextFileRef);
 
       $app = $this->getAppManager()->getApp($appClass);

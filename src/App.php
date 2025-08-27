@@ -91,8 +91,8 @@ class App extends Core implements Interfaces\AppInterface
       throw new \Exception("{$this->fullName}: Some properties are missing in manifest (" . join(", ", $missing) . ").");
     }
 
-    if (!str_starts_with($this->manifest['namespace'], 'HubletoApp')) {
-      throw new \Exception("{$this->fullName}: Namespace must start with 'HubletoApp'.");
+    if (!str_starts_with($this->manifest['namespace'], 'Hubleto\\App')) {
+      throw new \Exception("{$this->fullName}: Namespace must start with 'Hubleto\\App'.");
     }
   }
 
@@ -197,7 +197,7 @@ class App extends Core implements Interfaces\AppInterface
       }
     }
 
-    $mPermission = $this->getModel(\HubletoApp\Community\Settings\Models\Permission::class);
+    $mPermission = $this->getModel(\Hubleto\App\Community\Settings\Models\Permission::class);
 
     foreach ($permissions as $permission) {
       $mPermission->record->recordCreate([
