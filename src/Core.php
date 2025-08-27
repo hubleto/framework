@@ -47,14 +47,14 @@ class Core
   }
 
   /**
-   * [Description for getPdo]
+   * [Description for getDb]
    *
-   * @return PDO
+   * @return Db
    * 
    */
-  public function getPdo(): PDO
+  public function getDb(): Db
   {
-    return $this->getService(PDO::class);
+    return $this->getService(Db::class);
   }
 
   /**

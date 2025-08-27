@@ -84,7 +84,7 @@ class Config extends Core
   {
     try {
       if (!empty($path)) {
-        $this->getPdo()->execute("
+        $this->getDb()->execute("
           insert into `config` set `path` = :path, `value` = :value
           on duplicate key update `path` = :path, `value` = :value
         ", ['path' => $path, 'value' => $value]);
@@ -102,7 +102,7 @@ class Config extends Core
   {
     try {
       if (!empty($path)) {
-        $this->getPdo()->execute("delete from `config` where `path` like ?", [$path . '%']);
+        $this->getDb()->execute("delete from `config` where `path` like ?", [$path . '%']);
       }
     } catch (\Exception $e) {
       if ($e->getCode() == '42S02') { // Base table not found
@@ -115,10 +115,10 @@ class Config extends Core
 
   public function init(): void
   {
-    if (!$this->getPdo()->isConnected) return;
+    if (!$this->getDb()->isConnected) return;
 
     try {
-      $cfgs = $this->getPdo()->fetchAll("select * from `config`");
+      $cfgs = $this->getDb()->fetchAll("select * from `config`");
 
       foreach ($cfgs as $cfg) {
         $tmp = &$this->configData;

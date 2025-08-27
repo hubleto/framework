@@ -194,8 +194,6 @@ class Renderer extends Core
 
       $return = '';
 
-      unset($this->params['__IS_AJAX__']);
-
       $this->onBeforeRender();
 
       // Either return JSON string ...

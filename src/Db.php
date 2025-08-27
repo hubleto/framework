@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class PDO extends Core
+class Db extends Core
 {
   public ?\PDO $connection = null;
   public bool $isConnected = false;
@@ -38,7 +38,7 @@ class PDO extends Core
         "collation" => 'utf8mb4_unicode_ci',
       ], 'default');
 
-      $this->getPdo()->connect();
+      $this->getDb()->connect();
     }
   }
 

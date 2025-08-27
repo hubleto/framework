@@ -31,11 +31,10 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
       $appClass = $appNamespace . '\\Loader';
       if (is_array($appConfig)) {
         try {
+          $this->enabledApps[$appNamespace] = $this->createAppInstance($appNamespace);
+
           if ($appConfig['enabled'] ?? false) {
-            $this->enabledApps[$appNamespace] = $this->createAppInstance($appNamespace);
             $this->enabledApps[$appNamespace]->enabled = true;
-          } else {
-            $this->disabledApps[$appNamespace] = $this->createAppInstance($appNamespace);
           }
         } catch (\Throwable $e) {
           throw new \Exception("Failed to initialize app {$appNamespace}." . $e->getMessage());
@@ -320,32 +319,6 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
     $apps = $this->getEnabledApps();
     return isset($apps[$appNamespace]);
   }
-
-  // /**
-  //  * [Description for community]
-  //  *
-  //  * @param string $appName
-  //  * 
-  //  * @return null|Interfaces\AppInterface
-  //  * 
-  //  */
-  // public function community(string $appName): null|Interfaces\AppInterface
-  // {
-  //   return $this->getApp('HubletoApp\\Community\\' . $appName);
-  // }
-
-  // /**
-  //  * [Description for custom]
-  //  *
-  //  * @param string $appName
-  //  * 
-  //  * @return null|Interfaces\AppInterface
-  //  * 
-  //  */
-  // public function custom(string $appName): null|Interfaces\AppInterface
-  // {
-  //   return $this->getApp('HubletoApp\\Custom\\' . $appName);
-  // }
 
   /** @param array<string, mixed> $appConfig */
   public function installApp(int $round, string $appNamespace, array $appConfig = [], bool $forceInstall = false): bool

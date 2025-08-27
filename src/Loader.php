@@ -42,7 +42,7 @@ class Loader extends Core
     $GLOBALS['hubleto'] = $this;
   }
 
-  public static function getGlobalApp(): \HubletoMain\Loader
+  public static function getGlobalApp(): \Hubleto\Framework\Loader
   {
     return $GLOBALS['hubleto'];
   }
@@ -51,7 +51,7 @@ class Loader extends Core
   {
 
     try {
-      $this->getPdo()->init();
+      $this->getDb()->init();
       $this->getSessionManager()->start(true);
 
       $this->getConfig()->init();

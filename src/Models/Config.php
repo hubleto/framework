@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Models;
 
-class Config extends \Hubleto\Framework\Model
+class Config extends Model
 {
 
   public string $table = 'config';

@@ -90,7 +90,7 @@ class Model extends Core
 
   public function isDatabaseConnected(): bool
   {
-    return $this->getPdo()->isConnected;
+    return $this->getDb()->isConnected;
   }
 
   public function getConfigFullPath(string $configName): string
@@ -184,11 +184,11 @@ class Model extends Core
   public function createSqlTable()
   {
 
-    $this->getPdo()->startTransaction();
+    $this->getDb()->startTransaction();
     foreach ($this->getSqlCreateTableCommands() as $command) {
-      $this->getPdo()->execute($command);
+      $this->getDb()->execute($command);
     }
-    $this->getPdo()->commit();
+    $this->getDb()->commit();
   }
 
   /**
@@ -229,13 +229,13 @@ class Model extends Core
 
         switch ($indexDef["type"]) {
           case "index":
-            $this->getPdo()->execute("
+            $this->getDb()->execute("
               alter table `" . $this->table . "`
               add index `{$indexOrConstraintName}` ({$tmpColumns})
             ");
             break;
           case "unique":
-            $this->getPdo()->execute("
+            $this->getDb()->execute("
               alter table `" . $this->table . "`
               add constraint `{$indexOrConstraintName}` unique ({$tmpColumns})
             ");
@@ -256,9 +256,9 @@ class Model extends Core
 
   public function dropTableIfExists(): Model
   {
-    $this->getPdo()->execute("set foreign_key_checks = 0");
-    $this->getPdo()->execute("drop table if exists `" . $this->table . "`");
-    $this->getPdo()->execute("set foreign_key_checks = 1");
+    $this->getDb()->execute("set foreign_key_checks = 0");
+    $this->getDb()->execute("drop table if exists `" . $this->table . "`");
+    $this->getDb()->execute("set foreign_key_checks = 1");
     return $this;
   }
 
@@ -296,7 +296,7 @@ class Model extends Core
 
     if (!empty($sql)) {
       foreach (explode(';;', $sql) as $query) {
-        $this->getPdo()->execute(trim($query));
+        $this->getDb()->execute(trim($query));
       }
     }
 
