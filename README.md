@@ -2,7 +2,7 @@
 
 The MVC-based framework for the Hubleto ERP.
 
-See https://github.com/hubleto/main and https://github.com/hubleto/project for more information.
+See https://github.com/hubleto/erp and https://github.com/hubleto/erp-project for more information.
 
 ## Contributing
 
