@@ -12,7 +12,7 @@ class Env extends Core
   public string $uploadFolder = '';
 
   public string $srcFolder = '';
-  public string $releaseFolder = '';
+  public string $releaseFolder = '.';
 
   public string $assetsUrl = '';
 
