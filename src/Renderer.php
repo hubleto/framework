@@ -16,11 +16,10 @@ class Renderer extends Core
       'debug' => true,
     ));
 
+    $this->twigLoader->addPath(realpath(__DIR__ . '/../views'), 'framework');
+
     try {
       $this->twigLoader->addPath($this->getEnv()->projectFolder . '/views', 'app');
-    } catch (\Exception $e) { }
-    try {
-      $this->twigLoader->addPath(realpath(__DIR__ . '/../views'), 'framework');
     } catch (\Exception $e) { }
 
     $this->twig->addGlobal('config', $this->getConfig()->get());
