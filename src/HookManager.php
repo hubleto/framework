@@ -9,14 +9,6 @@ class HookManager extends Core implements Interfaces\HookManagerInterface
 
   public function init(): void
   {
-    $hooks = @Helper::scanDirRecursively($this->getEnv()->srcFolder . '/../hooks');
-    foreach ($hooks as $hook) {
-      if (!\str_ends_with($hook, '.php')) continue;
-      $hookClass = '\\HubletoMain\\Hook\\' . str_replace('/', '\\', $hook);
-      $hookClass = str_replace('.php', '', $hookClass);
-      $this->addHook($hookClass);
-    }
-
     foreach ($this->getAppManager()->getInstalledApps() as $appNamespace => $app) {
       $hooks = @Helper::scanDirRecursively($app->srcFolder . '/Hooks');
       // var_dump($appNamespace);var_dump($hooks);

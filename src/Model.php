@@ -98,16 +98,6 @@ class Model extends Core
     return 'models/' . $this->fullName . '/' . $configName;
   }
 
-  // /**
-  //  * Retrieves value of configuration parameter.
-  //  *
-  //  * @return void
-  //  */
-  // public function getConfig(string $configName): string
-  // {
-  //   return $this->getConfig()->getAsString($this->getConfigFullPath($configName));
-  // }
-
   /**
    * Retrieves value of configuration parameter.
    *

@@ -154,7 +154,6 @@ class Controller extends Core {
   {
     $this->translationContext = $this->translationContext;
     $this->viewParams = $this->getRouter()->getUrlParams();
-    $this->viewParams['main'] = $this;
   }
   
   public function setView(string $view): void

@@ -221,16 +221,15 @@ class Renderer extends Core
         $view = $controllerObject->getView();
 
         $contentParams = [
-          'app' => $this,
+          'hubleto' => $this,
           'user' => $this->getAuthProvider()->getUser(),
           'config' => $this->getConfig()->get(),
-          'routeUrl' => $router->getRoute(),
-          'routeParams' => $this->getRouter()->getRouteVars(),
-          'route' => $router->getRoute(),
-          'session' => $this->getSessionManager()->get(),
-          'controller' => $controllerObject,
+          // 'routeUrl' => $router->getRoute(),
+          // 'routeParams' => $this->getRouter()->getRouteVars(),
+          // 'route' => $router->getRoute(),
+          // 'session' => $this->getSessionManager()->get(),
+          // 'controller' => $controllerObject,
           'viewParams' => $controllerObject->getViewParams(),
-          'windowParams' => $controllerObject->getViewParams()['windowParams'] ?? null,
         ];
 
         $contentHtml = $this->renderView($view, $contentParams);

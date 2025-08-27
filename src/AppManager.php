@@ -289,7 +289,9 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
    */
   public function getApp(string $appNamespace): null|Interfaces\AppInterface
   {
-    return $this->enabledApps[str_replace('\\Loader', '', $appNamespace)] ?? null;
+    $appNamespace = str_replace('/', '\\', $appNamespace);
+    $appNamespace = str_replace('\\Loader', '', $appNamespace);
+    return $this->enabledApps[$appNamespace] ?? null;
   }
 
   /**
