@@ -25,6 +25,7 @@ class App extends Core implements Interfaces\AppInterface
   public string $viewNamespace = '';
   public string $namespace = '';
   public string $fullName = '';
+  public string $shortName = '';
 
   public bool $isActivated = false;
   public bool $hasCustomSettings = false;
@@ -44,6 +45,9 @@ class App extends Core implements Interfaces\AppInterface
     $this->namespace = $reflection->getNamespaceName();
     $this->fullName = $reflection->getName();
     $this->translationContext = trim(str_replace('\\', '/', $this->fullName), '/');
+
+    $tmp = str_replace('\\Loader', '', $this->fullName);
+    $this->shortName = substr($tmp, strrpos($tmp, '\\') + 1);
 
     $this->viewNamespace = $this->namespace;
     $this->viewNamespace = str_replace('\\', ':', $this->viewNamespace);
