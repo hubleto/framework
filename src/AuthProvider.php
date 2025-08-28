@@ -40,11 +40,6 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
     return isset($user['id']) && $user['id'] > 0;
   }
 
-  public function loadUserFromSession()
-  {
-    $this->user = $this->getUserFromSession();
-  }
-
   function deleteSession()
   {
     $this->getSessionManager()->clear();
@@ -103,9 +98,7 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
     /** @var Models\User */
     $userModel = $this->createUserModel();
 
-    if ($this->isUserInSession()) {
-      $this->loadUserFromSession();
-    } else {
+    if (!$this->isUserInSession()) {
       $login = $this->getRouter()->urlParamAsString('login');
       $password = $this->getRouter()->urlParamAsString('password');
       $rememberLogin = $this->getRouter()->urlParamAsBool('rememberLogin');
@@ -145,7 +138,7 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
 
   public function getUser(): array
   {
-    return is_array($this->user) ? $this->user : [];
+    return $this->getUserFromSession();
   }
 
   public function getUserType(): int
@@ -156,8 +149,8 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
 
   public function getUserRoles(): array
   {
-    if (isset($this->user['ROLES']) && is_array($this->user['ROLES'])) return $this->user['ROLES'];
-    else if (isset($this->user['roles']) && is_array($this->user['roles'])) return $this->user['roles'];
+    if (isset($user['ROLES']) && is_array($user['ROLES'])) return $user['ROLES'];
+    else if (isset($user['roles']) && is_array($user['roles'])) return $user['roles'];
     else return [];
   }
 
@@ -168,7 +161,7 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
 
   public function getUserId(): int
   {
-    return (int) ($this->user['id'] ?? 0);
+    return (int) ($this->getUser()['id'] ?? 0);
   }
 
   public function forgotPassword(): void
@@ -193,9 +186,9 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
     }
   }
     public function setUserLanguage(string $language): void {
-    $user = $this->user;
+    $user = $this->getUser();
     $user['language'] = $language;
-    $this->user = $user;
+    $this->updateUserInSession($user);
   }
 
 }

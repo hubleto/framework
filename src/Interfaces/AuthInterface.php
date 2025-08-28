@@ -9,7 +9,6 @@ interface AuthInterface {
   public function getUserFromSession(): array;
   public function updateUserInSession(array $user): void;
   public function isUserInSession(): bool;
-  public function loadUserFromSession();
   public function deleteSession();
   public function signIn(array $user);
   public function signOut();

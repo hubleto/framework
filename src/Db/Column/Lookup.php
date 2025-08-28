@@ -41,6 +41,11 @@ class Lookup extends \Hubleto\Framework\Db\Column
     return $column;
   }
 
+  public function isEmpty(mixed $value): bool
+  {
+    return (int) $value <= 0;
+  }
+  
   public function normalize(mixed $value): mixed
   {
     if ($value === 0) {
