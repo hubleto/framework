@@ -149,6 +149,7 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
 
   public function getUserRoles(): array
   {
+    $user = $this->getUser();
     if (isset($user['ROLES']) && is_array($user['ROLES'])) return $user['ROLES'];
     else if (isset($user['roles']) && is_array($user['roles'])) return $user['roles'];
     else return [];
