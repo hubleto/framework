@@ -403,7 +403,7 @@ class Renderer extends Core
         } else {
           $errorMessage = $dbError;
         }
-        $html = $this->translate($errorMessage);
+        $html = $errorMessage;
       break;
       case 'Hubleto\Framework\Exceptions\DBDuplicateEntryException':
 
@@ -450,12 +450,12 @@ class Renderer extends Core
 
         $html = "
           <div class='hubleto exception message'>
-            ".$this->getTranslator()->translate($errorMessage)."<br/>
+            {$errorMessage}<br/>
             <br/>
             <b>".join(", ", $invalidColumns)."</b>
           </div>
           <a class='btn btn-small btn-transparent' onclick='$(this).next(\"pre\").slideToggle();'>
-            <span class='text'>" . $this->getTranslator()->translate('Show error details') . "</span>
+            <span class='text'>Show error details</span>
           </a>
           <pre style='font-size:9px;text-align:left;display:none;padding-top:1em'>{$errorDebugInfoHtml}</pre>
         ";
