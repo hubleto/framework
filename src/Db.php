@@ -118,9 +118,13 @@ class Db extends Core
    */
   public function fetchAll(string $query, array $data = [])
   {
-    $stmt = $this->connection->prepare($query);
-    $stmt->execute($data);
-    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    try {
+      $stmt = $this->connection->prepare($query);
+      $stmt->execute($data);
+      return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    } catch (\Throwable $e) {
+      throw new \Hubleto\Framework\Exceptions\DBException($e->getMessage() . '\nQuery: ' . $query);
+    }
   }
 
   /**

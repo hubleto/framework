@@ -171,10 +171,10 @@ class Controller extends Core {
     return $this->viewParams;
   }
 
-  // public function render(array $params): string
-  // {
-  //   return '';
-  // }
+  public function render(): string
+  {
+    return '';
+  }
 
 }
 

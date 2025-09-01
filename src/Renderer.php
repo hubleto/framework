@@ -218,7 +218,7 @@ class Renderer extends Core
         $controllerObject->prepareView();
 
         $view = $controllerObject->getView();
-
+        
         $contentParams = [
           'hubleto' => $this,
           'user' => $this->getAuthProvider()->getUser(),
@@ -231,7 +231,11 @@ class Renderer extends Core
           'viewParams' => $controllerObject->getViewParams(),
         ];
 
-        $contentHtml = $this->renderView($view, $contentParams);
+        if (empty($view)) {
+          $contentHtml = $controllerObject->render();
+        } else {
+          $contentHtml = $this->renderView($view, $contentParams);
+        }
 
         // In some cases the result of the view will be used as-is ...
         if (php_sapi_name() == 'cli' || $this->getRouter()->urlParamAsBool('__IS_AJAX__') || $controllerObject->hideDefaultDesktop) {
