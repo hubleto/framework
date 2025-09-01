@@ -35,7 +35,14 @@ class Locale extends Core
 
   public function getCurrencySymbol(): string
   {
-    return "€";
+    $symbol = $this->getConfig()->getAsString('locale/currency/symbol');
+    return empty($symbol) ? "€" : $symbol;
+  }
+
+  public function getCurrencyIsoCode(): string
+  {
+    $isoCode = $this->getConfig()->getAsString('locale/currency/isoCode');
+    return empty($isoCode) ? "EUR" : $isoCode;
   }
 
   public function getAll(string $keyBy = "") {
@@ -45,6 +52,7 @@ class Locale extends Core
       "timeFormat" => $this->getTimeFormat(),
       "datetimeFormat" => $this->getDatetimeFormat(),
       "currencySymbol" => $this->getCurrencySymbol(),
+      "currencyIsoCode" => $this->getCurrencyIsoCode(),
     ];
   }
 
