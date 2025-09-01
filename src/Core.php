@@ -19,6 +19,19 @@ class Core
    * @return mixed
    * 
    */
+  public static function getServiceStatic(string $service): mixed
+  {
+    return DependencyInjection::create($service);
+  }
+
+  /**
+   * [Description for getService]
+   *
+   * @param string $service
+   * 
+   * @return mixed
+   * 
+   */
   public function getService(string $service): mixed
   {
     return DependencyInjection::create($service);
