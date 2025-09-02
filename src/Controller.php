@@ -37,6 +37,11 @@ class Controller extends Core {
   public bool $requiresUserAuthentication = TRUE;
 
   /**
+   * If set to TRUE, the controller's permissions is not checked.
+   */
+  public bool $permittedForAllUsers = false;
+
+  /**
    * If set to TRUE, the default desktop will not be added to the rendered content
    */
   public bool $hideDefaultDesktop = FALSE;

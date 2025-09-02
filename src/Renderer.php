@@ -181,7 +181,7 @@ class Renderer extends Core
         }
       }
 
-      if ($controllerObject->requiresUserAuthentication) {
+      if (!$controllerObject->permittedForAllUsers) {
         $this->permissionsManager()->checkPermission();
       }
 
