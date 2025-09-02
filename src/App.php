@@ -105,7 +105,7 @@ class App extends Core implements Interfaces\AppInterface
     $this->manifest['nameTranslated'] = $this->translate($this->manifest['name'], [], 'manifest');
     $this->manifest['highlightTranslated'] = $this->translate($this->manifest['highlight'], [], 'manifest');
 
-    $this->getRenderer()->addNamespace($this->srcFolder . '/Views', $this->viewNamespace);
+    $this->renderer()->addNamespace($this->srcFolder . '/Views', $this->viewNamespace);
   }
 
   public function onBeforeRender(): void
@@ -128,7 +128,7 @@ class App extends Core implements Interfaces\AppInterface
 
   public function translate(string $string, array $vars = [], string $context = 'root'): string
   {
-    return $this->getTranslator()->translate($string, $vars, $this->fullName . '::' . $context);
+    return $this->translator()->translate($string, $vars, $this->fullName . '::' . $context);
   }
 
   public function installTables(int $round): void
@@ -214,10 +214,10 @@ class App extends Core implements Interfaces\AppInterface
   {
 
     /** @var \Hubleto\Framework\Models\UserRole */
-    $mUserRole = $this->getPermissionsManager()->createUserRoleModel();
+    $mUserRole = $this->permissionsManager()->createUserRoleModel();
 
     /** @var \Hubleto\Framework\Models\RolePermission */
-    $mRolePermission = $this->getPermissionsManager()->createRolePermissionModel();
+    $mRolePermission = $this->permissionsManager()->createRolePermissionModel();
 
     $userRoles = $mUserRole->record->get()->toArray();
     foreach ($userRoles as $role) {
@@ -285,68 +285,68 @@ class App extends Core implements Interfaces\AppInterface
 
   public function getFullConfigPath(string $path): string
   {
-    return 'apps/' . $this->getAppManager()->getAppNamespaceForConfig($this->namespace) . '/' . $path;
+    return 'apps/' . $this->appManager()->getAppNamespaceForConfig($this->namespace) . '/' . $path;
   }
 
   public function saveConfig(string $path, string $value = ''): void
   {
-    $this->getConfig()->save($this->getFullConfigPath($path), $value);
+    $this->config()->save($this->getFullConfigPath($path), $value);
   }
 
   public function saveConfigForUser(string $path, string $value = ''): void
   {
-    $this->getConfig()->saveForUser($this->getFullConfigPath($path), $value);
+    $this->config()->saveForUser($this->getFullConfigPath($path), $value);
   }
 
 
   public function configAsString(string $path, string $defaultValue = ''): string
   {
-    return (string) $this->getConfig()->get($this->getFullConfigPath($path), $defaultValue);
+    return (string) $this->config()->get($this->getFullConfigPath($path), $defaultValue);
   }
 
   public function configAsInteger(string $path, int $defaultValue = 0): int
   {
-    return (int) $this->getConfig()->get($this->getFullConfigPath($path), $defaultValue);
+    return (int) $this->config()->get($this->getFullConfigPath($path), $defaultValue);
   }
 
   public function configAsFloat(string $path, float $defaultValue = 0): float
   {
-    return (float) $this->getConfig()->get($this->getFullConfigPath($path), $defaultValue);
+    return (float) $this->config()->get($this->getFullConfigPath($path), $defaultValue);
   }
 
   public function configAsBool(string $path, bool $defaultValue = false): bool
   {
-    return (bool) $this->getConfig()->get($this->getFullConfigPath($path), $defaultValue);
+    return (bool) $this->config()->get($this->getFullConfigPath($path), $defaultValue);
   }
 
   public function configAsArray(string $path, array $defaultValue = []): array
   {
-    return (array) $this->getConfig()->get($path, $defaultValue);
+    return (array) $this->config()->get($path, $defaultValue);
   }
 
   public function setConfigAsString(string $path, string $value = ''): void
   {
-    $this->getConfig()->set($this->getFullConfigPath($path), $value);
+    $this->config()->set($this->getFullConfigPath($path), $value);
   }
 
   public function setConfigAsInteger(string $path, int $value = 0): void
   {
-    $this->getConfig()->set($this->getFullConfigPath($path), $value);
+    $this->config()->set($this->getFullConfigPath($path), $value);
   }
 
   public function setConfigAsFloat(string $path, float $value = 0): void
   {
-    $this->getConfig()->set($this->getFullConfigPath($path), $value);
+    $this->config()->set($this->getFullConfigPath($path), $value);
   }
 
   public function setConfigAsBool(string $path, bool $value = false): void
   {
-    $this->getConfig()->set($this->getFullConfigPath($path), $value);
+    $this->config()->set($this->getFullConfigPath($path), $value);
   }
 
   public function setConfigAsArray(string $path, array $value = []): void
   {
-    $this->getConfig()->set($this->getFullConfigPath($path), $value);
+    $this->config()->set($this->getFullConfigPath($path), $value);
   }
 
 
@@ -369,7 +369,7 @@ class App extends Core implements Interfaces\AppInterface
   public function collectExtendibles(string $extendibleName): array
   {
     $items = [];
-    foreach ($this->getAppManager()->getEnabledApps() as $app) {
+    foreach ($this->appManager()->getEnabledApps() as $app) {
       try {
         $extendible = $this->getService($app->namespace . '\\Extendibles\\' . $extendibleName);
         $extendible->app = $app;

@@ -43,8 +43,8 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
     $apps = $this->getEnabledApps();
     array_walk($apps, function ($app) {
       if (
-        $this->getEnv()->requestedUri == $app->manifest['rootUrlSlug']
-        || str_starts_with($this->getEnv()->requestedUri, $app->manifest['rootUrlSlug'] . '/')
+        $this->env()->requestedUri == $app->manifest['rootUrlSlug']
+        || str_starts_with($this->env()->requestedUri, $app->manifest['rootUrlSlug'] . '/')
       ) {
         $app->isActivated = true;
         $this->activatedApp = $app;
@@ -162,7 +162,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
     $appNamespaces = [];
 
     // community apps
-    $communityRepoFolder = $this->getEnv()->srcFolder . '/../../apps/src';
+    $communityRepoFolder = $this->env()->srcFolder . '/../../apps/src';
     if (is_dir($communityRepoFolder)) {
       foreach (scandir($communityRepoFolder) as $folder) {
         $manifestFile = $communityRepoFolder . '/' . $folder . '/manifest.yaml';
@@ -178,10 +178,10 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
     // Each repository is scanned, first for the vendor name ($vendorFolder), then for
     // the app name ($appFolder).
     // The $appFolder represents the Hubleto\App only if there is src/manifest.yaml file.
-    $appRepositories = $this->getConfig()->getAsArray('appRepositories');
+    $appRepositories = $this->config()->getAsArray('appRepositories');
     if (count($appRepositories) == 0) {
       $appRepositories = [
-        $this->getEnv()->projectFolder . '/vendor'
+        $this->env()->projectFolder . '/vendor'
       ];
     }
 
@@ -213,7 +213,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
    */
   public function getInstalledAppNamespaces(): array
   {
-    $tmp = $this->getConfig()->getAsArray('apps');
+    $tmp = $this->config()->getAsArray('apps');
     ksort($tmp);
 
     $appNamespaces = [];
@@ -272,7 +272,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
   {
     $apps = $this->getEnabledApps();
     foreach ($apps as $app) {
-      if (str_starts_with($this->getEnv()->requestedUri, $app->getRootUrlSlug())) {
+      if (str_starts_with($this->env()->requestedUri, $app->getRootUrlSlug())) {
         return $app;
       }
     }
@@ -362,15 +362,15 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
       $appNameForConfig = $this->getAppNamespaceForConfig($appNamespace);
 
       if (!in_array($appNamespace, $this->getInstalledAppNamespaces())) {
-        $this->getConfig()->set('apps/' . $appNameForConfig . "/installedOn", date('Y-m-d H:i:s'));
-        $this->getConfig()->set('apps/' . $appNameForConfig . "/enabled", true);
-        $this->getConfig()->save('apps/' . $appNameForConfig . "/installedOn", date('Y-m-d H:i:s'));
-        $this->getConfig()->save('apps/' . $appNameForConfig . "/enabled", '1');
+        $this->config()->set('apps/' . $appNameForConfig . "/installedOn", date('Y-m-d H:i:s'));
+        $this->config()->set('apps/' . $appNameForConfig . "/enabled", true);
+        $this->config()->save('apps/' . $appNameForConfig . "/installedOn", date('Y-m-d H:i:s'));
+        $this->config()->save('apps/' . $appNameForConfig . "/enabled", '1');
       }
 
       foreach ($appConfig as $cPath => $cValue) {
-        $this->getConfig()->set('apps/' . $appNameForConfig . "/" . $cPath, (string) $cValue);
-        $this->getConfig()->save('apps/' . $appNameForConfig . "/" . $cPath, (string) $cValue);
+        $this->config()->set('apps/' . $appNameForConfig . "/" . $cPath, (string) $cValue);
+        $this->config()->save('apps/' . $appNameForConfig . "/" . $cPath, (string) $cValue);
       }
     }
 
@@ -384,12 +384,12 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
 
   public function disableApp(string $appNamespace): void
   {
-    $this->getConfig()->save('apps/' . $this->getAppNamespaceForConfig($appNamespace) . '/enabled', '0');
+    $this->config()->save('apps/' . $this->getAppNamespaceForConfig($appNamespace) . '/enabled', '0');
   }
 
   public function enableApp(string $appNamespace): void
   {
-    $this->getConfig()->save('apps/' . $this->getAppNamespaceForConfig($appNamespace) . '/enabled', '1');
+    $this->config()->save('apps/' . $this->getAppNamespaceForConfig($appNamespace) . '/enabled', '1');
   }
 
   public function createApp(string $appNamespace, string $appSrcFolder): void
@@ -418,7 +418,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
 
     $tplFolder = __DIR__ . '/../cli/Templates/app';
 
-    $this->getRenderer()->addNamespace($tplFolder, 'appTemplate');
+    $this->renderer()->addNamespace($tplFolder, 'appTemplate');
 
     if (!is_dir($appSrcFolder . '/Controllers')) {
       mkdir($appSrcFolder . '/Controllers');
@@ -430,15 +430,15 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
       mkdir($appSrcFolder . '/Extendibles');
     }
 
-    file_put_contents($appSrcFolder . '/Loader.php', $this->getRenderer()->renderView('@appTemplate/Loader.php.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Loader.tsx', $this->getRenderer()->renderView('@appTemplate/Loader.tsx.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Calendar.php', $this->getRenderer()->renderView('@appTemplate/Calendar.php.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/manifest.yaml', $this->getRenderer()->renderView('@appTemplate/manifest.yaml.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Controllers/Home.php', $this->getRenderer()->renderView('@appTemplate/Controllers/Home.php.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Controllers/Settings.php', $this->getRenderer()->renderView('@appTemplate/Controllers/Settings.php.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Views/Home.twig', $this->getRenderer()->renderView('@appTemplate/Views/Home.twig.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Views/Settings.twig', $this->getRenderer()->renderView('@appTemplate/Views/Settings.twig.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Extendibles/AppMenu.php', $this->getRenderer()->renderView('@appTemplate/Extendibles/AppMenu.php.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Loader.php', $this->renderer()->renderView('@appTemplate/Loader.php.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Loader.tsx', $this->renderer()->renderView('@appTemplate/Loader.tsx.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Calendar.php', $this->renderer()->renderView('@appTemplate/Calendar.php.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/manifest.yaml', $this->renderer()->renderView('@appTemplate/manifest.yaml.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Controllers/Home.php', $this->renderer()->renderView('@appTemplate/Controllers/Home.php.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Controllers/Settings.php', $this->renderer()->renderView('@appTemplate/Controllers/Settings.php.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Views/Home.twig', $this->renderer()->renderView('@appTemplate/Views/Home.twig.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Views/Settings.twig', $this->renderer()->renderView('@appTemplate/Views/Settings.twig.twig', $tplVars));
+    file_put_contents($appSrcFolder . '/Extendibles/AppMenu.php', $this->renderer()->renderView('@appTemplate/Extendibles/AppMenu.php.twig', $tplVars));
   }
 
   public function canAppDangerouslyInjectDesktopHtmlContent(string $appNamespace): bool

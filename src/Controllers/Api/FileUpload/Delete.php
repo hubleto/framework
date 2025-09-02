@@ -11,8 +11,8 @@ class Delete extends \Hubleto\Framework\Controller {
   public function renderJson(): ?array {
     try {
       $fileFullPath =
-        $this->getConfig()->getAsString('uploadFolder')
-        . '/' . $this->getRouter()->urlParamAsString('fileFullPath')
+        $this->config()->getAsString('uploadFolder')
+        . '/' . $this->router()->urlParamAsString('fileFullPath')
       ;
 
       if (is_file($fileFullPath)) {

@@ -19,7 +19,7 @@ class Logger extends Core {
   {
     parent::__construct();
 
-    $this->logFolder = $this->getConfig()->getAsString('logFolder');
+    $this->logFolder = $this->config()->getAsString('logFolder');
     $this->enabled = !empty($this->logFolder) && is_dir($this->logFolder);
 
     $this->initInternalLogger('core');

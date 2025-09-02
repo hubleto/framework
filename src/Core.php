@@ -2,6 +2,10 @@
 
 namespace Hubleto\Framework;
 
+/**
+ * This class provides shortcut methods to access all services
+ * used in the Hubleto application.
+ */
 class Core
 {
 
@@ -12,7 +16,7 @@ class Core
   }
 
   /**
-   * [Description for getService]
+   * Shortcut for the dependency injection.
    *
    * @param string $service
    * 
@@ -38,153 +42,193 @@ class Core
   }
 
   /**
-   * [Description for getEnv]
+   * Shortcut for the env service.
    *
    * @return Env
    * 
    */
-  public function getEnv(): Env
+  public function env(): Env
   {
     return $this->getService(Env::class);
   }
 
   /**
-   * [Description for getAuth]
+   * Shortcut for the authentication service.
    *
    * @return Interfaces\AuthInterface
    * 
    */
-  public function getAuthProvider(): Interfaces\AuthInterface
+  public function authProvider(): Interfaces\AuthInterface
   {
     return $this->getService(AuthProvider::class);
   }
 
   /**
-   * [Description for getDb]
+   * Shortcut for the database service.
    *
    * @return Db
    * 
    */
-  public function getDb(): Db
+  public function db(): Db
   {
     return $this->getService(Db::class);
   }
 
   /**
-   * [Description for getAppManager]
+   * Shortcut for the app manager service.
    *
    * @return Interfaces\AppManagerInterface
    * 
    */
-  public function getAppManager(): Interfaces\AppManagerInterface
+  public function appManager(): Interfaces\AppManagerInterface
   {
     return $this->getService(AppManager::class);
   }
 
   /**
-   * [Description for getRouter]
+   * Shortcut for the router service.
    *
    * @return Router
    * 
    */
-  public function getRouter(): Router
+  public function router(): Router
   {
     return $this->getService(Router::class);
   }
 
   /**
-   * [Description for getHookManager]
+   * Shortcut for the hook manager service.
    *
    * @return HookManager
    * 
    */
-  public function getHookManager(): HookManager
+  public function hookManager(): HookManager
   {
     return $this->getService(HookManager::class);
   }
 
   /**
-   * [Description for getSessionManager]
+   * Shortcut for the session manager service.
    *
    * @return SessionManager
    * 
    */
-  public function getSessionManager(): SessionManager
+  public function sessionManager(): SessionManager
   {
     return $this->getService(SessionManager::class);
   }
 
   /**
-   * [Description for getPermissionsManager]
+   * Shortcut for the permissions manager service.
    *
    * @return PermissionsManager
    * 
    */
-  public function getPermissionsManager(): PermissionsManager
+  public function permissionsManager(): PermissionsManager
   {
     return $this->getService(PermissionsManager::class);
   }
 
   /**
-   * [Description for getCronManager]
+   * Shortcut for the cron manager service.
    *
    * @return CronManager
    * 
    */
-  public function getCronManager(): CronManager
+  public function cronManager(): CronManager
   {
     return $this->getService(CronManager::class);
   }
 
   /**
-   * [Description for getEmailProvider]
+   * Shortcut for the email provider service.
    *
    * @return EmailProvider
    * 
    */
-  public function getEmailProvider(): EmailProvider
+  public function emailProvider(): EmailProvider
   {
     return $this->getService(EmailProvider::class);
   }
 
   /**
-   * [Description for getConfig]
+   * Shortcut for the config service.
    *
    * @return Config
    * 
    */
-  public function getConfig(): Config
+  public function config(): Config
   {
     return $this->getService(Config::class);
   }
 
-  public function getLogger(): Logger
+  /**
+   * Shortcut for the logger service.
+   *
+   * @return Logger
+   * 
+   */
+  public function logger(): Logger
   {
     return $this->getService(Logger::class);
   }
 
-  public function getLocale(): Locale
+  /**
+   * Shortcut for the locale service.
+   *
+   * @return Locale
+   * 
+   */
+  public function locale(): Locale
   {
     return $this->getService(Locale::class);
   }
 
-  public function getRenderer(): Renderer
+  /**
+   * Shortcut for the renderer service.
+   *
+   * @return Renderer
+   * 
+   */
+  public function renderer(): Renderer
   {
     return $this->getService(Renderer::class);
   }
 
-  public function getTranslator(): Interfaces\TranslatorInterface
+  /**
+   * Shortcut for the translator service.
+   *
+   * @return Interfaces\TranslatorInterface
+   * 
+   */
+  public function translator(): Interfaces\TranslatorInterface
   {
     $translator = $this->getService(Translator::class);
     $translator->setContext($this->translationContext);
     return $translator;
   }
 
+  /**
+   * [Description for getModel]
+   *
+   * @param string $model
+   * 
+   * @return Models\Model
+   * 
+   */
   public function getModel(string $model): Models\Model
   {
     return $this->getService($model);
   }
 
+  /**
+   * [Description for getController]
+   *
+   * @param string $controller
+   * 
+   * @return Controller
+   * 
+   */
   public function getController(string $controller): Controller
   {
     return $this->getService($controller);
@@ -203,7 +247,7 @@ class Core
    */
   public function translate(string $string, array $vars = []): string
   {
-    return $this->getTranslator()->translate($string, $vars);
+    return $this->translator()->translate($string, $vars);
   }
 
   // public static function getDictionaryFilename(string $language): string
@@ -241,7 +285,7 @@ class Core
 
   //   if (!empty($dict[$contextInner][$string])) return;
 
-  //   if ($main->getConfig()->getAsBool('autoTranslate')) {
+  //   if ($main->config()->getAsBool('autoTranslate')) {
   //     /** @disregard P1009 */
   //     $tr = new \Stichoza\GoogleTranslate\GoogleTranslate();
   //     $tr->setSource('en'); // Translate from

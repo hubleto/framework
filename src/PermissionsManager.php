@@ -81,7 +81,7 @@ class PermissionsManager extends Core implements Interfaces\PermissionsManagerIn
 
   public function set(string $permission, int $idUserRole, bool $isEnabled)
   {
-    $this->getConfig()->save(
+    $this->config()->save(
       "permissions/{$idUserRole}/".str_replace("/", ":", $permission),
       $isEnabled ? "1" : "0"
     );
@@ -102,7 +102,7 @@ class PermissionsManager extends Core implements Interfaces\PermissionsManagerIn
       $idRole = (int) $role;
     }
 
-    return in_array($idRole, $this->getAuthProvider()->getUserRoles());
+    return in_array($idRole, $this->authProvider()->getUserRoles());
   }
 
   public function grantedForRole(string $permission, int|string $userRole): bool
@@ -123,8 +123,8 @@ class PermissionsManager extends Core implements Interfaces\PermissionsManagerIn
       return true;
     } else {
       if (empty($permission)) return true;
-      if (count($userRoles) == 0) $userRoles = $this->getAuthProvider()->getUserRoles();
-      if ($userType == 0) $userType = $this->getAuthProvider()->getUserType();
+      if (count($userRoles) == 0) $userRoles = $this->authProvider()->getUserRoles();
+      if ($userType == 0) $userType = $this->authProvider()->getUserType();
 
       $granted = false;
 
@@ -171,8 +171,8 @@ class PermissionsManager extends Core implements Interfaces\PermissionsManagerIn
 
   public function isAppPermittedForActiveUser(\Hubleto\Framework\Interfaces\AppInterface $app): bool
   {
-    $userRoles = $this->getAuthProvider()->getUserRoles();
-    $userType = $this->getAuthProvider()->getUserType();
+    $userRoles = $this->authProvider()->getUserRoles();
+    $userType = $this->authProvider()->getUserType();
 
     if (
       $this->grantAllPermissions
@@ -183,7 +183,7 @@ class PermissionsManager extends Core implements Interfaces\PermissionsManagerIn
       return true;
     }
 
-    $user = $this->getAuthProvider()->getUser();
+    $user = $this->authProvider()->getUser();
     $userApps = @json_decode($user['apps'], true);
 
     return is_array($userApps) && in_array($app->namespace, $userApps);

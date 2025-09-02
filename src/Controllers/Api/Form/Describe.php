@@ -9,7 +9,7 @@ class Describe extends \Hubleto\Framework\Controllers\ApiController {
   {
     parent::__construct();
 
-    $model = $this->getRouter()->urlParamAsString('model');
+    $model = $this->router()->urlParamAsString('model');
     // $this->permission = $model . ':Read';
     $this->model = $this->getModel($model);
   }

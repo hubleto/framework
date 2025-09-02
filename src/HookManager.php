@@ -9,7 +9,7 @@ class HookManager extends Core implements Interfaces\HookManagerInterface
 
   public function init(): void
   {
-    foreach ($this->getAppManager()->getInstalledApps() as $appNamespace => $app) {
+    foreach ($this->appManager()->getInstalledApps() as $appNamespace => $app) {
       $hooks = @Helper::scanDirRecursively($app->srcFolder . '/Hooks');
       // var_dump($appNamespace);var_dump($hooks);
       foreach ($hooks as $hook) {
@@ -20,7 +20,7 @@ class HookManager extends Core implements Interfaces\HookManagerInterface
       }
     }
 
-    $hooks = @Helper::scanDirRecursively($this->getEnv()->projectFolder . '/src/hooks');
+    $hooks = @Helper::scanDirRecursively($this->env()->projectFolder . '/src/hooks');
     foreach ($hooks as $hook) {
       if (!\str_ends_with($hook, '.php')) continue;
       $hookClass = '\\HubletoProject\\Hook\\' . str_replace('/', '\\', $hook);
@@ -31,7 +31,7 @@ class HookManager extends Core implements Interfaces\HookManagerInterface
 
   public function log(string $msg): void
   {
-    $this->getLogger()->info($msg);
+    $this->logger()->info($msg);
   }
 
   public function addHook(string $hookClass): void

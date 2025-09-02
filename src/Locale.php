@@ -10,7 +10,7 @@ class Locale extends Core
   public function __construct()
   {
     parent::__construct();
-    $this->locale = $this->getConfig()->getAsArray('locale');
+    $this->locale = $this->config()->getAsArray('locale');
   }
 
   public function getDateShortFormat(): string
@@ -35,13 +35,13 @@ class Locale extends Core
 
   public function getCurrencySymbol(): string
   {
-    $symbol = $this->getConfig()->getAsString('locale/currency/symbol');
+    $symbol = $this->config()->getAsString('locale/currency/symbol');
     return empty($symbol) ? "€" : $symbol;
   }
 
   public function getCurrencyIsoCode(): string
   {
-    $isoCode = $this->getConfig()->getAsString('locale/currency/isoCode');
+    $isoCode = $this->config()->getAsString('locale/currency/isoCode');
     return empty($isoCode) ? "EUR" : $isoCode;
   }
 

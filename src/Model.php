@@ -90,7 +90,7 @@ class Model extends Core
 
   public function isDatabaseConnected(): bool
   {
-    return $this->getDb()->isConnected;
+    return $this->db()->isConnected;
   }
 
   public function getConfigFullPath(string $configName): string
@@ -105,7 +105,7 @@ class Model extends Core
    */
   public function configAsString(string $configName): string
   {
-    return $this->getConfig()->getAsString($this->getConfigFullPath($configName));
+    return $this->config()->getAsString($this->getConfigFullPath($configName));
   }
 
   /**
@@ -115,7 +115,7 @@ class Model extends Core
    */
   public function configAsInteger(string $configName): int
   {
-    return $this->getConfig()->getAsInteger($this->getConfigFullPath($configName));
+    return $this->config()->getAsInteger($this->getConfigFullPath($configName));
   }
 
   /**
@@ -125,7 +125,7 @@ class Model extends Core
    */
   public function configAsArray(string $configName): array
   {
-    return $this->getConfig()->getAsArray($this->getConfigFullPath($configName));
+    return $this->config()->getAsArray($this->getConfigFullPath($configName));
   }
 
   /**
@@ -174,11 +174,11 @@ class Model extends Core
   public function createSqlTable()
   {
 
-    $this->getDb()->startTransaction();
+    $this->db()->startTransaction();
     foreach ($this->getSqlCreateTableCommands() as $command) {
-      $this->getDb()->execute($command);
+      $this->db()->execute($command);
     }
-    $this->getDb()->commit();
+    $this->db()->commit();
   }
 
   /**
@@ -219,13 +219,13 @@ class Model extends Core
 
         switch ($indexDef["type"]) {
           case "index":
-            $this->getDb()->execute("
+            $this->db()->execute("
               alter table `" . $this->table . "`
               add index `{$indexOrConstraintName}` ({$tmpColumns})
             ");
             break;
           case "unique":
-            $this->getDb()->execute("
+            $this->db()->execute("
               alter table `" . $this->table . "`
               add constraint `{$indexOrConstraintName}` unique ({$tmpColumns})
             ");
@@ -233,7 +233,7 @@ class Model extends Core
         }
       }
 
-      $this->getConfig()->save(
+      $this->config()->save(
         'models/' . str_replace("/", "-", $this->fullName) . '/installed-version',
         max(array_keys($this->upgrades()))
       );
@@ -246,9 +246,9 @@ class Model extends Core
 
   public function dropTableIfExists(): Model
   {
-    $this->getDb()->execute("set foreign_key_checks = 0");
-    $this->getDb()->execute("drop table if exists `" . $this->table . "`");
-    $this->getDb()->execute("set foreign_key_checks = 1");
+    $this->db()->execute("set foreign_key_checks = 0");
+    $this->db()->execute("drop table if exists `" . $this->table . "`");
+    $this->db()->execute("set foreign_key_checks = 1");
     return $this;
   }
 
@@ -286,7 +286,7 @@ class Model extends Core
 
     if (!empty($sql)) {
       foreach (explode(';;', $sql) as $query) {
-        $this->getDb()->execute(trim($query));
+        $this->db()->execute(trim($query));
       }
     }
 
@@ -406,10 +406,10 @@ class Model extends Core
     }
 
     $description->permissions = [
-      'canRead' => $this->getPermissionsManager()->granted($this->fullName . ':Read'),
-      'canCreate' => $this->getPermissionsManager()->granted($this->fullName . ':Create'),
-      'canUpdate' => $this->getPermissionsManager()->granted($this->fullName . ':Update'),
-      'canDelete' => $this->getPermissionsManager()->granted($this->fullName . ':Delete'),
+      'canRead' => $this->permissionsManager()->granted($this->fullName . ':Read'),
+      'canCreate' => $this->permissionsManager()->granted($this->fullName . ':Create'),
+      'canUpdate' => $this->permissionsManager()->granted($this->fullName . ':Update'),
+      'canDelete' => $this->permissionsManager()->granted($this->fullName . ':Delete'),
     ];
 
     return $description;
@@ -432,10 +432,10 @@ class Model extends Core
     }
 
     $description->permissions = [
-      'canRead' => $this->getPermissionsManager()->granted($this->fullName . ':Read'),
-      'canCreate' => $this->getPermissionsManager()->granted($this->fullName . ':Create'),
-      'canUpdate' => $this->getPermissionsManager()->granted($this->fullName . ':Update'),
-      'canDelete' => $this->getPermissionsManager()->granted($this->fullName . ':Delete'),
+      'canRead' => $this->permissionsManager()->granted($this->fullName . ':Read'),
+      'canCreate' => $this->permissionsManager()->granted($this->fullName . ':Create'),
+      'canUpdate' => $this->permissionsManager()->granted($this->fullName . ':Update'),
+      'canDelete' => $this->permissionsManager()->granted($this->fullName . ':Delete'),
     ];
 
     $description->includeRelations = array_keys($this->relations);

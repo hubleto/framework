@@ -147,13 +147,13 @@ class Controller extends Core {
    */
   public function prepareViewParams()
   {
-    $this->viewParams = $this->getRouter()->getUrlParams();
+    $this->viewParams = $this->router()->getUrlParams();
   }
 
   public function prepareView(): void
   {
     $this->translationContext = $this->translationContext;
-    $this->viewParams = $this->getRouter()->getUrlParams();
+    $this->viewParams = $this->router()->getUrlParams();
   }
   
   public function setView(string $view): void

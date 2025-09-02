@@ -14,7 +14,7 @@ class Router extends Core implements Interfaces\RouterInterface {
   public function __construct()
   {
 
-    $this->httpGet([
+    $this->get([
       '/^api\/form\/describe\/?$/' => \Hubleto\Framework\Controllers\Api\Form\Describe::class,
       '/^api\/table\/describe\/?$/' => \Hubleto\Framework\Controllers\Api\Table\Describe::class,
       '/^api\/record\/get\/?$/' => \Hubleto\Framework\Controllers\Api\Record\Get::class,
@@ -71,7 +71,7 @@ class Router extends Core implements Interfaces\RouterInterface {
   }
 
   // configure routes for HTTP GET
-  public function httpGet(array $routes)
+  public function get(array $routes)
   {
     $this->routesHttpGet = array_merge($this->routesHttpGet, $routes);
   }
@@ -188,7 +188,7 @@ class Router extends Core implements Interfaces\RouterInterface {
 
   public function redirectTo(string $url, int $code = 302): void
   {
-    header("Location: " . $this->getEnv()->projectUrl . "/" . trim($url, "/"), true, $code);
+    header("Location: " . $this->env()->projectUrl . "/" . trim($url, "/"), true, $code);
     exit;
   }
 

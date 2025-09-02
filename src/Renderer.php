@@ -19,10 +19,10 @@ class Renderer extends Core
     $this->twigLoader->addPath(realpath(__DIR__ . '/../views'), 'framework');
 
     try {
-      $this->twigLoader->addPath($this->getEnv()->projectFolder . '/views', 'app');
+      $this->twigLoader->addPath($this->env()->projectFolder . '/views', 'app');
     } catch (\Exception $e) { }
 
-    $this->twig->addGlobal('config', $this->getConfig()->get());
+    $this->twig->addGlobal('config', $this->config()->get());
     $this->twig->addExtension(new \Twig\Extension\StringLoaderExtension());
     $this->twig->addExtension(new \Twig\Extension\DebugExtension());
 
@@ -41,13 +41,13 @@ class Renderer extends Core
     $this->twig->addFunction(new \Twig\TwigFunction(
       'hasPermission',
       function (string $permission, array $idUserRoles = []) {
-        return $this->getPermissionsManager()->granted($permission, $idUserRoles);
+        return $this->permissionsManager()->granted($permission, $idUserRoles);
       }
     ));
     $this->twig->addFunction(new \Twig\TwigFunction(
       'hasRole',
       function (int|string $role) {
-        return $this->getPermissionsManager()->hasRole($role);
+        return $this->permissionsManager()->hasRole($role);
       }
     ));
     $this->twig->addFunction(new \Twig\TwigFunction(
@@ -116,8 +116,8 @@ class Renderer extends Core
 
     try {
 
-      $router = $this->getRouter();
-      $permissionManager = $this->getPermissionsManager();
+      $router = $this->router();
+      $permissionManager = $this->permissionsManager();
 
       // Find-out which route is used for rendering
 
@@ -137,7 +137,7 @@ class Renderer extends Core
       $router->setRouteVars($routeVars);
 
       if ($router->isUrlParam('sign-out')) {
-        $this->getAuthProvider()->signOut();
+        $this->authProvider()->signOut();
       }
 
       if ($router->isUrlParam('signed-out')) {
@@ -154,8 +154,8 @@ class Renderer extends Core
       $controllerObject = $this->getController($controllerClassName);
 
       // authenticate user, if any
-      $this->getAuthProvider()->auth();
-      $this->getConfig()->filterByUser();
+      $this->authProvider()->auth();
+      $this->config()->filterByUser();
 
       if (empty($this->permission) && !empty($controllerObject->permission)) {
         $permissionManager->setPermission($controllerObject->permission);
@@ -175,14 +175,14 @@ class Renderer extends Core
       }
 
       if ($controllerObject->requiresUserAuthentication) {
-        if (!$this->getAuthProvider()->isUserInSession()) {
+        if (!$this->authProvider()->isUserInSession()) {
           $controllerObject = $this->getController(Controllers\SignIn::class);
           $permissionManager->setPermission($controllerObject->permission);
         }
       }
 
       if ($controllerObject->requiresUserAuthentication) {
-        $this->getPermissionsManager()->checkPermission();
+        $this->permissionsManager()->checkPermission();
       }
 
       $controllerObject->preInit();
@@ -221,12 +221,12 @@ class Renderer extends Core
         
         $contentParams = [
           'hubleto' => $this,
-          'user' => $this->getAuthProvider()->getUser(),
-          'config' => $this->getConfig()->get(),
+          'user' => $this->authProvider()->getUser(),
+          'config' => $this->config()->get(),
           // 'routeUrl' => $router->getRoute(),
-          // 'routeParams' => $this->getRouter()->getRouteVars(),
+          // 'routeParams' => $this->router()->getRouteVars(),
           // 'route' => $router->getRoute(),
-          // 'session' => $this->getSessionManager()->get(),
+          // 'session' => $this->sessionManager()->get(),
           // 'controller' => $controllerObject,
           'viewParams' => $controllerObject->getViewParams(),
         ];
@@ -238,7 +238,7 @@ class Renderer extends Core
         }
 
         // In some cases the result of the view will be used as-is ...
-        if (php_sapi_name() == 'cli' || $this->getRouter()->urlParamAsBool('__IS_AJAX__') || $controllerObject->hideDefaultDesktop) {
+        if (php_sapi_name() == 'cli' || $this->router()->urlParamAsBool('__IS_AJAX__') || $controllerObject->hideDefaultDesktop) {
           $html = $contentHtml;
 
         // ... But in most cases it will be "encapsulated" in the desktop.
@@ -273,8 +273,8 @@ class Renderer extends Core
       return $this->renderFatal('Controller not found: ' . $e->getMessage(), false);
     } catch (Exceptions\NotEnoughPermissionsException $e) {
       $message = $e->getMessage();
-      if ($this->getAuthProvider()->isUserInSession()) {
-        $message .= " Hint: Sign out at {$this->getEnv()->projectUrl}?sign-out and sign in again or check your permissions.";
+      if ($this->authProvider()->isUserInSession()) {
+        $message .= " Hint: Sign out at {$this->env()->projectUrl}?sign-out and sign in again or check your permissions.";
       }
       return $this->renderFatal($message, false);
       // header('HTTP/1.1 401 Unauthorized', true, 401);
@@ -321,7 +321,7 @@ class Renderer extends Core
 
   public function renderWarning($message, $isHtml = true): string
   {
-    if ($this->getRouter()->isAjax()) {
+    if ($this->router()->isAjax()) {
       return json_encode([
         "status" => "warning",
         "message" => $message,
@@ -337,7 +337,7 @@ class Renderer extends Core
 
   public function renderFatal($message, $isHtml = true): string
   {
-    if ($this->getRouter()->isAjax()) {
+    if ($this->router()->isAjax()) {
       return json_encode([
         "status" => "error",
         "message" => $message,
@@ -377,7 +377,7 @@ class Renderer extends Core
       . "</div>"
     ;
 
-    $this->getLogger()->error("{$errorHash}\t{$errorMessage}");
+    $this->logger()->error("{$errorHash}\t{$errorMessage}");
 
     switch (get_class($exception)) {
       case 'Hubleto\Framework\Exceptions\DBException':

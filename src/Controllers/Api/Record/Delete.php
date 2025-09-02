@@ -10,7 +10,7 @@ class Delete extends \Hubleto\Framework\Controllers\ApiController {
   {
     parent::__construct();
 
-    $model = $this->getRouter()->urlParamAsString('model');
+    $model = $this->router()->urlParamAsString('model');
     // $this->permission = $model . ':Read';
     $this->model = $this->getModel($model);
   }
@@ -20,11 +20,11 @@ class Delete extends \Hubleto\Framework\Controllers\ApiController {
     $ok = false;
     $rowsAffected = 0;
 
-    if ($this->getConfig()->getAsBool('encryptRecordIds')) {
-      $hash = $this->getRouter()->urlParamAsString('hash');
-      $ok = $hash == \Hubleto\Framework\Helper::encrypt($this->getRouter()->urlParamAsString('id'), '', true);
+    if ($this->config()->getAsBool('encryptRecordIds')) {
+      $hash = $this->router()->urlParamAsString('hash');
+      $ok = $hash == \Hubleto\Framework\Helper::encrypt($this->router()->urlParamAsString('id'), '', true);
     } else {
-      $id = $this->getRouter()->urlParamAsInteger('id');
+      $id = $this->router()->urlParamAsInteger('id');
       $ok = $id > 0;
     }
 
@@ -38,7 +38,7 @@ class Delete extends \Hubleto\Framework\Controllers\ApiController {
         $this->model->onAfterDelete((int) $id);
       } catch (\Throwable $e) {
         $error = $e->getMessage();
-        $errorHtml = $this->getRenderer()->renderExceptionHtml($e, [$this->model]);
+        $errorHtml = $this->renderer()->renderExceptionHtml($e, [$this->model]);
       }
 
       $return = [

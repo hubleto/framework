@@ -13,7 +13,7 @@ class SessionManager extends Core implements Interfaces\SessionManagerInterface
 
     if (isset($_SESSION) && is_array($_SESSION) && !is_array($_SESSION[$this->salt])) $_SESSION[$this->salt] = [];
 
-    $this->salt = $this->getConfig()->getAsString('sessionSalt');
+    $this->salt = $this->config()->getAsString('sessionSalt');
   }
 
   /**

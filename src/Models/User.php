@@ -108,7 +108,7 @@ class User extends Model {
   }
 
   public function authCookieGetLogin() {
-    list($tmpHash, $tmpLogin) = explode(",", $_COOKIE[$this->getSessionManager()->getSalt() . '-user']);
+    list($tmpHash, $tmpLogin) = explode(",", $_COOKIE[$this->sessionManager()->getSalt() . '-user']);
     return $tmpLogin;
   }
 

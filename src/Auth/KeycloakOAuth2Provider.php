@@ -30,25 +30,25 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
 
       $this->deleteSession();
       header(
-        "Location: " . $this->getConfig()->getAsString('auth/urlLogout') . 
-        "?id_token_hint=".\urlencode($idToken)."&post_logout_redirect_uri=".\urlencode($this->getEnv()->projectUrl . "?signed-out")
+        "Location: " . $this->config()->getAsString('auth/urlLogout') . 
+        "?id_token_hint=".\urlencode($idToken)."&post_logout_redirect_uri=".\urlencode($this->env()->projectUrl . "?signed-out")
       );
       exit;
     } catch (\Throwable $e) {
       $this->deleteSession();
-      header("Location: {$this->getEnv()->projectUrl}");
+      header("Location: {$this->env()->projectUrl}");
       exit;
     }
   }
 
   public function getAccessToken()
   {
-    return $this->getSessionManager()->get('oauthAccessToken');
+    return $this->sessionManager()->get('oauthAccessToken');
   }
 
   public function setAccessToken($accessToken)
   {
-    $this->getSessionManager()->set('oauthAccessToken', $accessToken);
+    $this->sessionManager()->set('oauthAccessToken', $accessToken);
   }
 
   public function auth(): void
@@ -77,8 +77,8 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
       }
     } else {
 
-      $authCode = $this->getRouter()->urlParamAsString('code');
-      $authState = $this->getRouter()->urlParamAsString('state');
+      $authCode = $this->router()->urlParamAsString('code');
+      $authState = $this->router()->urlParamAsString('state');
 
       // If we don't have an authorization code then get one
       if (empty($authCode)) {
@@ -89,11 +89,11 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
         $authorizationUrl = $this->provider->getAuthorizationUrl(['scope' => ['openid']]);
 
         // Get the state generated for you and store it to the session.
-        $this->getSessionManager()->set('oauth2state', $this->provider->getState());
+        $this->sessionManager()->set('oauth2state', $this->provider->getState());
 
         // Optional, only required when PKCE is enabled.
         // Get the PKCE code generated for you and store it to the session.
-        $this->getSessionManager()->set('oauth2pkceCode', $this->provider->getPkceCode());
+        $this->sessionManager()->set('oauth2pkceCode', $this->provider->getPkceCode());
 
         // Redirect the user to the authorization URL.
         header('Location: ' . $authorizationUrl);
@@ -102,10 +102,10 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
       // Check given state against previously stored one to mitigate CSRF attack
       } elseif (
         empty($authState)
-        || empty($this->getSessionManager()->get('oauth2state'))
-        || $authState !== $this->getSessionManager()->get('oauth2state')
+        || empty($this->sessionManager()->get('oauth2state'))
+        || $authState !== $this->sessionManager()->get('oauth2state')
       ) {
-        if ($this->getSessionManager()->isset('oauth2state')) $this->getSessionManager()->unset('oauth2state');
+        if ($this->sessionManager()->isset('oauth2state')) $this->sessionManager()->unset('oauth2state');
         exit('Invalid state');
       } else {
 
@@ -113,7 +113,7 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
 
           // Optional, only required when PKCE is enabled.
           // Restore the PKCE code stored in the session.
-          $this->provider->setPkceCode($this->getSessionManager()->get('oauth2pkceCode'));
+          $this->provider->setPkceCode($this->sessionManager()->get('oauth2pkceCode'));
 
           // Try to get an access token using the authorization code grant.
           $accessToken = $this->provider->getAccessToken('authorization_code', [
@@ -141,7 +141,7 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
 
       if ($authResult) {
         $this->signIn($authResult);
-        $this->getRouter()->redirectTo('');
+        $this->router()->redirectTo('');
         exit;
       } else {
         $this->deleteSession();

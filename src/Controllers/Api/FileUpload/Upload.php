@@ -33,7 +33,7 @@ class Upload extends \Hubleto\Framework\Controller {
   }
 
   private function uploadFile(string $fileName, string $sourceFile): array {
-    $renamePattern = $this->getRouter()->urlParamAsString('renamePattern');
+    $renamePattern = $this->router()->urlParamAsString('renamePattern');
 
     if (!empty($renamePattern)) {
       $uploadedFileExtension = strtolower($fileName, PATHINFO_EXTENSION);
@@ -55,7 +55,7 @@ class Upload extends \Hubleto\Framework\Controller {
       $fileName = str_replace("{%EXT%}", $tmpParts['extension'], $fileName);
     }
 
-    $folderPath = $this->getRouter()->urlParamAsString('folderPath');
+    $folderPath = $this->router()->urlParamAsString('folderPath');
 
     if (strpos($folderPath, "..") !== FALSE) {
       $folderPath = "";
@@ -63,7 +63,7 @@ class Upload extends \Hubleto\Framework\Controller {
 
     if (empty($folderPath)) $folderPath = ".";
 
-    $uploadFolder = $this->getConfig()->getAsString('uploadFolder');
+    $uploadFolder = $this->config()->getAsString('uploadFolder');
 
     if (!is_dir("{$uploadFolder}/{$folderPath}")) {
       mkdir("{$uploadFolder}/{$folderPath}", 0775, TRUE);

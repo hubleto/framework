@@ -58,7 +58,7 @@ class Model extends \Hubleto\Framework\Model
   {
     $description = parent::describeTable();
 
-    $tag = $this->getRouter()->urlParamAsString('tag');
+    $tag = $this->router()->urlParamAsString('tag');
 
     // model-based permissions sa uz nepouzivaju
     // pouzivaju sa record-based permissions, vid recordManager->getPermissions()
@@ -122,7 +122,7 @@ class Model extends \Hubleto\Framework\Model
   public function onAfterUpdate(array $originalRecord, array $savedRecord): array
   {
     $savedRecord = parent::onAfterUpdate($originalRecord, $savedRecord);
-    $this->getHookManager()->run('model:record-updated', [$this, $originalRecord, $savedRecord]);
+    $this->hookManager()->run('model:record-updated', [$this, $originalRecord, $savedRecord]);
     return $savedRecord;
   }
 

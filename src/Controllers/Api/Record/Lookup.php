@@ -11,14 +11,14 @@ class Lookup extends \Hubleto\Framework\Controllers\ApiController {
   {
     parent::__construct();
 
-    $model = $this->getRouter()->urlParamAsString('model');
+    $model = $this->router()->urlParamAsString('model');
     // $this->permission = $model . ':Read';
     $this->model = $this->getModel($model);
   }
 
   public function response(): array
   {
-    $search = $this->getRouter()->urlParamAsString('search');
+    $search = $this->router()->urlParamAsString('search');
     $query = $this->model->record->prepareLookupQuery($search);
 
     $dataRaw = $query->get()->toArray();

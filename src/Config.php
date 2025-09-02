@@ -84,7 +84,7 @@ class Config extends Core
   {
     try {
       if (!empty($path)) {
-        $this->getDb()->execute("
+        $this->db()->execute("
           insert into `config` set `path` = :path, `value` = :value
           on duplicate key update `path` = :path, `value` = :value
         ", ['path' => $path, 'value' => $value]);
@@ -95,14 +95,14 @@ class Config extends Core
 
   public function saveForUser(string $path, string $value): void
   {
-    $this->save('user/' . $this->getAuthProvider()->getUserId() . '/' . $path, $value);
+    $this->save('user/' . $this->authProvider()->getUserId() . '/' . $path, $value);
   }
 
   public function delete($path): void
   {
     try {
       if (!empty($path)) {
-        $this->getDb()->execute("delete from `config` where `path` like ?", [$path . '%']);
+        $this->db()->execute("delete from `config` where `path` like ?", [$path . '%']);
       }
     } catch (\Exception $e) {
       if ($e->getCode() == '42S02') { // Base table not found
@@ -115,10 +115,10 @@ class Config extends Core
 
   public function init(): void
   {
-    if (!$this->getDb()->isConnected) return;
+    if (!$this->db()->isConnected) return;
 
     try {
-      $cfgs = $this->getDb()->fetchAll("select * from `config`");
+      $cfgs = $this->db()->fetchAll("select * from `config`");
 
       foreach ($cfgs as $cfg) {
         $tmp = &$this->configData;
@@ -141,7 +141,7 @@ class Config extends Core
 
   public function filterByUser(): void
   {
-    $idUser = $this->getAuthProvider()->getUserId();
+    $idUser = $this->authProvider()->getUserId();
     if (isset($this->configData['user'][$idUser]) && is_array($this->configData['user'][$idUser])) {
       $this->configData = array_merge_recursive($this->configData, $this->configData['user'][$idUser]);
       unset($this->configData['user']);

@@ -10,7 +10,7 @@ class Get extends \Hubleto\Framework\Controllers\ApiController {
   {
     parent::__construct();
 
-    $model = $this->getRouter()->urlParamAsString('model');
+    $model = $this->router()->urlParamAsString('model');
     $this->model = $this->getModel($model);
   }
 
@@ -18,7 +18,7 @@ class Get extends \Hubleto\Framework\Controllers\ApiController {
   {
     $record = [];
 
-    $idEncrypted = $this->getRouter()->urlParamAsString('id');
+    $idEncrypted = $this->router()->urlParamAsString('id');
     $id = (int) \Hubleto\Framework\Helper::decrypt($idEncrypted);
 
     if ($id > 0) {

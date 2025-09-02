@@ -10,7 +10,7 @@ class CronManager extends Core implements Interfaces\CronManagerInterface
 
   public function init(): void
   {
-    $crons = @Helper::scanDirRecursively($this->getEnv()->srcFolder . '/crons');
+    $crons = @Helper::scanDirRecursively($this->env()->srcFolder . '/crons');
     foreach ($crons as $cron) {
       if (!\str_ends_with($cron, '.php')) continue;
       $cronClass = '\\Hubleto\\Erp\\Cron\\' . str_replace('/', '\\', $cron);
@@ -18,7 +18,7 @@ class CronManager extends Core implements Interfaces\CronManagerInterface
       $this->addCron($cronClass);
     }
 
-    $crons = @Helper::scanDirRecursively($this->getEnv()->projectFolder . '/src/crons');
+    $crons = @Helper::scanDirRecursively($this->env()->projectFolder . '/src/crons');
     foreach ($crons as $cron) {
       if (!\str_ends_with($cron, '.php')) continue;
       $cronClass = '\\HubletoProject\\Cron\\' . str_replace('/', '\\', $cron);
@@ -29,7 +29,7 @@ class CronManager extends Core implements Interfaces\CronManagerInterface
 
   public function log(string $msg): void
   {
-    $this->getLogger()->info($msg);
+    $this->logger()->info($msg);
   }
 
   public function addCron(string $cronClass): void

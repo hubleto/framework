@@ -7,11 +7,11 @@ class SaveJunction extends \Hubleto\Framework\Controllers\ApiController
 
   public function renderJson(): array
   {
-    $junctionModel = $this->getRouter()->urlParamAsString('junctionModel');
-    $junctionSourceColumn = $this->getRouter()->urlParamAsString('junctionSourceColumn');
-    $junctionDestinationColumn = $this->getRouter()->urlParamAsString('junctionDestinationColumn');
-    $junctionSourceRecordId = $this->getRouter()->urlParamAsInteger('junctionSourceRecordId');
-    $junctionDestinationRecordId = $this->getRouter()->urlParamAsInteger('junctionDestinationRecordId');
+    $junctionModel = $this->router()->urlParamAsString('junctionModel');
+    $junctionSourceColumn = $this->router()->urlParamAsString('junctionSourceColumn');
+    $junctionDestinationColumn = $this->router()->urlParamAsString('junctionDestinationColumn');
+    $junctionSourceRecordId = $this->router()->urlParamAsInteger('junctionSourceRecordId');
+    $junctionDestinationRecordId = $this->router()->urlParamAsInteger('junctionDestinationRecordId');
 
     $jModel = $this->getModel($junctionModel);
 

@@ -29,8 +29,8 @@ class File extends \Hubleto\Framework\Db\Column
 
     $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-    if (empty($this->model->getConfig()->getAsString('uploadFolder'))) throw new \Exception("{$title}: Upload folder is not configured.");
-    if (!is_dir($this->model->getConfig()->getAsString('uploadFolder'))) throw new \Exception("{$title}: Upload folder does not exist.");
+    if (empty($this->model->config()->getAsString('uploadFolder'))) throw new \Exception("{$title}: Upload folder is not configured.");
+    if (!is_dir($this->model->config()->getAsString('uploadFolder'))) throw new \Exception("{$title}: Upload folder does not exist.");
     if (in_array($fileExtension, ['php', 'sh', 'exe', 'bat', 'htm', 'html', 'htaccess'])) {
       throw new \Exception("{$title}: This file type cannot be uploaded.");
     }
@@ -62,7 +62,7 @@ class File extends \Hubleto\Framework\Db\Column
 
     if (empty($folderPath)) $folderPath = ".";
 
-    $uploadFolder = $this->model->getConfig()->getAsString('uploadFolder');
+    $uploadFolder = $this->model->config()->getAsString('uploadFolder');
 
     if (!is_dir("{$uploadFolder}/{$folderPath}")) {
       mkdir("{$uploadFolder}/{$folderPath}", 0775, TRUE);

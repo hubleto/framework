@@ -43,7 +43,7 @@ class Translator extends Core implements Interfaces\TranslatorInterface
     } elseif (str_starts_with($contextFileRef, 'Hubleto\\App')) {
       $appClass = str_replace('/', '\\', $contextFileRef);
 
-      $app = $this->getAppManager()->getApp($appClass);
+      $app = $this->appManager()->getApp($appClass);
       if ($app) {
         $dictionaryFilename = $app->srcFolder . '/Lang/' . $language . '.json';
       }
@@ -61,11 +61,11 @@ class Translator extends Core implements Interfaces\TranslatorInterface
   {
     $dictionaryFile = '';
 
-    if (empty($language)) $language = $this->getConfig()->getAsString('language', 'en');
+    if (empty($language)) $language = $this->config()->getAsString('language', 'en');
     if (empty($language)) $language = 'en';
 
     if (strlen($language) == 2) {
-      $dictionaryFile = $this->getEnv()->srcFolder . "/Lang/{$language}.json";
+      $dictionaryFile = $this->env()->srcFolder . "/Lang/{$language}.json";
     }
 
     return $dictionaryFile;
@@ -93,7 +93,7 @@ class Translator extends Core implements Interfaces\TranslatorInterface
   public function loadDictionary(string $language = ""): array
   {
     if (empty($language)) {
-      $language = $this->getAuthProvider()->getUserLanguage();
+      $language = $this->authProvider()->getUserLanguage();
     }
 
     if ($language == 'en') {
@@ -102,7 +102,7 @@ class Translator extends Core implements Interfaces\TranslatorInterface
 
     $dictionary = [];
 
-    foreach ($this->getAppManager()->getEnabledApps() as $app) {
+    foreach ($this->appManager()->getEnabledApps() as $app) {
       $appDict = $app->loadDictionary($language);
       foreach ($appDict as $key => $value) {
         $dictionary[$app->fullName][(string) $key] = $value;
@@ -118,7 +118,7 @@ class Translator extends Core implements Interfaces\TranslatorInterface
   public function translate(string $string, array $vars = []): string
   {
     if (empty($toLanguage)) {
-      $toLanguage = $this->getAuthProvider()->getUserLanguage();
+      $toLanguage = $this->authProvider()->getUserLanguage();
     }
 
     if (strpos($this->context, '::')) {

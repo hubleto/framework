@@ -25,25 +25,25 @@ class Env extends Core
     $reflection = new \ReflectionClass($this);
     $this->srcFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
 
-    $this->projectFolder = $this->getConfig()->getAsString('projectFolder');
-    $this->projectUrl = $this->getConfig()->getAsString('projectUrl');
+    $this->projectFolder = $this->config()->getAsString('projectFolder');
+    $this->projectUrl = $this->config()->getAsString('projectUrl');
 
-    $this->secureFolder = $this->getConfig()->getAsString('secureFolder');
+    $this->secureFolder = $this->config()->getAsString('secureFolder');
     if (empty($this->secureFolder)) $this->secureFolder = $this->projectFolder . '/secure';
 
-    $this->uploadFolder = $this->getConfig()->getAsString('uploadFolder');
+    $this->uploadFolder = $this->config()->getAsString('uploadFolder');
     if (empty($this->uploadFolder)) $this->secureFolder = $this->projectFolder . '/upload';
 
-    $this->assetsUrl = $this->getConfig()->getAsString('assetsUrl');
+    $this->assetsUrl = $this->config()->getAsString('assetsUrl');
 
     if (php_sapi_name() !== 'cli') {
       if (!empty($_GET['route'])) {
         $this->requestedUri = $_GET['route'];
-      } else if ($this->getConfig()->getAsString('rewriteBase') == "/") {
+      } else if ($this->config()->getAsString('rewriteBase') == "/") {
         $this->requestedUri = ltrim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), "/");
       } else {
         $this->requestedUri = str_replace(
-          $this->getConfig()->getAsString('rewriteBase'),
+          $this->config()->getAsString('rewriteBase'),
           "",
           parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
         );

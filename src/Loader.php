@@ -21,7 +21,7 @@ class Loader extends Core
     $this->setAsGlobal();
 
     try {
-      $this->getConfig()->setConfig($config);
+      $this->config()->setConfig($config);
 
     } catch (\Exception $e) {
       echo "Hubleto boot failed: [".get_class($e)."] ".$e->getMessage() . "\n";
@@ -51,17 +51,17 @@ class Loader extends Core
   {
 
     try {
-      $this->getDb()->init();
-      $this->getSessionManager()->start(true);
+      $this->db()->init();
+      $this->sessionManager()->start(true);
 
-      $this->getConfig()->init();
-      $this->getRouter()->init();
-      $this->getAuthProvider()->init();
-      $this->getPermissionsManager()->init();
-      $this->getRenderer()->init();
-      $this->getAppManager()->init();
-      $this->getHookManager()->init();
-      $this->getEmailProvider()->init();
+      $this->config()->init();
+      $this->router()->init();
+      $this->authProvider()->init();
+      $this->permissionsManager()->init();
+      $this->renderer()->init();
+      $this->appManager()->init();
+      $this->hookManager()->init();
+      $this->emailProvider()->init();
 
     } catch (\Exception $e) {
       echo "Hubleto init failed: [".get_class($e)."] ".$e->getMessage() . "\n";

@@ -12,10 +12,10 @@ class Add extends \Hubleto\Framework\Controller {
 
   public function renderJson(): ?array { 
     try {
-      $id = $this->getRouter()->urlParamAsInteger('id');
-      $model = $this->getRouter()->urlParamAsString('model');
-      $junction = $this->getRouter()->urlParamAsString('junction');
-      $dataKey = $this->getRouter()->urlParamAsString('dataKey');
+      $id = $this->router()->urlParamAsInteger('id');
+      $model = $this->router()->urlParamAsString('model');
+      $junction = $this->router()->urlParamAsString('junction');
+      $dataKey = $this->router()->urlParamAsString('dataKey');
 
       // Validate required params
       if ($model == '') throw new \Exception("Unknown model");
@@ -35,7 +35,7 @@ class Add extends \Hubleto\Framework\Controller {
       $junctionOptionKeyModel = $this->getModel($junctionOptionKeyColumn['model']);
 
       $insertedId = $junctionOptionKeyModel->insertGetId([
-        $dataKey => $this->getRouter()->urlParamAsString($dataKey)
+        $dataKey => $this->router()->urlParamAsString($dataKey)
       ]);
 
       // Junction table insert

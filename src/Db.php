@@ -17,11 +17,11 @@ class Db extends Core
    */
   public function init()
   {
-    $dbHost = $this->getConfig()->getAsString('db_host', '');
-    $dbPort = $this->getConfig()->getAsInteger('db_port', 3306);
-    $dbName = $this->getConfig()->getAsString('db_name', '');
-    $dbUser = $this->getConfig()->getAsString('db_user', '');
-    $dbPassword = $this->getConfig()->getAsString('db_password', '');
+    $dbHost = $this->config()->getAsString('db_host', '');
+    $dbPort = $this->config()->getAsInteger('db_port', 3306);
+    $dbName = $this->config()->getAsString('db_name', '');
+    $dbUser = $this->config()->getAsString('db_user', '');
+    $dbPassword = $this->config()->getAsString('db_password', '');
 
     if (!empty($dbHost) && !empty($dbPort) && !empty($dbUser)) {
       $this->eloquent = new \Illuminate\Database\Capsule\Manager;
@@ -38,7 +38,7 @@ class Db extends Core
         "collation" => 'utf8mb4_unicode_ci',
       ], 'default');
 
-      $this->getDb()->connect();
+      $this->db()->connect();
     }
   }
 
@@ -49,12 +49,12 @@ class Db extends Core
    * 
    */
   public function connect() {
-    $dbHost = $this->getConfig()->getAsString('db_host');
-    $dbPort = $this->getConfig()->getAsString('db_port');
-    $dbUser = $this->getConfig()->getAsString('db_user');
-    $dbPassword = $this->getConfig()->getAsString('db_password');
-    $dbName = $this->getConfig()->getAsString('db_name');
-    $dbCodepage = $this->getConfig()->getAsString('db_codepage', 'utf8mb4');
+    $dbHost = $this->config()->getAsString('db_host');
+    $dbPort = $this->config()->getAsString('db_port');
+    $dbUser = $this->config()->getAsString('db_user');
+    $dbPassword = $this->config()->getAsString('db_password');
+    $dbName = $this->config()->getAsString('db_name');
+    $dbCodepage = $this->config()->getAsString('db_codepage', 'utf8mb4');
 
     if (!empty($dbHost)) {
       if (empty($dbName)) {

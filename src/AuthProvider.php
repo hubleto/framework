@@ -16,12 +16,12 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
   {
     $userLanguage = $this->getUserLanguage();
     if (empty($userLanguage)) $userLanguage = 'en';
-    $this->getConfig()->set('language', $userLanguage);
+    $this->config()->set('language', $userLanguage);
   }
 
   public function getUserFromSession(): array
   {
-    $tmp = $this->getSessionManager()->get('userProfile') ?? [];
+    $tmp = $this->sessionManager()->get('userProfile') ?? [];
     return [
       'id' => (int) ($tmp['id'] ?? 0),
       'login' => (string) ($tmp['login'] ?? ''),
@@ -31,7 +31,7 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
 
   public function updateUserInSession(array $user): void
   {
-    $this->getSessionManager()->set('userProfile', $user);
+    $this->sessionManager()->set('userProfile', $user);
   }
 
   public function isUserInSession(): bool
@@ -42,11 +42,11 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
 
   function deleteSession()
   {
-    $this->getSessionManager()->clear();
+    $this->sessionManager()->clear();
     $this->user = [];
 
-    setcookie($this->getSessionManager()->getSalt() . '-user', '', 0);
-    setcookie($this->getSessionManager()->getSalt() . '-language', '', 0);
+    setcookie($this->sessionManager()->getSalt() . '-user', '', 0);
+    setcookie($this->sessionManager()->getSalt() . '-language', '', 0);
   }
 
   public function signIn(array $user)
@@ -58,7 +58,7 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
   public function signOut()
   {
     $this->deleteSession();
-    $this->getRouter()->redirectTo('?signed-out');
+    $this->router()->redirectTo('?signed-out');
     exit;
   }
 
@@ -99,13 +99,13 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
     $userModel = $this->createUserModel();
 
     if (!$this->isUserInSession()) {
-      $login = $this->getRouter()->urlParamAsString('login');
-      $password = $this->getRouter()->urlParamAsString('password');
-      $rememberLogin = $this->getRouter()->urlParamAsBool('rememberLogin');
+      $login = $this->router()->urlParamAsString('login');
+      $password = $this->router()->urlParamAsString('password');
+      $rememberLogin = $this->router()->urlParamAsBool('rememberLogin');
 
       $login = trim($login);
 
-      if (empty($login) && !empty($_COOKIE[$this->getSessionManager()->getSalt() . '-user'])) {
+      if (empty($login) && !empty($_COOKIE[$this->sessionManager()->getSalt() . '-user'])) {
         $login = $userModel->authCookieGetLogin();
       }
 
@@ -121,7 +121,7 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
 
             if ($rememberLogin) {
               setcookie(
-                $this->getSessionManager()->getSalt() . '-user',
+                $this->sessionManager()->getSalt() . '-user',
                 $userModel->authCookieSerialize($user[$this->loginAttribute], $user[$this->passwordAttribute]),
                 time() + (3600 * 24 * 30)
               );
@@ -181,7 +181,7 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
     } else if (isset($_COOKIE['language']) && strlen($_COOKIE['language']) == 2) {
       return $_COOKIE['language'];
     } else {
-      $language = $this->getConfig()->getAsString('language', 'en');
+      $language = $this->config()->getAsString('language', 'en');
       if (strlen($language) !== 2) $language = 'en';
       return $language;
     }
