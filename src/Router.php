@@ -150,27 +150,27 @@ class Router extends Core implements Interfaces\RouterInterface {
     return $this->routeVars;
   }
 
-  public function getRouteVar($index): string
+  public function getRouteVar(string|int $varIndex): string
   {
-    return $this->routeVars[$index] ?? '';
+    return $this->routeVars[$varIndex] ?? '';
   }
 
-  public function routeVarAsString($varIndex): string
+  public function routeVarAsString(string|int $varIndex): string
   {
     return (string) ($this->routeVars[$varIndex] ?? '');
   }
 
-  public function routeVarAsInteger($varIndex): int
+  public function routeVarAsInteger(string|int $varIndex): int
   {
     return (int) ($this->routeVars[$varIndex] ?? 0);
   }
 
-  public function routeVarAsFloat($varIndex): float
+  public function routeVarAsFloat(string|int $varIndex): float
   {
     return (float) ($this->routeVars[$varIndex] ?? 0);
   }
 
-  public function routeVarAsBool($varIndex): bool
+  public function routeVarAsBool(string|int $varIndex): bool
   {
     if (isset($this->routeVars[$varIndex])) {
       if (strtolower($this->routeVars[$varIndex]) === 'false') return false;

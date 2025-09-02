@@ -15,11 +15,11 @@ interface RouterInterface {
   public function setRoute(string $route): void;
   public function setRouteVars(array $routeVars): void;
   public function getRouteVars(): array;
-  public function getRouteVar($index): string;
-  public function routeVarAsString($varIndex): string;
-  public function routeVarAsInteger($varIndex): int;
-  public function routeVarAsFloat($varIndex): float;
-  public function routeVarAsBool($varIndex): bool;
+  public function getRouteVar(string|int $varIndex): string;
+  public function routeVarAsString(string|int $varIndex): string;
+  public function routeVarAsInteger(string|int $varIndex): int;
+  public function routeVarAsFloat(string|int $varIndex): float;
+  public function routeVarAsBool(string|int $varIndex): bool;
   public function redirectTo(string $url, int $code = 302): void;
   public function getUrlParams(): array;
   public function isUrlParam(string $paramName): bool;
