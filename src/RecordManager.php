@@ -4,6 +4,9 @@ namespace Hubleto\Framework;
 
 use Hubleto\App\Community\Settings\Models\UserRole;
 
+/**
+ * Default record manager for Hubleto projects. Uses Laravel's Eloquent.
+ */
 class RecordManager extends EloquentRecordManager
 {
 

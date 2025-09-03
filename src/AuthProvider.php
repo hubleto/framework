@@ -2,6 +2,9 @@
 
 namespace Hubleto\Framework;
 
+/**
+ * Default implementation of authentication provider.
+ */
 class AuthProvider extends Core implements Interfaces\AuthInterface
 {
 

@@ -6,6 +6,9 @@ use Hubleto\Framework\Exceptions\GeneralException;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+/**
+ * Default implementation of email provider.
+ */
 class EmailProvider extends Core implements Interfaces\EmailProviderInterface
 {
 

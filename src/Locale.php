@@ -2,6 +2,9 @@
 
 namespace Hubleto\Framework;
 
+/**
+ * Methods to support locale in Hubleto project.
+ */
 class Locale extends Core
 {
 

@@ -3,8 +3,7 @@
 namespace Hubleto\Framework;
 
 /**
- * This class provides shortcut methods to access all services
- * used in the Hubleto application.
+ * Shortcut to access all services used in the Hubleto project.
  */
 class Core
 {

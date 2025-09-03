@@ -2,6 +2,9 @@
 
 namespace Hubleto\Framework;
 
+/**
+ * Default manager for hooks in the Hubleto project.
+ */
 class HookManager extends Core implements Interfaces\HookManagerInterface
 {
   /** @var array<\Hubleto\Erp\Hook> */

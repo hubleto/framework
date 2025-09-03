@@ -2,6 +2,9 @@
 
 namespace Hubleto\Framework;
 
+/**
+ * Default manager for scheduled jobs (cron) in Hubleto project.
+ */
 class CronManager extends Core implements Interfaces\CronManagerInterface
 {
 

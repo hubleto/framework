@@ -3,7 +3,7 @@
 namespace Hubleto\Framework;
 
 /**
- * Core implementation of Hubleto Framework controller
+ * Default implementation of Hubleto controller.
  * 
  * 'Controller' is fundamendal class for generating HTML content of each call. Controllers can
  * be rendered using Twig template or using custom render() method.

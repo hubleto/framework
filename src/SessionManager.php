@@ -2,6 +2,9 @@
 
 namespace Hubleto\Framework;
 
+/**
+ * Default session manager for Hubleto project.
+ */
 class SessionManager extends Core implements Interfaces\SessionManagerInterface
 {
 

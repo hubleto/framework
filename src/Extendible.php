@@ -2,6 +2,9 @@
 
 namespace Hubleto\Framework;
 
+/**
+ * Manager for app's extendibles.
+ */
 class Extendible extends Core
 {
   public App $app;

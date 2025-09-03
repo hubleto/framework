@@ -2,6 +2,9 @@
 
 namespace Hubleto\Framework;
 
+/**
+ * Default manager for permissions and user access for Hubleto project.
+ */
 class PermissionsManager extends Core implements Interfaces\PermissionsManagerInterface
 {
 

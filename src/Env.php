@@ -2,6 +2,9 @@
 
 namespace Hubleto\Framework;
 
+/**
+ * Storage for environment-specific configuration.
+ */
 class Env extends Core
 {
 

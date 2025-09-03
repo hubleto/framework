@@ -2,6 +2,9 @@
 
 namespace Hubleto\Framework;
 
+/**
+ * Record manager based on Laravel's Eloquent.
+ */
 class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implements Interfaces\RecordManagerInterface {
   protected $primaryKey = 'id';
   protected $guarded = [];

@@ -5,7 +5,7 @@ namespace Hubleto\Framework;
 use Monolog\Handler\RotatingFileHandler;
 
 /**
- * Debugger console.
+ * Default implementation of logger in Hubleto project.
  */
 class Logger extends Core {
 

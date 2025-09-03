@@ -2,6 +2,9 @@
 
 namespace Hubleto\Framework;
 
+/**
+ * Various helper functions.
+ */
 class Helper
 {
 

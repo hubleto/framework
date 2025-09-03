@@ -4,6 +4,9 @@ namespace Hubleto\Framework;
 
 use Hubleto\Framework\Interfaces\AppManagerInterface;
 
+/**
+ * Default translator for Hubleto project.
+ */
 class Translator extends Core implements Interfaces\TranslatorInterface
 {
 

@@ -2,6 +2,9 @@
 
 namespace Hubleto\Framework;
 
+/**
+ * Default view renderer for Hubleto project.
+ */
 class Renderer extends Core
 {
 

@@ -2,6 +2,9 @@
 
 namespace Hubleto\Framework;
 
+/**
+ * Default implementation of dependency injection.
+ */
 class DependencyInjection
 {
 

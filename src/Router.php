@@ -2,6 +2,9 @@
 
 namespace Hubleto\Framework;
 
+/**
+ * Default router for Hubleto project.
+ */
 class Router extends Core implements Interfaces\RouterInterface {
   const HTTP_GET = 'HTTP_GET';
 

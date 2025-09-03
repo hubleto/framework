@@ -2,6 +2,9 @@
 
 namespace Hubleto\Framework;
 
+/**
+ * Database abstraction layer.
+ */
 class Db extends Core
 {
   public ?\PDO $connection = null;

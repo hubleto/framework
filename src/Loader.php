@@ -9,6 +9,9 @@ register_shutdown_function(function() {
   }
 });
 
+/**
+ * Default implementation of bootstrap loader.
+ */
 class Loader extends Core
 {
 

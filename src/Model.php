@@ -6,7 +6,7 @@ use Hubleto\Framework\Exceptions\DBException;
 use ReflectionClass;
 
 /**
- * Core implementation of model.
+ * Default implementation of model for Hubleto project.
  */
 class Model extends Core
 {

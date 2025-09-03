@@ -4,6 +4,9 @@ namespace Hubleto\Framework;
 
 use Hubleto\Framework\Interfaces\AppManagerInterface;
 
+/**
+ * Encapsulation for Hubleto app.
+ */
 class App extends Core implements Interfaces\AppInterface
 {
   public const DEFAULT_INSTALLATION_CONFIG = [
