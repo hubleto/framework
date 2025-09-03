@@ -163,7 +163,6 @@ class User extends Model {
 
   public function getQueryForUser(int $idUser) {
     return $this->record
-      ->with('roles')
       ->where('id', $idUser)
       ->where('is_active', '<>', 0)
     ;

@@ -130,12 +130,13 @@ class Config extends Core
         }
         $tmp = $cfg['value'];
       }
-    } catch (\Exception $e) {
-      if ($e->getCode() == '42S02') { // Base table not found
-        // do nothing
-      } else {
-        throw $e; // forward exception to be processed further
-      }
+    } catch (\Throwable $e) {
+      // do nothing
+      // if ($e->getCode() == '42S02') { // Base table not found
+      //   // do nothing
+      // } else {
+      //   throw $e; // forward exception to be processed further
+      // }
     }
   }
 

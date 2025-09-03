@@ -34,7 +34,7 @@ class Controller extends Core {
   /**
    * If set to FALSE, the rendered content of controller is available to public
    */
-  public bool $requiresUserAuthentication = TRUE;
+  public bool $requiresAuthenticatedUser = true;
 
   /**
    * If set to TRUE, the controller's permissions is not checked.
