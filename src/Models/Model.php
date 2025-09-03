@@ -83,15 +83,18 @@ class Model extends \Hubleto\Framework\Model
 
     if (!empty($tag)) {
       $allColumnsConfig = @json_decode($this->configAsString('tableColumns') ?? '', true);
-
       if (isset($allColumnsConfig[$tag])) {
+        $newColumnOrder = [];
         foreach ($allColumnsConfig[$tag] as $colName => $is_hidden) {
           if (isset($description->columns[$colName])) {
             if (($is_hidden ?? false)) {
               unset($description->columns[$colName]);
+            } else {
+              $newColumnOrder[$colName] = $description->columns[$colName];
             }
           }
         }
+        $description->columns = $newColumnOrder;
       } else {
         foreach ($description->columns as $colName => $column) {
           if (!$column->getProperty('defaultVisibility')) {
