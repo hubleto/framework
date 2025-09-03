@@ -31,7 +31,7 @@ class SessionManager extends Core implements Interfaces\SessionManagerInterface
   }
 
   public function start(bool $persist, array $options = []): void
-  { 
+  {
     if (session_status() == PHP_SESSION_NONE && !headers_sent()) {
       if (empty($this->salt)) throw new \Exception('Hubleto: Cannot start session, salt is empty.');
 
@@ -39,13 +39,28 @@ class SessionManager extends Core implements Interfaces\SessionManagerInterface
       session_name($this->salt);
 
       if ($persist) {
-        $options['cookie_lifetime'] = 86400; // 7 days
-        $options['gc_maxlifetime'] = 86400; // 7 days
+        $options['cookie_lifetime'] = 2592000; // 30 days (1 month)
+        $options['gc_maxlifetime'] = 2592000; // 30 days (1 month)
       }
 
       session_start($options);
 
       define('_SESSION_ID', session_id());
+    }
+  }
+
+  public function prolongSession(int $seconds = 2592000): void
+  {
+    if (session_status() == PHP_SESSION_ACTIVE) {
+      setcookie(
+        session_name(),
+        session_id(),
+        time() + $seconds,
+        ini_get('session.cookie_path'),
+        ini_get('session.cookie_domain'),
+        ini_get('session.cookie_secure'),
+        ini_get('session.cookie_httponly')
+      );
     }
   }
 

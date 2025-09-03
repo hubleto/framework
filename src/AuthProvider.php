@@ -104,7 +104,7 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
     if (!$this->isUserInSession()) {
       $login = $this->router()->urlParamAsString('login');
       $password = $this->router()->urlParamAsString('password');
-      $rememberLogin = $this->router()->urlParamAsBool('rememberLogin');
+      $rememberLogin = $this->router()->urlParamAsBool('session-persist');
 
       $login = trim($login);
 
@@ -123,11 +123,7 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
             $this->signIn($authResult);
 
             if ($rememberLogin) {
-              setcookie(
-                $this->sessionManager()->getSalt() . '-user',
-                $userModel->authCookieSerialize($user[$this->loginAttribute], $user[$this->passwordAttribute]),
-                time() + (3600 * 24 * 30)
-              );
+              $this->sessionManager()->prolongSession();
             }
 
             break;

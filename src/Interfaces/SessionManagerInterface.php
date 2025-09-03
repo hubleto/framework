@@ -7,6 +7,8 @@ interface SessionManagerInterface
 
   public function getSalt(): string;
   public function start(bool $persist, array $options = []): void;
+
+  public function prolongSession(int $seconds = 2592000): void;
   public function stop(): void;
   public function set(string $path, mixed $value, string $key = '');
   public function get(string $path = '', string $key = ''): mixed;
