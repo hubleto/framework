@@ -32,6 +32,7 @@ abstract class Column implements \JsonSerializable
   protected string $reactComponent = '';
   protected int $decimals = 4;
   protected int $byteSize = 14;
+  protected array $inputProps = [];
 
   protected array $properties = [];
 
@@ -124,6 +125,14 @@ abstract class Column implements \JsonSerializable
   public function getDecimals(): int { return $this->decimals; }
   public function setDecimals(int $decimals): Column { $this->decimals = $decimals; return $this; }
 
+  public function getInputProps(): array { return $this->inputProps; }
+  public function setInputProps(array $inputProps): Column { $this->inputProps = $inputProps; return $this; }
+
+  public function setInputProp(string $pName, mixed $pValue): Column {
+    $this->inputProps[$pName] = $pValue;
+    return $this;
+  }
+
   public function describeInput(): \Hubleto\Framework\Description\Input
   {
     $description = new \Hubleto\Framework\Description\Input();
@@ -145,6 +154,7 @@ abstract class Column implements \JsonSerializable
     $description->setEnumValues($this->enumValues);
     $description->setEnumCssClasses($this->enumCssClasses);
     $description->setPredefinedValues($this->predefinedValues);
+    $description->setInputProps($this->inputProps);
 
     foreach ($this->properties as $pName => $pValue) $description->setProperty($pName, $pValue);
 

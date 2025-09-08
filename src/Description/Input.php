@@ -17,7 +17,7 @@ class Input implements \JsonSerializable
   protected string $description = '';
   protected string $reactComponent = '';
   protected string $lookupModel = '';
-  protected array $extendedProps = [];
+  protected array $inputProps = [];
   protected array $examples = [];
   protected array $enumValues = [];
   protected array $enumCssClasses = [];
@@ -63,8 +63,8 @@ class Input implements \JsonSerializable
   public function getLookupModel(): string { return $this->lookupModel; }
   public function setLookupModel(string $lookupModel): Input { $this->lookupModel = $lookupModel; return $this; }
 
-  public function getExtendedProps(): array { return $this->extendedProps; }
-  public function setExtendedProps(array $extendedProps): Input { $this->extendedProps = $extendedProps; return $this; }
+  public function getInputProps(): array { return $this->inputProps; }
+  public function setInputProps(array $inputProps): Input { $this->inputProps = $inputProps; return $this; }
 
   public function getExamples(): array { return $this->examples; }
   public function setExamples(array $examples): Input { $this->examples = $examples; return $this; }
@@ -96,7 +96,7 @@ class Input implements \JsonSerializable
     if (!empty($this->format)) $json['format'] = $this->format;
     if (!empty($this->description)) $json['description'] = $this->description;
     if (!empty($this->lookupModel)) $json['model'] = $this->lookupModel;
-    if (!empty($this->extendedProps)) $json['extendedProps'] = $this->extendedProps;
+    if (!empty($this->inputProps)) $json['inputProps'] = $this->inputProps;
     if (!empty($this->enumValues)) $json['enumValues'] = $this->enumValues;
     if (!empty($this->enumCssClasses)) $json['enumCssClasses'] = $this->enumCssClasses;
     if (!empty($this->predefinedValues)) $json['predefinedValues'] = $this->predefinedValues;
