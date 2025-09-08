@@ -375,11 +375,11 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       throw new Exceptions\NotEnoughPermissionsException("Cannot delete. Not enough permissions.");
     }
 
-    $this->where('id', $id)->delete();
+    $rowsDeleted = $this->where('id', $id)->delete();
 
     $this->model->onAfterDelete((int) $id);
 
-    return 1; // TODO: return $rowsAffected
+    return $rowsDeleted;
   }
 
   public function recordSave(array $record, int $idMasterRecord = 0, bool $saveRelationsRecursively = false): array

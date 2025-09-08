@@ -24,7 +24,7 @@ class Model extends Core
    */
   public string $shortName = "";
 
-  public object $record;
+  public RecordManager $record;
 
   /**
    * SQL-compatible string used to render displayed value of the record when used
@@ -332,6 +332,12 @@ class Model extends Core
     return $columns;
   }
 
+  /**
+   * [Description for getColumns]
+   *
+   * @return array<string, \Hubleto\Framework\Db\Column>
+   * 
+   */
   public function getColumns(): array
   {
     return $this->columns;

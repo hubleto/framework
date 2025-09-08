@@ -234,7 +234,7 @@ abstract class Column implements \JsonSerializable
   
   public function normalize(mixed $value): mixed
   {
-    return $value;
+    return ($value === null ? $this->defaultValue : $value);
   }
 
   public function validate(mixed $value): bool
