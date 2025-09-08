@@ -31,6 +31,17 @@ class Lookup extends \Hubleto\Framework\Db\Column
   public function getAutocomplete(): Autocomplete { return $this->autocomplete; }
   public function setAutocomplete(Autocomplete $autocomplete): Varchar { $this->autocomplete = $autocomplete; return $this; }
 
+  public function describeInput(): \Hubleto\Framework\Description\Input
+  {
+
+    $lookupModelObj = $this->model->getModel($this->lookupModel);
+    if (!empty($lookupModelObj->lookupUrlAdd)) {
+      $this->setInputProp('urlAdd', $lookupModelObj->lookupUrlAdd);
+    }
+
+    return parent::describeInput();
+  }
+
   public function jsonSerialize(): array
   {
     $column = parent::jsonSerialize();
