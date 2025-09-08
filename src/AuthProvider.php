@@ -164,6 +164,11 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
     return (int) ($this->getUser()['id'] ?? 0);
   }
 
+  public function getUserEmail(): string
+  {
+    return (string) ($this->getUser()['email'] ?? '');
+  }
+
   public function forgotPassword(): void
   {
   }

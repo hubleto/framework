@@ -21,6 +21,7 @@ interface AuthInterface {
   public function getUserRoles(): array;
   public function userHasRole(int $idRole): bool;
   public function getUserId(): int;
+  public function getUserEmail(): string;
   public function setUserLanguage(string $language): void;
   public function getUserLanguage(): string;
 
