@@ -30,6 +30,10 @@ class Logger extends Core {
 
     // inicializacia loggerov
     $this->loggers[$loggerName] = new \Monolog\Logger($loggerName);
+
+    $debugStreamHandler = new RotatingFileHandler("{$this->logFolder}/{$loggerName}-debug.log", 1000, \Monolog\Logger::DEBUG);
+    $debugStreamHandler->setFilenameFormat('{date}/{filename}', 'Y/m/d');
+
     $infoStreamHandler = new RotatingFileHandler("{$this->logFolder}/{$loggerName}-info.log", 1000, \Monolog\Logger::INFO);
     $infoStreamHandler->setFilenameFormat('{date}/{filename}', 'Y/m/d');
 
@@ -39,6 +43,7 @@ class Logger extends Core {
     $errorStreamHandler = new RotatingFileHandler("{$this->logFolder}/{$loggerName}-error.log", 1000, \Monolog\Logger::ERROR);
     $errorStreamHandler->setFilenameFormat('{date}/{filename}', 'Y/m/d');
 
+    $this->loggers[$loggerName]->pushHandler($debugStreamHandler);
     $this->loggers[$loggerName]->pushHandler($infoStreamHandler);
     $this->loggers[$loggerName]->pushHandler($warningStreamHandler);
     $this->loggers[$loggerName]->pushHandler($errorStreamHandler);
@@ -59,6 +64,12 @@ class Logger extends Core {
     }
   }
 
+  public function debug($message, array $context = [], $loggerName = 'core') {
+    if (!$this->enabled) return;
+    $this->getInternalLogger($loggerName)->debug($message, $context);
+    $this->cliEcho($message, $loggerName, 'DEBUG');
+  }
+  
   public function info($message, array $context = [], $loggerName = 'core') {
     if (!$this->enabled) return;
     $this->getInternalLogger($loggerName)->info($message, $context);
