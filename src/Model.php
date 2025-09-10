@@ -24,7 +24,7 @@ class Model extends Core
    */
   public string $shortName = "";
 
-  public RecordManager $record;
+  public \Illuminate\Database\Eloquent\Model|Interfaces\RecordManagerInterface $record;
 
   /**
    * SQL-compatible string used to render displayed value of the record when used

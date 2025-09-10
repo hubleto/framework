@@ -112,7 +112,12 @@ class CronManager extends Core implements Interfaces\CronManagerInterface
 
       if ($minMatch && $hourMatch && $dayMatch && $monthMatch && $dowMatch) {
         $this->log('Starting `' . $cronClass . '`.');
-        $cron->run();
+        try {
+          $cron->run();
+        } catch (\Throwable $e) {
+          $this->log('Cron `' . $cronClass . '` failed.');
+          $this->log('EXCEPTION: ' . $e->getMessage());
+        }
       }
     }
   }
