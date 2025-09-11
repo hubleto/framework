@@ -382,7 +382,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return $rowsDeleted;
   }
 
-  public function recordSave(array $record, int $idMasterRecord = 0, bool $saveRelationsRecursively = false): array
+  public function recordSave(array $record, int $idMasterRecord = 0, array $saveRelations = [], string $relation = ''): array
   {
 
     $id = (int) ($record['id'] ?? 0);
@@ -403,7 +403,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     }
 
     $savedRecord = $record;
-    if ($idMasterRecord == 0) $this->recordValidate($savedRecord, $saveRelationsRecursively);
+    if ($idMasterRecord == 0) $this->recordValidate($savedRecord, $saveRelations);
 
     try {
 
@@ -426,30 +426,33 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
         $savedRecord = $this->recordUpdate($savedRecord, $originalRecord);
       }
 
-      if ($saveRelationsRecursively) {
-        foreach ($this->model->relations as $relName => $relDefinition) {
-          if (isset($record[$relName]) && is_array($record[$relName])) {
-            list($relType, $relModelClass) = $relDefinition;
-            $relModel = new $relModelClass();
-            switch ($relType) {
-              case Model::HAS_MANY:
-                foreach ($record[$relName] as $subKey => $subRecord) {
-                  if (is_array($subRecord)) {
-                    $subRecord = $relModel->record->recordSave($subRecord, $savedRecord['id'], $saveRelationsRecursively);
-                    $savedRecord[$relName][$subKey] = $subRecord;
-                  }
+      foreach ($this->model->relations as $relName => $relDefinition) {
+        $tmpRelation = $relation . ($relation == '' ? '' : '.') . $relName;
+
+        if (!in_array($tmpRelation, $saveRelations)) continue;
+
+        if (isset($record[$relName]) && is_array($record[$relName])) {
+          list($relType, $relModelClass) = $relDefinition;
+          $relModel = new $relModelClass();
+          switch ($relType) {
+            case Model::HAS_MANY:
+              foreach ($record[$relName] as $subKey => $subRecord) {
+                if (is_array($subRecord)) {
+                  $subRecord = $relModel->record->recordSave($subRecord, $savedRecord['id'], $saveRelations, $tmpRelation);
+                  $savedRecord[$relName][$subKey] = $subRecord;
                 }
-              break;
-              case Model::HAS_ONE:
-                if (is_array($record[$relName])) {
-                  $subRecord = $relModel->record->recordSave($record[$relName], $savedRecord['id'], $saveRelationsRecursively);
-                  $savedRecord[$relName] = $subRecord;
-                }
-              break;
-            }
+              }
+            break;
+            case Model::HAS_ONE:
+              if (is_array($record[$relName])) {
+                $subRecord = $relModel->record->recordSave($record[$relName], $savedRecord['id'], $saveRelations, $tmpRelation);
+                $savedRecord[$relName] = $subRecord;
+              }
+            break;
           }
         }
       }
+
     } catch (\Illuminate\Database\QueryException $e) {
       throw new Exceptions\RecordSaveException($e->getConnectionName(), $e->getSql(), $e);
     } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
@@ -484,7 +487,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    * @param array<string, mixed> $record
    * @return array<string, mixed>
    */
-  public function recordValidate(array $record, bool $validateRelationsRecursively = false): array
+  public function recordValidate(array $record, array $validateRelations = [], string $relation = ''): array
   {
     $invalidInputs = [];
 
@@ -503,25 +506,27 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       throw new Exceptions\RecordSaveException(json_encode($invalidInputs), 87335);
     }
 
-    if ($validateRelationsRecursively) {
-      foreach ($this->model->relations as $relName => $relDefinition) {
-        if (isset($record[$relName]) && is_array($record[$relName])) {
-          list($relType, $relModelClass) = $relDefinition;
-          $relModel = new $relModelClass();
-          switch ($relType) {
-            case Model::HAS_MANY:
-              foreach ($record[$relName] as $subKey => $subRecord) {
-                if (is_array($subRecord)) {
-                  $subRecord = $relModel->record->recordValidate($subRecord, $record['id'], $validateRelationsRecursively);
-                }
+    foreach ($this->model->relations as $relName => $relDefinition) {
+      $tmpRelation = $relation . ($relation == '' ? '' : '.') . $relName;
+
+      if (!in_array($tmpRelation, $validateRelations)) continue;
+
+      if (isset($record[$relName]) && is_array($record[$relName])) {
+        list($relType, $relModelClass) = $relDefinition;
+        $relModel = new $relModelClass();
+        switch ($relType) {
+          case Model::HAS_MANY:
+            foreach ($record[$relName] as $subKey => $subRecord) {
+              if (is_array($subRecord)) {
+                $subRecord = $relModel->record->recordValidate($subRecord, $validateRelations, $tmpRelation);
               }
-            break;
-            case Model::HAS_ONE:
-              if (is_array($record[$relName])) {
-                $subRecord = $relModel->record->recordValidate($record[$relName], $record['id'], $validateRelationsRecursively);
-              }
-            break;
-          }
+            }
+          break;
+          case Model::HAS_ONE:
+            if (is_array($record[$relName])) {
+              $subRecord = $relModel->record->recordValidate($record[$relName], $validateRelations, $tmpRelation);
+            }
+          break;
         }
       }
     }
