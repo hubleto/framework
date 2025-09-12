@@ -52,17 +52,6 @@ class Core
   }
 
   /**
-   * Shortcut for the authentication service.
-   *
-   * @return Interfaces\AuthInterface
-   * 
-   */
-  public function authProvider(): Interfaces\AuthInterface
-  {
-    return $this->getService(AuthProvider::class);
-  }
-
-  /**
    * Shortcut for the database service.
    *
    * @return Db
@@ -115,17 +104,6 @@ class Core
   public function sessionManager(): SessionManager
   {
     return $this->getService(SessionManager::class);
-  }
-
-  /**
-   * Shortcut for the permissions manager service.
-   *
-   * @return PermissionsManager
-   * 
-   */
-  public function permissionsManager(): PermissionsManager
-  {
-    return $this->getService(PermissionsManager::class);
   }
 
   /**

@@ -2,6 +2,7 @@
 
 namespace Hubleto\Framework;
 
+use Hubleto\App\Community\Auth\AuthProvider;
 use Hubleto\Framework\Interfaces\AppManagerInterface;
 
 /**
@@ -96,7 +97,7 @@ class Translator extends Core implements Interfaces\TranslatorInterface
   public function loadDictionary(string $language = ""): array
   {
     if (empty($language)) {
-      $language = $this->authProvider()->getUserLanguage();
+      $language = $this->getService(AuthProvider::class)->getUserLanguage();
     }
 
     if ($language == 'en') {
@@ -121,7 +122,7 @@ class Translator extends Core implements Interfaces\TranslatorInterface
   public function translate(string $string, array $vars = []): string
   {
     if (empty($toLanguage)) {
-      $toLanguage = $this->authProvider()->getUserLanguage();
+      $toLanguage = $this->getService(AuthProvider::class)->getUserLanguage();
     }
 
     if (strpos($this->context, '::')) {

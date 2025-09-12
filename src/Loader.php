@@ -59,8 +59,6 @@ class Loader extends Core
 
       $this->config()->init();
       $this->router()->init();
-      $this->authProvider()->init();
-      $this->permissionsManager()->init();
       $this->renderer()->init();
       $this->appManager()->init();
       $this->hookManager()->init();

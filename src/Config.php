@@ -96,11 +96,6 @@ class Config extends Core
     }
   }
 
-  public function saveForUser(string $path, string $value): void
-  {
-    $this->save('user/' . $this->authProvider()->getUserId() . '/' . $path, $value);
-  }
-
   public function delete($path): void
   {
     try {
@@ -140,15 +135,6 @@ class Config extends Core
       // } else {
       //   throw $e; // forward exception to be processed further
       // }
-    }
-  }
-
-  public function filterByUser(): void
-  {
-    $idUser = $this->authProvider()->getUserId();
-    if (isset($this->configData['user'][$idUser]) && is_array($this->configData['user'][$idUser])) {
-      $this->configData = array_merge_recursive($this->configData, $this->configData['user'][$idUser]);
-      unset($this->configData['user']);
     }
   }
 
