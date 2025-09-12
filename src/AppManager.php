@@ -165,7 +165,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
     $appNamespaces = [];
 
     // community apps
-    $communityRepoFolder = $this->env()->srcFolder . '/../../apps/src';
+    $communityRepoFolder = $this->env()->srcFolder . '/../apps';
     if (is_dir($communityRepoFolder)) {
       foreach (scandir($communityRepoFolder) as $folder) {
         $manifestFile = $communityRepoFolder . '/' . $folder . '/manifest.yaml';
