@@ -2,6 +2,8 @@
 
 namespace Hubleto\Framework\Models;
 
+use Hubleto\Framework\Model;
+
 class User extends Model {
   const TOKEN_TYPE_USER_FORGOT_PASSWORD = 551155;
 

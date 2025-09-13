@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Db\Column;
 
-class Integer extends \Hubleto\Framework\Db\Column
+class Integer extends \Hubleto\Framework\Column
 {
 
   protected string $type = 'int';
@@ -15,7 +15,7 @@ class Integer extends \Hubleto\Framework\Db\Column
   }
 
   public function getByteSize(): int { return $this->byteSize; }
-  public function setByteSize(int $byteSize): Decimal { $this->byteSize = $byteSize; return $this; }
+  public function setByteSize(int $byteSize): Integer { $this->byteSize = $byteSize; return $this; }
 
   public function describeInput(): \Hubleto\Framework\Description\Input
   {

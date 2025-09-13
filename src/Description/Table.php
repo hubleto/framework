@@ -26,7 +26,7 @@ class Table implements \JsonSerializable
     'canDelete' => false,
   ];
 
-  /** @property array<\Hubleto\Framework\Db\Column> */
+  /** @property array<\Hubleto\Framework\Column> */
   public array $columns = [];
 
   /** @property array<\Hubleto\Framework\Db\Input> */

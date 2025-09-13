@@ -24,6 +24,8 @@ class Input implements \JsonSerializable
   protected array $predefinedValues = [];
   protected mixed $defaultValue = null;
   protected string $cssClass = '';
+  protected string $endpoint = '';
+  protected bool $creatable = false;
 
   protected array $properties = [];
 
@@ -84,6 +86,12 @@ class Input implements \JsonSerializable
   public function getCssClass(): string { return $this->cssClass; }
   public function setCssClass(string $cssClass): Input { $this->cssClass = $cssClass; return $this; }
 
+  public function getEndpoint(): string { return $this->endpoint; }
+  public function setEndpoint(string $endpoint): Input { $this->endpoint = $endpoint; return $this; }
+
+  public function getCreatable(): bool { return $this->creatable; }
+  public function setCreatable(bool $creatable = true): Input { $this->creatable = $creatable; return $this; }
+
   public function jsonSerialize(): array
   {
     $json = ['type' => $this->type];
@@ -102,6 +110,8 @@ class Input implements \JsonSerializable
     if (!empty($this->predefinedValues)) $json['predefinedValues'] = $this->predefinedValues;
     if (!empty($this->defaultValue)) $json['defaultValue'] = $this->defaultValue;
     if (!empty($this->cssClass)) $json['cssClass'] = $this->cssClass;
+    if (!empty($this->endpoint)) $json['endpoint'] = $this->endpoint;
+    if (!empty($this->creatable)) $json['creatable'] = $this->creatable;
 
     foreach ($this->properties as $pName => $pValue) {
       if (is_array($pValue)) {

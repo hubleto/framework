@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Db\Column;
 
-class DateTime extends \Hubleto\Framework\Db\Column
+class DateTime extends \Hubleto\Framework\Column
 {
 
   protected string $type = 'datetime';

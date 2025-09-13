@@ -2,9 +2,7 @@
 
 namespace Hubleto\Framework\Db\Column;
 
-use \Hubleto\Framework\Db\ColumnProperty\Autocomplete;
-
-class Lookup extends \Hubleto\Framework\Db\Column
+class Lookup extends \Hubleto\Framework\Column
 {
 
   protected string $type = 'lookup';
@@ -15,7 +13,6 @@ class Lookup extends \Hubleto\Framework\Db\Column
   protected string $foreignKeyColumn = 'id';
   protected string $foreignKeyOnDelete = 'RESTRICT';
   protected string $foreignKeyOnUpdate = 'RESTRICT';
-  protected ?Autocomplete $autocomplete = null;
 
   public function __construct(\Hubleto\Framework\Model $model, string $title, string $lookupModel = '', string $foreignKeyBehaviour = 'RESTRICT')
   {
@@ -27,9 +24,6 @@ class Lookup extends \Hubleto\Framework\Db\Column
 
   public function setFkOnDelete(string $fkOnDelete): Lookup { $this->foreignKeyOnDelete = $fkOnDelete; return $this; }
   public function setFkOnUpdate(string $fkOnUpdate): Lookup { $this->foreignKeyOnUpdate = $fkOnUpdate; return $this; }
-
-  public function getAutocomplete(): Autocomplete { return $this->autocomplete; }
-  public function setAutocomplete(Autocomplete $autocomplete): Varchar { $this->autocomplete = $autocomplete; return $this; }
 
   public function describeInput(): \Hubleto\Framework\Description\Input
   {
@@ -48,7 +42,6 @@ class Lookup extends \Hubleto\Framework\Db\Column
     $column['model'] = $this->lookupModel;
     $column['foreignKeyOnDelete'] = $this->foreignKeyOnDelete;
     $column['foreignKeyOnUpdate'] = $this->foreignKeyOnUpdate;
-    if ($this->autocomplete !== null) $column['autocomplete'] = $this->autocomplete;
     return $column;
   }
 

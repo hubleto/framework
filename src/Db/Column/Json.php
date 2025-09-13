@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Db\Column;
 
-class Json extends \Hubleto\Framework\Db\Column
+class Json extends \Hubleto\Framework\Column
 {
 
   protected string $type = 'json';

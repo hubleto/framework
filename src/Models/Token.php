@@ -6,6 +6,8 @@ use Hubleto\Framework\Db\Column\DateTime;
 use Hubleto\Framework\Db\Column\Integer;
 use Hubleto\Framework\Db\Column\Varchar;
 
+use Hubleto\Framework\Model;
+
 /**
  * Model for storing various validation tokens. Stored in 'tokens' SQL table.
  *

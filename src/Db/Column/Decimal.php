@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Db\Column;
 
-class Decimal extends \Hubleto\Framework\Db\Column
+class Decimal extends \Hubleto\Framework\Column
 {
 
   protected string $type = 'float';

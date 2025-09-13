@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Db\Column;
 
-class File extends \Hubleto\Framework\Db\Column
+class File extends \Hubleto\Framework\Column
 {
 
   protected string $type = 'file';
@@ -11,10 +11,10 @@ class File extends \Hubleto\Framework\Db\Column
   protected string $renamePattern = '';
 
   public function getFolderPath(): string { return $this->folderPath; }
-  public function setFolderPath(string $folderPath): Lookup { $this->folderPath = $folderPath; return $this; }
+  public function setFolderPath(string $folderPath): File { $this->folderPath = $folderPath; return $this; }
 
   public function getRenamePattern(): string { return $this->renamePattern; }
-  public function setRenamePattern(string $renamePattern): Lookup { $this->renamePattern = $renamePattern; return $this; }
+  public function setRenamePattern(string $renamePattern): File { $this->renamePattern = $renamePattern; return $this; }
 
   public function normalize(mixed $value): mixed
   {

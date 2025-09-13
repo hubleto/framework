@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Db\Column;
 
-class Color extends \Hubleto\Framework\Db\Column
+class Color extends \Hubleto\Framework\Column
 {
 
   protected string $type = 'color';

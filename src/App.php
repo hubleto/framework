@@ -103,6 +103,12 @@ class App extends Core implements Interfaces\AppInterface
     }
   }
 
+  /**
+   * [Description for init]
+   *
+   * @return void
+   * 
+   */
   public function init(): void
   {
     $this->manifest['nameTranslated'] = $this->translate($this->manifest['name'], [], 'manifest');
@@ -111,29 +117,73 @@ class App extends Core implements Interfaces\AppInterface
     $this->renderer()->addNamespace($this->srcFolder . '/Views', $this->viewNamespace);
   }
 
+  /**
+   * [Description for onBeforeRender]
+   *
+   * @return void
+   * 
+   */
   public function onBeforeRender(): void
   {
   }
 
+  /**
+   * [Description for hook]
+   *
+   * @param string $hook
+   * 
+   * @return void
+   * 
+   */
   public function hook(string $hook): void
   {
   }
 
+  /**
+   * [Description for getRootUrlSlug]
+   *
+   * @return string
+   * 
+   */
   public function getRootUrlSlug(): string
   {
     return $this->manifest['rootUrlSlug'] ?? '';
   }
 
+  /**
+   * [Description for getNotificationsCount]
+   *
+   * @return int
+   * 
+   */
   public function getNotificationsCount(): int
   {
     return 0;
   }
 
+  /**
+   * [Description for translate]
+   *
+   * @param string $string
+   * @param array $vars
+   * @param string $context
+   * 
+   * @return string
+   * 
+   */
   public function translate(string $string, array $vars = [], string $context = 'root'): string
   {
     return $this->translator()->translate($string, $vars, $this->fullName . '::' . $context);
   }
 
+  /**
+   * [Description for installTables]
+   *
+   * @param int $round
+   * 
+   * @return void
+   * 
+   */
   public function installTables(int $round): void
   {
     if ($round == 1) {
@@ -141,6 +191,12 @@ class App extends Core implements Interfaces\AppInterface
     }
   }
 
+  /**
+   * [Description for getAvailableControllerClasses]
+   *
+   * @return array
+   * 
+   */
   public function getAvailableControllerClasses(): array
   {
     $controllerClasses = [];
@@ -161,6 +217,12 @@ class App extends Core implements Interfaces\AppInterface
     return $controllerClasses;
   }
 
+  /**
+   * [Description for getAvailableModelClasses]
+   *
+   * @return array
+   * 
+   */
   public function getAvailableModelClasses(): array
   {
     $modelClasses = [];
@@ -186,6 +248,12 @@ class App extends Core implements Interfaces\AppInterface
 
   }
 
+  /**
+   * [Description for installDefaultPermissions]
+   *
+   * @return void
+   * 
+   */
   public function installDefaultPermissions(): void
   {
     $permissions = [];
@@ -213,6 +281,12 @@ class App extends Core implements Interfaces\AppInterface
     }
   }
 
+  /**
+   * [Description for assignPermissionsToRoles]
+   *
+   * @return void
+   * 
+   */
   public function assignPermissionsToRoles(): void
   {
 
@@ -246,11 +320,23 @@ class App extends Core implements Interfaces\AppInterface
 
   }
 
+  /**
+   * [Description for generateDemoData]
+   *
+   * @return void
+   * 
+   */
   public function generateDemoData(): void
   {
     // to be overriden
   }
 
+  /**
+   * [Description for renderSecondSidebar]
+   *
+   * @return string
+   * 
+   */
   public function renderSecondSidebar(): string
   {
     return '';
@@ -264,16 +350,39 @@ class App extends Core implements Interfaces\AppInterface
    * @return array
    * 
    */
+  /**
+   * [Description for search]
+   *
+   * @param array $expressions
+   * 
+   * @return array
+   * 
+   */
   public function search(array $expressions): array
   {
     return [];
   }
 
+  /**
+   * [Description for addSetting]
+   *
+   * @param \Hubleto\Framework\Interfaces\AppInterface $app
+   * @param array $setting
+   * 
+   * @return void
+   * 
+   */
   public function addSetting(\Hubleto\Framework\Interfaces\AppInterface $app, array $setting): void
   {
     $this->settings[] = [$app, $setting];
   }
 
+  /**
+   * [Description for getSettings]
+   *
+   * @return array
+   * 
+   */
   public function getSettings(): array
   {
     $settings = [];
@@ -286,89 +395,235 @@ class App extends Core implements Interfaces\AppInterface
     return $settings;
   }
 
+  /**
+   * [Description for getFullConfigPath]
+   *
+   * @param string $path
+   * 
+   * @return string
+   * 
+   */
   public function getFullConfigPath(string $path): string
   {
     return 'apps/' . $this->appManager()->getAppNamespaceForConfig($this->namespace) . '/' . $path;
   }
 
+  /**
+   * [Description for saveConfig]
+   *
+   * @param string $path
+   * @param string $value
+   * 
+   * @return void
+   * 
+   */
   public function saveConfig(string $path, string $value = ''): void
   {
     $this->config()->save($this->getFullConfigPath($path), $value);
   }
 
+  /**
+   * [Description for saveConfigForUser]
+   *
+   * @param string $path
+   * @param string $value
+   * 
+   * @return void
+   * 
+   */
   public function saveConfigForUser(string $path, string $value = ''): void
   {
     $this->config()->saveForUser($this->getFullConfigPath($path), $value);
   }
 
-
+  /**
+   * [Description for configAsString]
+   *
+   * @param string $path
+   * @param string $defaultValue
+   * 
+   * @return string
+   * 
+   */
   public function configAsString(string $path, string $defaultValue = ''): string
   {
     return (string) $this->config()->get($this->getFullConfigPath($path), $defaultValue);
   }
 
+  /**
+   * [Description for configAsInteger]
+   *
+   * @param string $path
+   * @param int $defaultValue
+   * 
+   * @return int
+   * 
+   */
   public function configAsInteger(string $path, int $defaultValue = 0): int
   {
     return (int) $this->config()->get($this->getFullConfigPath($path), $defaultValue);
   }
 
+  /**
+   * [Description for configAsFloat]
+   *
+   * @param string $path
+   * @param float $defaultValue
+   * 
+   * @return float
+   * 
+   */
   public function configAsFloat(string $path, float $defaultValue = 0): float
   {
     return (float) $this->config()->get($this->getFullConfigPath($path), $defaultValue);
   }
 
+  /**
+   * [Description for configAsBool]
+   *
+   * @param string $path
+   * @param bool $defaultValue
+   * 
+   * @return bool
+   * 
+   */
   public function configAsBool(string $path, bool $defaultValue = false): bool
   {
     return (bool) $this->config()->get($this->getFullConfigPath($path), $defaultValue);
   }
 
+  /**
+   * [Description for configAsArray]
+   *
+   * @param string $path
+   * @param array $defaultValue
+   * 
+   * @return array
+   * 
+   */
   public function configAsArray(string $path, array $defaultValue = []): array
   {
     return (array) $this->config()->get($path, $defaultValue);
   }
 
+  /**
+   * [Description for setConfigAsString]
+   *
+   * @param string $path
+   * @param string $value
+   * 
+   * @return void
+   * 
+   */
   public function setConfigAsString(string $path, string $value = ''): void
   {
     $this->config()->set($this->getFullConfigPath($path), $value);
   }
 
+  /**
+   * [Description for setConfigAsInteger]
+   *
+   * @param string $path
+   * @param int $value
+   * 
+   * @return void
+   * 
+   */
   public function setConfigAsInteger(string $path, int $value = 0): void
   {
     $this->config()->set($this->getFullConfigPath($path), $value);
   }
 
+  /**
+   * [Description for setConfigAsFloat]
+   *
+   * @param string $path
+   * @param float $value
+   * 
+   * @return void
+   * 
+   */
   public function setConfigAsFloat(string $path, float $value = 0): void
   {
     $this->config()->set($this->getFullConfigPath($path), $value);
   }
 
+  /**
+   * [Description for setConfigAsBool]
+   *
+   * @param string $path
+   * @param bool $value
+   * 
+   * @return void
+   * 
+   */
   public function setConfigAsBool(string $path, bool $value = false): void
   {
     $this->config()->set($this->getFullConfigPath($path), $value);
   }
 
+  /**
+   * [Description for setConfigAsArray]
+   *
+   * @param string $path
+   * @param array $value
+   * 
+   * @return void
+   * 
+   */
   public function setConfigAsArray(string $path, array $value = []): void
   {
     $this->config()->set($this->getFullConfigPath($path), $value);
   }
 
-
-
+  /**
+   * [Description for dangerouslyInjectDesktopHtmlContent]
+   *
+   * @param string $where
+   * 
+   * @return string
+   * 
+   */
   public function dangerouslyInjectDesktopHtmlContent(string $where): string
   {
     return '';
   }
 
+  /**
+   * [Description for addSearchSwitch]
+   *
+   * @param string $switch
+   * @param string $name
+   * 
+   * @return void
+   * 
+   */
   public function addSearchSwitch(string $switch, string $name): void
   {
     $this->searchSwitches[$switch] = $name;
   }
 
+  /**
+   * [Description for canHandleSearchSwith]
+   *
+   * @param string $switch
+   * 
+   * @return bool
+   * 
+   */
   public function canHandleSearchSwith(string $switch): bool
   {
     return isset($this->searchSwitches[$switch]);
   }
 
+  /**
+   * [Description for collectExtendibles]
+   *
+   * @param string $extendibleName
+   * 
+   * @return array
+   * 
+   */
   public function collectExtendibles(string $extendibleName): array
   {
     $items = [];
