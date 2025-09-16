@@ -212,7 +212,7 @@ class Core
    *
    * @param string $model
    * 
-   * @return Models\Model
+   * @return Interfaces\ModelInterface
    * 
    */
   public function getModel(string $model): Interfaces\ModelInterface
