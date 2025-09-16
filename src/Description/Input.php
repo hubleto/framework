@@ -12,6 +12,7 @@ class Input implements \JsonSerializable
   protected bool $required = false;
   protected string $placeholder = '';
   protected int $decimals = 4;
+  protected float $step = 1;
   protected string $unit = '';
   protected string $format = '';
   protected string $description = '';
@@ -52,6 +53,9 @@ class Input implements \JsonSerializable
 
   public function getDecimals(): int { return $this->decimals; }
   public function setDecimals(int $decimals): Input { $this->decimals = $decimals; return $this; }
+
+  public function getStep(): float { return $this->step; }
+  public function setStep(float $step): Input { $this->step = $step; return $this; }
 
   public function getUnit(): string { return $this->unit; }
   public function setUnit(string $unit): Input { $this->unit = $unit; return $this; }
@@ -112,6 +116,8 @@ class Input implements \JsonSerializable
     if (!empty($this->cssClass)) $json['cssClass'] = $this->cssClass;
     if (!empty($this->endpoint)) $json['endpoint'] = $this->endpoint;
     if (!empty($this->creatable)) $json['creatable'] = $this->creatable;
+    if (!empty($this->decimals)) $json['decimals'] = $this->decimals;
+    if (!empty($this->step)) $json['step'] = $this->step;
 
     foreach ($this->properties as $pName => $pValue) {
       if (is_array($pValue)) {

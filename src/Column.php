@@ -31,6 +31,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   protected string $lookupModel = '';
   protected string $reactComponent = '';
   protected int $decimals = 4;
+  protected float $step = 1;
   protected int $byteSize = 14;
   protected array $inputProps = [];
   protected string $endpoint = '';
@@ -127,6 +128,9 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   public function getDecimals(): int { return $this->decimals; }
   public function setDecimals(int $decimals): Column { $this->decimals = $decimals; return $this; }
 
+  public function getStep(): float { return $this->step; }
+  public function setStep(float $step): Column { $this->step = $step; return $this; }
+
   public function getEndpoint(): string { return $this->endpoint; }
   public function setEndpoint(string $endpoint): Column { $this->endpoint = $endpoint; return $this; }
 
@@ -160,6 +164,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
     if ($this->defaultValue !== null) $description->setDefaultValue($this->defaultValue);
     $description->setExamples($this->examples);
     $description->setDecimals($this->decimals);
+    $description->setStep($this->step);
     $description->setEnumValues($this->enumValues);
     $description->setEnumCssClasses($this->enumCssClasses);
     $description->setPredefinedValues($this->predefinedValues);
@@ -187,6 +192,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
     if (isset($columnConfig['predefinedValues'])) $this->setPredefinedValues($columnConfig['predefinedValues']);
     if (isset($columnConfig['lookupModel'])) $this->setLookupModel($columnConfig['lookupModel']);
     if (isset($columnConfig['decimals'])) $this->setDecimals($columnConfig['decimals']);
+    if (isset($columnConfig['step'])) $this->setStep($columnConfig['step']);
     if (isset($columnConfig['byteSize'])) $this->setByteSize($columnConfig['byteSize']);
     if (isset($columnConfig['endpoint'])) $this->setEndpoint($columnConfig['endpoint']);
     if (isset($columnConfig['creatable'])) $this->setCreatable($columnConfig['creatable']);
@@ -210,6 +216,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
       'tableCellRenderer' => $this->tableCellRenderer,
       'reactComponent' => $this->reactComponent,
       'decimals' => $this->decimals,
+      'step' => $this->step,
       'byteSize' => $this->byteSize,
       'endpoint' => $this->endpoint,
       'creatable' => $this->creatable,
