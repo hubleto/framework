@@ -2,6 +2,8 @@
 
 namespace Hubleto\Framework;
 
+use Hubleto\App\Community\Auth\AuthProvider;
+
 /**
  * Default view renderer for Hubleto project.
  */
@@ -39,18 +41,6 @@ class Renderer extends Core implements Interfaces\RendererInterface
       'str2url',
       function ($string) {
         return Helper::str2url($string ?? '');
-      }
-    ));
-    $this->twig->addFunction(new \Twig\TwigFunction(
-      'hasPermission',
-      function (string $permission, array $idUserRoles = []) {
-        return $this->permissionsManager()->granted($permission, $idUserRoles);
-      }
-    ));
-    $this->twig->addFunction(new \Twig\TwigFunction(
-      'hasRole',
-      function (int|string $role) {
-        return $this->permissionsManager()->hasRole($role);
       }
     ));
     $this->twig->addFunction(new \Twig\TwigFunction(
@@ -120,7 +110,7 @@ class Renderer extends Core implements Interfaces\RendererInterface
     try {
 
       $router = $this->router();
-      $permissionManager = $this->permissionsManager();
+//      $permissionManager = $this->getService(PermissionsManager::class);
 
       // Find-out which route is used for rendering
 
@@ -155,10 +145,6 @@ class Renderer extends Core implements Interfaces\RendererInterface
       // authenticate user, if any
       $this->config()->filterByUser();
 
-      if (empty($this->permission) && !empty($controllerObject->permission)) {
-        $permissionManager->setPermission($controllerObject->permission);
-      }
-
       // Check if controller can be executed in this SAPI
       if (php_sapi_name() === 'cli') {
         /** @disregard P1014 */
@@ -170,20 +156,6 @@ class Renderer extends Core implements Interfaces\RendererInterface
         if (!$controllerClassName::$webSAPIEnabled) {
           throw new Exceptions\GeneralException("Controller is not enabled in WEB interface.");
         }
-      }
-
-      if ($controllerObject->requiresAuthenticatedUser) {
-        if (!$this->getService(AuthProvider::class)->isUserInSession()) {
-          $controllerObject = $this->getController(Controllers\SignIn::class);
-          $permissionManager->setPermission($controllerObject->permission);
-        }
-      }
-
-      if (
-        $controllerObject->requiresAuthenticatedUser
-        && !$controllerObject->permittedForAllUsers
-      ) {
-        $this->permissionsManager()->checkPermission();
       }
 
       $controllerObject->preInit();
@@ -222,7 +194,6 @@ class Renderer extends Core implements Interfaces\RendererInterface
         
         $contentParams = [
           'hubleto' => $this,
-          'user' => $this->getService(AuthProvider::class)->getUser(),
           'config' => $this->config()->get(),
           // 'routeUrl' => $router->getRoute(),
           // 'routeParams' => $this->router()->getRouteVars(),

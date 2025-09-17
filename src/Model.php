@@ -2,6 +2,7 @@
 
 namespace Hubleto\Framework;
 
+use Hubleto\App\Community\Settings\PermissionsManager;
 use Hubleto\Framework\Exceptions\DBException;
 use ReflectionClass;
 
@@ -490,13 +491,6 @@ class Model extends Core implements Interfaces\ModelInterface
       }
     }
 
-    $description->permissions = [
-      'canRead' => $this->permissionsManager()->granted($this->fullName . ':Read'),
-      'canCreate' => $this->permissionsManager()->granted($this->fullName . ':Create'),
-      'canUpdate' => $this->permissionsManager()->granted($this->fullName . ':Update'),
-      'canDelete' => $this->permissionsManager()->granted($this->fullName . ':Delete'),
-    ];
-
     $description->includeRelations = array_keys($this->relations);
 
     // model-based permissions sa uz nepouzivaju
@@ -535,13 +529,6 @@ class Model extends Core implements Interfaces\ModelInterface
       if ($columnName == 'id') continue;
       $description->inputs[$columnName] = $this->describeInput($columnName);
     }
-
-    $description->permissions = [
-      'canRead' => $this->permissionsManager()->granted($this->fullName . ':Read'),
-      'canCreate' => $this->permissionsManager()->granted($this->fullName . ':Create'),
-      'canUpdate' => $this->permissionsManager()->granted($this->fullName . ':Update'),
-      'canDelete' => $this->permissionsManager()->granted($this->fullName . ':Delete'),
-    ];
 
 
     $tag = $this->router()->urlParamAsString('tag');
