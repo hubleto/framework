@@ -5,14 +5,14 @@ namespace Hubleto\Framework\Controllers\Api\Record;
 use Illuminate\Support\Str;
 
 class GetList extends \Hubleto\Framework\Controllers\ApiController {
-  public \Hubleto\Framework\Model $model;
+
+  public \Hubleto\Framework\Interfaces\ModelInterface $model;
 
   function __construct()
   {
     parent::__construct();
 
     $model = $this->router()->urlParamAsString('model');
-    // $this->permission = $model . ':Read';
     $this->model = $this->getModel($model);
   }
 

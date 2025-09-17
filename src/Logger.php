@@ -7,7 +7,7 @@ use Monolog\Handler\RotatingFileHandler;
 /**
  * Default implementation of logger in Hubleto project.
  */
-class Logger extends Core {
+class Logger extends Core implements Interfaces\LoggerInterface {
 
   public array $loggers = [];
 
@@ -25,7 +25,16 @@ class Logger extends Core {
     $this->initInternalLogger('core');
   }
 
-  public function initInternalLogger(string $loggerName = "") {
+  /**
+   * [Description for initInternalLogger]
+   *
+   * @param string $loggerName
+   * 
+   * @return void
+   * 
+   */
+  public function initInternalLogger(string $loggerName = ""): void
+  {
     if (!class_exists("\\Monolog\\Logger")) return;
 
     // inicializacia loggerov
@@ -50,7 +59,16 @@ class Logger extends Core {
 
   }
   
-  public function getInternalLogger($loggerName) {
+  /**
+   * [Description for getInternalLogger]
+   *
+   * @param mixed $loggerName
+   * 
+   * @return object
+   * 
+   */
+  public function getInternalLogger($loggerName): object
+  {
     if (!isset($this->loggers[$loggerName])) {
       $this->initInternalLogger($loggerName);
     }
@@ -58,31 +76,86 @@ class Logger extends Core {
     return $this->loggers[$loggerName];
   }
 
-  public function cliEcho($message, $loggerName, $severity) {
+  /**
+   * [Description for cliEcho]
+   *
+   * @param mixed $message
+   * @param mixed $loggerName
+   * @param mixed $severity
+   * 
+   * @return void
+   * 
+   */
+  public function cliEcho($message, $loggerName, $severity): void
+  {
     if ($this->cliEchoEnabled && php_sapi_name() === 'cli') {
       echo date("Y-m-d H:i:s")." {$loggerName}.{$severity} {$message}\n";
     }
   }
 
-  public function debug($message, array $context = [], $loggerName = 'core') {
+  /**
+   * [Description for debug]
+   *
+   * @param mixed $message
+   * @param array $context
+   * @param string $loggerName
+   * 
+   * @return void
+   * 
+   */
+  public function debug($message, array $context = [], $loggerName = 'core'): void
+  {
     if (!$this->enabled) return;
     $this->getInternalLogger($loggerName)->debug($message, $context);
     $this->cliEcho($message, $loggerName, 'DEBUG');
   }
   
-  public function info($message, array $context = [], $loggerName = 'core') {
+  /**
+   * [Description for info]
+   *
+   * @param mixed $message
+   * @param array $context
+   * @param string $loggerName
+   * 
+   * @return void
+   * 
+   */
+  public function info($message, array $context = [], $loggerName = 'core'): void
+  {
     if (!$this->enabled) return;
     $this->getInternalLogger($loggerName)->info($message, $context);
     $this->cliEcho($message, $loggerName, 'INFO');
   }
   
-  public function warning($message, array $context = [], $loggerName = 'core') {
+  /**
+   * [Description for warning]
+   *
+   * @param mixed $message
+   * @param array $context
+   * @param string $loggerName
+   * 
+   * @return void
+   * 
+   */
+  public function warning($message, array $context = [], $loggerName = 'core'): void
+  {
     if (!$this->enabled) return;
     $this->getInternalLogger($loggerName)->warning($message, $context);
     $this->cliEcho($message, $loggerName, 'WARNING');
   }
   
-  public function error($message, array $context = [], $loggerName = 'core') {
+  /**
+   * [Description for error]
+   *
+   * @param mixed $message
+   * @param array $context
+   * @param string $loggerName
+   * 
+   * @return void
+   * 
+   */
+  public function error($message, array $context = [], $loggerName = 'core'): void
+  {
     if (!$this->enabled) return;
     $this->getInternalLogger($loggerName)->error($message, $context);
     $this->cliEcho($message, $loggerName, 'ERROR');

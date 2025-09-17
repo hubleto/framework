@@ -90,7 +90,7 @@ class Core
    * @return HookManager
    * 
    */
-  public function hookManager(): HookManager
+  public function hookManager(): Interfaces\HookManagerInterface
   {
     return $this->getService(HookManager::class);
   }
@@ -101,7 +101,7 @@ class Core
    * @return SessionManager
    * 
    */
-  public function sessionManager(): SessionManager
+  public function sessionManager(): Interfaces\SessionManagerInterface
   {
     return $this->getService(SessionManager::class);
   }
@@ -112,7 +112,7 @@ class Core
    * @return CronManager
    * 
    */
-  public function cronManager(): CronManager
+  public function cronManager(): Interfaces\CronManagerInterface
   {
     return $this->getService(CronManager::class);
   }
@@ -123,7 +123,7 @@ class Core
    * @return EmailProvider
    * 
    */
-  public function emailProvider(): EmailProvider
+  public function emailProvider(): Interfaces\EmailProviderInterface
   {
     return $this->getService(EmailProvider::class);
   }
@@ -131,12 +131,12 @@ class Core
   /**
    * Shortcut for the config service.
    *
-   * @return Config
+   * @return Interfaces\ConfigManagerInterface
    * 
    */
-  public function config(): Config
+  public function config(): Interfaces\ConfigManagerInterface
   {
-    return $this->getService(Config::class);
+    return $this->getService(ConfigManager::class);
   }
 
   /**
@@ -145,7 +145,7 @@ class Core
    * @return Logger
    * 
    */
-  public function logger(): Logger
+  public function logger(): Interfaces\LoggerInterface
   {
     return $this->getService(Logger::class);
   }
@@ -156,7 +156,7 @@ class Core
    * @return Locale
    * 
    */
-  public function locale(): Locale
+  public function locale(): Interfaces\LocaleInterface
   {
     return $this->getService(Locale::class);
   }
@@ -167,7 +167,7 @@ class Core
    * @return Renderer
    * 
    */
-  public function renderer(): Renderer
+  public function renderer(): Interfaces\RendererInterface
   {
     return $this->getService(Renderer::class);
   }
@@ -190,10 +190,10 @@ class Core
    *
    * @param string $model
    * 
-   * @return Models\Model
+   * @return Interfaces\ModelInterface
    * 
    */
-  public function getModel(string $model): Models\Model
+  public function getModel(string $model): Interfaces\ModelInterface
   {
     return $this->getService($model);
   }
@@ -206,7 +206,7 @@ class Core
    * @return Controller
    * 
    */
-  public function getController(string $controller): Controller
+  public function getController(string $controller): Interfaces\ControllerInterface
   {
     return $this->getService($controller);
   }

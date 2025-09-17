@@ -5,7 +5,7 @@ namespace Hubleto\Framework;
 /**
  * Configuration management for the Hubleto project.
  */
-class Config extends Core
+class ConfigManager extends Core implements Interfaces\ConfigManagerInterface
 {
   protected array $configData = [];
 

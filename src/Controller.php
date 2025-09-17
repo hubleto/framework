@@ -9,7 +9,7 @@ namespace Hubleto\Framework;
  * be rendered using Twig template or using custom render() method.
  * 
  */
-class Controller extends Core {
+class Controller extends Core implements Interfaces\ControllerInterface {
 
   const RETURN_TYPE_VIEW = 0;
   const RETURN_TYPE_JSON = 1;
@@ -155,27 +155,59 @@ class Controller extends Core {
     $this->viewParams = $this->router()->getUrlParams();
   }
 
+  /**
+   * [Description for prepareView]
+   *
+   * @return void
+   * 
+   */
   public function prepareView(): void
   {
     $this->translationContext = $this->translationContext;
     $this->viewParams = $this->router()->getUrlParams();
   }
   
+  /**
+   * [Description for setView]
+   *
+   * @param string $view
+   * 
+   * @return void
+   * 
+   */
   public function setView(string $view): void
   {
     $this->view = $view;
   }
 
+  /**
+   * [Description for getView]
+   *
+   * @return string
+   * 
+   */
   public function getView(): string
   {
     return $this->view;
   }
 
+  /**
+   * [Description for getViewParams]
+   *
+   * @return array
+   * 
+   */
   public function getViewParams(): array
   {
     return $this->viewParams;
   }
 
+  /**
+   * [Description for render]
+   *
+   * @return string
+   * 
+   */
   public function render(): string
   {
     return '';

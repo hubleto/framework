@@ -2,6 +2,8 @@
 
 namespace Hubleto\Framework\Models;
 
+use Hubleto\Framework\Model;
+
 class Config extends Model
 {
 

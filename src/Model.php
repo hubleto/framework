@@ -8,7 +8,7 @@ use ReflectionClass;
 /**
  * Default implementation of model for Hubleto project.
  */
-class Model extends Core
+class Model extends Core implements Interfaces\ModelInterface
 {
   const HAS_ONE = 'hasOne';
   const HAS_MANY = 'hasMany';
@@ -48,18 +48,21 @@ class Model extends Core
 
   public ?array $junctions = [];
 
-  /** @property array<string, \Hubleto\Framework\Db\Column> */
+  /** @property array<string, \Hubleto\Framework\Interfaces\ColumnInterface> */
   protected array $columns = [];
 
-  /**
-   * Creates instance of model's object.
-   *
-   * @param mixed $main
-   * @return void
-   */
+  public bool $isExtendableByCustomColumns = false;
+
+  public array $conversionRelations = [];
+  public string $permission = '';
+  public array $rolePermissions = []; // example: [ [UserRole::ROLE_CHIEF_OFFICER => [true, true, true, true]] ]
+
   public function __construct()
   {
+
     $reflection = new \ReflectionClass($this);
+    preg_match('/^(.*?)\\\Models\\\(.*?)$/', $reflection->getName(), $m);
+    $this->translationContext = $m[1] . '\\Loader::Models\\' . $m[2];
 
     $recordManagerClass = $this->recordManagerClass;
     if (!empty($recordManagerClass) && $this->isDatabaseConnected()) {
@@ -80,6 +83,12 @@ class Model extends Core
 
   }
 
+  /**
+   * [Description for initRecordManager]
+   *
+   * @return null|object
+   * 
+   */
   public function initRecordManager(): null|object
   {
     $recordManagerClass = $this->recordManagerClass;
@@ -88,11 +97,28 @@ class Model extends Core
     return $recordManager;
   }
 
+  /**
+   * [Description for isDatabaseConnected]
+   *
+   * @return bool
+   * 
+   */
   public function isDatabaseConnected(): bool
   {
     return $this->db()->isConnected;
   }
 
+  //////////////////////////////////////////////////////////////////
+  // Methods for accessing and modifying model's config
+
+  /**
+   * [Description for getConfigFullPath]
+   *
+   * @param string $configName
+   * 
+   * @return string
+   * 
+   */
   public function getConfigFullPath(string $configName): string
   {
     return 'models/' . $this->fullName . '/' . $configName;
@@ -128,18 +154,15 @@ class Model extends Core
     return $this->config()->getAsArray($this->getConfigFullPath($configName));
   }
 
-  /**
-   * Returns list of available upgrades. This method must be overriden by each model.
-   *
-   * @return array List of available upgrades. Keys of the array are simple numbers starting from 1.
-   */
-  public function upgrades(): array
-  {
-    return [
-      0 => [], // upgrade to version 0 is the same as installation
-    ];
-  }
+  //////////////////////////////////////////////////////////////////
+  // SQL table manipulation
 
+  /**
+   * [Description for getSqlCreateTableCommands]
+   *
+   * @return array
+   * 
+   */
   public function getSqlCreateTableCommands(): array
   {
 
@@ -171,6 +194,12 @@ class Model extends Core
 
   }
 
+  /**
+   * [Description for createSqlTable]
+   *
+   * @return [type]
+   * 
+   */
   public function createSqlTable()
   {
 
@@ -244,7 +273,13 @@ class Model extends Core
     }
   }
 
-  public function dropTableIfExists(): Model
+  /**
+   * [Description for dropTableIfExists]
+   *
+   * @return Model
+   * 
+   */
+  public function dropTableIfExists(): Interfaces\ModelInterface
   {
     $this->db()->execute("set foreign_key_checks = 0");
     $this->db()->execute("drop table if exists `" . $this->table . "`");
@@ -302,25 +337,103 @@ class Model extends Core
     return $this->table;
   }
 
-  public function getLookupSqlValue(string $tableAlias = ''): string
+  /**
+   * Returns list of available upgrades. This method must be overriden by each model.
+   *
+   * @return array List of available upgrades. Keys of the array are simple numbers starting from 1.
+   */
+  public function upgrades(): array
   {
-    $value = $this->lookupSqlValue ?? "concat('{$this->fullName}, id = ', {%TABLE%}.id)";
-
-    return ($tableAlias !== ''
-      ? str_replace('{%TABLE%}', "`{$tableAlias}`", $value)
-      : $value
-    );
+    return [
+      0 => [], // upgrade to version 0 is the same as installation
+    ];
   }
 
   //////////////////////////////////////////////////////////////////
-  // definition of columns
+  // Methods for accessing information about model's columns
+  // and indexes
 
+  /**
+   * [Description for hasColumn]
+   *
+   * @param string $column
+   * 
+   * @return bool
+   * 
+   */
   public function hasColumn(string $column): bool
   {
     return in_array($column, array_keys($this->getColumns()));
   }
 
-  /** @return array<string, \Hubleto\Framework\Db\Column> */
+  /**
+   * [Description for getColumns]
+   *
+   * @return array<string, \Hubleto\Framework\Column>
+   * 
+   */
+  public function getColumns(): array
+  {
+    return $this->columns;
+  }
+
+  /**
+   * [Description for getColumn]
+   *
+   * @param string $column
+   * 
+   * @return Interfaces\ColumnInterface
+   * 
+   */
+  public function getColumn(string $column): Interfaces\ColumnInterface
+  {
+    return $this->columns[$column];
+  }
+
+  /**
+   * [Description for columnNames]
+   *
+   * @return array
+   * 
+   */
+  public function columnNames(): array
+  {
+    return array_keys($this->columns);
+  }
+
+  /**
+   * [Description for indexes]
+   *
+   * @param array $indexes
+   * 
+   * @return array
+   * 
+   */
+  public function indexes(array $indexes = []): array
+  {
+    return $indexes;
+  }
+
+  /**
+   * [Description for indexNames]
+   *
+   * @return array
+   * 
+   */
+  public function indexNames(): array
+  {
+    return array_keys($this->indexNames());
+  }
+
+  //////////////////////////////////////////////////////////////////
+  // Description API
+
+  /**
+   * [Description for describeColumns]
+   *
+   * @return array
+   * 
+   */
   public function describeColumns(): array
   {
     $columns = [];
@@ -329,98 +442,38 @@ class Model extends Core
       $columns['id'] = new \Hubleto\Framework\Db\Column\PrimaryKey($this, 'ID', 8);
     }
 
+    if ($this->isExtendableByCustomColumns) {
+      $columnsCfg = $this->configAsArray('customColumns') ?? [];
+      foreach ($columnsCfg as $colName => $colCfg) {
+        $colClass = $colCfg['class'] ?? '';
+        if (class_exists($colClass)) {
+          $columns[$colName] = (new $colClass($this, ''))->loadFromArray($colCfg)->setProperty('isCustom', true);
+        }
+      }
+    }
+
     return $columns;
   }
 
   /**
-   * [Description for getColumns]
+   * [Description for describeInput]
    *
-   * @return array<string, \Hubleto\Framework\Db\Column>
+   * @param string $columnName
+   * 
+   * @return \Hubleto\Framework\Description\Input
    * 
    */
-  public function getColumns(): array
-  {
-    return $this->columns;
-  }
-
-  public function getColumn(string $column): Db\Column
-  {
-    return $this->columns[$column];
-  }
-
-  /**
-   * columnNames
-   * @return array<string>
-   */
-  public function columnNames(): array
-  {
-    return array_keys($this->columns);
-  }
-
-  /**
-   * indexes
-   * @param array<string, mixed> $indexes
-   * @return array<string, mixed>
-   */
-  public function indexes(array $indexes = []): array
-  {
-    return $indexes;
-  }
-
-  /**
-   * indexNames
-   * @return array<string>
-   */
-  public function indexNames(): array
-  {
-    return array_keys($this->indexNames());
-  }
-
-  //////////////////////////////////////////////////////////////////
-  // CRUD methods
-
-  public function getById(int $id)
-  {
-    $item = $this->recordGet(function($q) use ($id) { $q->where($this->table . '.id', $id); });
-    return $item;
-  }
-
-  //////////////////////////////////////////////////////////////////
-  // Description API
-
   public function describeInput(string $columnName): \Hubleto\Framework\Description\Input
   {
     return $this->columns[$columnName]->describeInput();
   }
 
-  public function describeTable(): \Hubleto\Framework\Description\Table
-  {
-    $columns = $this->columns;
-    if (isset($columns['id'])) unset($columns['id']);
-
-    $description = new \Hubleto\Framework\Description\Table();
-    foreach ($columns as $columnName => $column) {
-      if (!$column->getHidden()) {
-        $description->columns[$columnName] = $column;
-      }
-    }
-
-    $description->inputs = [];
-    foreach ($columns as $columnName => $column) {
-      if ($columnName == 'id') continue;
-      $description->inputs[$columnName] = $this->describeInput($columnName);
-    }
-
-    $description->permissions = [
-      'canRead' => $this->permissionsManager()->granted($this->fullName . ':Read'),
-      'canCreate' => $this->permissionsManager()->granted($this->fullName . ':Create'),
-      'canUpdate' => $this->permissionsManager()->granted($this->fullName . ':Update'),
-      'canDelete' => $this->permissionsManager()->granted($this->fullName . ':Delete'),
-    ];
-
-    return $description;
-  }
-
+  /**
+   * [Description for describeForm]
+   *
+   * @return \Hubleto\Framework\Description\Form
+   * 
+   */
   public function describeForm(): \Hubleto\Framework\Description\Form
   {
     $description = new \Hubleto\Framework\Description\Form();
@@ -446,6 +499,97 @@ class Model extends Core
 
     $description->includeRelations = array_keys($this->relations);
 
+    // model-based permissions sa uz nepouzivaju
+    // pouzivaju sa record-based permissions, vid recordManager->getPermissions()
+    $description->permissions = [
+      'canRead' => true,
+      'canCreate' => true,
+      'canUpdate' => true,
+      'canDelete' => true,
+    ];
+
+    return $description;
+  }
+
+  /**
+   * [Description for describeTable]
+   *
+   * @return \Hubleto\Framework\Description\Table
+   * 
+   */
+  public function describeTable(): \Hubleto\Framework\Description\Table
+  {
+
+    $columns = $this->columns;
+    if (isset($columns['id'])) unset($columns['id']);
+
+    $description = new \Hubleto\Framework\Description\Table();
+    foreach ($columns as $columnName => $column) {
+      if (!$column->getHidden()) {
+        $description->columns[$columnName] = $column;
+      }
+    }
+
+    $description->inputs = [];
+    foreach ($columns as $columnName => $column) {
+      if ($columnName == 'id') continue;
+      $description->inputs[$columnName] = $this->describeInput($columnName);
+    }
+
+    $description->permissions = [
+      'canRead' => $this->permissionsManager()->granted($this->fullName . ':Read'),
+      'canCreate' => $this->permissionsManager()->granted($this->fullName . ':Create'),
+      'canUpdate' => $this->permissionsManager()->granted($this->fullName . ':Update'),
+      'canDelete' => $this->permissionsManager()->granted($this->fullName . ':Delete'),
+    ];
+
+
+    $tag = $this->router()->urlParamAsString('tag');
+
+    // model-based permissions sa uz nepouzivaju
+    // pouzivaju sa record-based permissions, vid recordManager->getPermissions()
+    $description->permissions = [
+      'canRead' => true,
+      'canCreate' => true,
+      'canUpdate' => true,
+      'canDelete' => true,
+    ];
+
+    $description->ui['moreActions'] = [
+      [ 'title' => 'Export to CSV', 'type' => 'stateChange', 'state' => 'showExportCsvScreen', 'value' => true ],
+      [ 'title' => 'Import from CSV', 'type' => 'stateChange', 'state' => 'showImportCsvScreen', 'value' => true ],
+    ];
+
+    if (!empty($tag)) {
+      $description->ui['moreActions'][] = [ 'title' => 'Columns', 'type' => 'stateChange', 'state' => 'showColumnConfigScreen', 'value' => true ];
+    }
+
+    // getConfig - zistit, ake stlpce sa maju zobrazit / skryt
+    // + vypocitat $description->columns (v principe asi unset() pre stlpce, ktore sa maju skryt)
+
+    if (!empty($tag)) {
+      $allColumnsConfig = @json_decode($this->configAsString('tableColumns') ?? '', true);
+      if (isset($allColumnsConfig[$tag])) {
+        $newColumnOrder = [];
+        foreach ($allColumnsConfig[$tag] as $colName => $is_hidden) {
+          if (isset($description->columns[$colName])) {
+            if (($is_hidden ?? false)) {
+              unset($description->columns[$colName]);
+            } else {
+              $newColumnOrder[$colName] = $description->columns[$colName];
+            }
+          }
+        }
+        $description->columns = $newColumnOrder;
+      } else {
+        foreach ($description->columns as $colName => $column) {
+          if (!$column->getProperty('defaultVisibility')) {
+            unset($description->columns[$colName]);
+          }
+        }
+      }
+    }
+
     return $description;
   }
 
@@ -453,7 +597,12 @@ class Model extends Core
   // Record-related methods
 
   /**
-   * recordGet
+   * [Description for recordGet]
+   *
+   * @param callable|null|null $queryModifierCallback
+   * 
+   * @return array
+   * 
    */
   public function recordGet(callable|null $queryModifierCallback = null): array
   {
@@ -465,7 +614,17 @@ class Model extends Core
   }
 
   /**
-   * recordGetList
+   * [Description for recordGetList]
+   *
+   * @param string $fulltextSearch
+   * @param array $columnSearch
+   * @param array $orderBy
+   * @param int $itemsPerPage
+   * @param int $page
+   * @param mixed 
+   * 
+   * @return array
+   * 
    */
   public function recordGetList(
     string $fulltextSearch = '',
@@ -490,84 +649,60 @@ class Model extends Core
     return $paginatedRecords;
   }
 
-  //////////////////////////////////////////////////////////////////
-  // callbacks
-
   /**
-   * onBeforeCreate
-   * @param array<string, mixed> $record
-   * @return array<string, mixed>
+   * [Description for diffRecords]
+   *
+   * @param array $record1
+   * @param array $record2
+   * 
+   * @return array
+   * 
    */
-  public function onBeforeCreate(array $record): array
+  public function diffRecords(array $record1, array $record2): array
   {
-    return $record;
+    $diff = [];
+    foreach ($this->getColumns() as $colName => $column) {
+      $v1 = $record1[$colName] ?? null;
+      $v2 = $record2[$colName] ?? null;
+      if ($v1 != $v2) {
+        $diff[$colName] = [ $v1, $v2 ];
+      }
+    }
+
+    return $diff;
+
   }
 
   /**
-   * onBeforeUpdate
-   * @param array<string, mixed> $record
-   * @return array<string, mixed>
-   */
-  public function onBeforeUpdate(array $record): array
-  {
-    return $record;
-  }
-
-  /**
-   * onAfterCreate
-   * @param array<string, mixed> $originalRecord
-   * @param array<string, mixed> $savedRecord
-   * @return array<string, mixed>
-   */
-  public function onAfterCreate(array $savedRecord): array
-  {
-    return $savedRecord;
-  }
-
-  /**
-   * onAfterUpdate
-   * @param array<string, mixed> $originalRecord
-   * @param array<string, mixed> $savedRecord
-   * @return array<string, mixed>
-   */
-  public function onAfterUpdate(array $originalRecord, array $savedRecord): array
-  {
-    return $savedRecord;
-  }
-
-  /**
-   * onBeforeDelete
+   * [Description for getById]
+   *
    * @param int $id
-   * @return int
+   * 
+   * @return [type]
+   * 
    */
-  public function onBeforeDelete(int $id): int
+  public function getById(int $id)
   {
-    return $id;
+    $item = $this->recordGet(function($q) use ($id) { $q->where($this->table . '.id', $id); });
+    return $item;
   }
 
   /**
-   * onAfterDelete
-   * @param int $id
-   * @return int
+   * [Description for getLookupSqlValue]
+   *
+   * @param string $tableAlias
+   * 
+   * @return string
+   * 
    */
-  public function onAfterDelete(int $id): int
+  public function getLookupSqlValue(string $tableAlias = ''): string
   {
-    return $id;
-  }
+    $value = $this->lookupSqlValue ?? "concat('{$this->fullName}, id = ', {%TABLE%}.id)";
 
-  /**
-   * onAfterLoadRecord
-   * @param array<string, mixed> $record
-   * @return array<string, mixed>
-   */
-  public function onAfterLoadRecord(array $record): array
-  {
-    return $record;
-  }
-
-  public function onAfterLoadRecords(array $records): array
-  {
-    return $records;
+    return ($tableAlias !== ''
+      ? str_replace('{%TABLE%}', "`{$tableAlias}`", $value)
+      : $value
+    );
   }
 
   /**
@@ -581,6 +716,122 @@ class Model extends Core
   public function encryptPassword(string $original): string
   {
     return password_hash($original, PASSWORD_DEFAULT);
+  }
+
+  //////////////////////////////////////////////////////////////////
+  // Callbacks
+
+  /**
+   * [Description for onBeforeCreate]
+   *
+   * @param array $record
+   * 
+   * @return array
+   * 
+   */
+  public function onBeforeCreate(array $record): array
+  {
+    $this->hookManager()->run('model:on-before-create', [$this, $record]);
+    return $record;
+  }
+
+  /**
+   * [Description for onBeforeUpdate]
+   *
+   * @param array $record
+   * 
+   * @return array
+   * 
+   */
+  public function onBeforeUpdate(array $record): array
+  {
+    $this->hookManager()->run('model:on-before-update', [$this, $record]);
+    return $record;
+  }
+
+  /**
+   * [Description for onAfterCreate]
+   *
+   * @param array $savedRecord
+   * 
+   * @return array
+   * 
+   */
+  public function onAfterCreate(array $savedRecord): array
+  {
+    $this->hookManager()->run('model:on-after-create', [$this, $savedRecord]);
+    return $savedRecord;
+  }
+
+  /**
+   * [Description for onAfterUpdate]
+   *
+   * @param array $originalRecord
+   * @param array $savedRecord
+   * 
+   * @return array
+   * 
+   */
+  public function onAfterUpdate(array $originalRecord, array $savedRecord): array
+  {
+    $this->hookManager()->run('model:on-after-update', [$this, $originalRecord, $savedRecord]);
+    return $savedRecord;
+  }
+
+  /**
+   * [Description for onBeforeDelete]
+   *
+   * @param int $id
+   * 
+   * @return int
+   * 
+   */
+  public function onBeforeDelete(int $id): int
+  {
+    $this->hookManager()->run('model:on-before-delete', [$this, $id]);
+    return $id;
+  }
+
+  /**
+   * [Description for onAfterDelete]
+   *
+   * @param int $id
+   * 
+   * @return int
+   * 
+   */
+  public function onAfterDelete(int $id): int
+  {
+    $this->hookManager()->run('model:on-after-delete', [$this, $id]);
+    return $id;
+  }
+
+  /**
+   * [Description for onAfterLoadRecord]
+   *
+   * @param array $record
+   * 
+   * @return array
+   * 
+   */
+  public function onAfterLoadRecord(array $record): array
+  {
+    $this->hookManager()->run('model:on-after-load-records', [$this, $record]);
+    return $record;
+  }
+
+  /**
+   * [Description for onAfterLoadRecords]
+   *
+   * @param array $records
+   * 
+   * @return array
+   * 
+   */
+  public function onAfterLoadRecords(array $records): array
+  {
+    $this->hookManager()->run('model:on-after-load-record', [$this, $records]);
+    return $records;
   }
 
 }

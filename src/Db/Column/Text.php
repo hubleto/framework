@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Db\Column;
 
-class Text extends \Hubleto\Framework\Db\Column
+class Text extends \Hubleto\Framework\Column
 {
 
   protected string $type = 'text';
@@ -16,7 +16,7 @@ class Text extends \Hubleto\Framework\Db\Column
   }
 
   public function getInterface(): int { return $this->interface; }
-  public function setInterface(int $interface): Decimal { $this->interface = $interface; return $this; }
+  public function setInterface(int $interface): Text { $this->interface = $interface; return $this; }
 
   public function jsonSerialize(): array
   {

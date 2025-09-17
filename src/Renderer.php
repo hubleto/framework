@@ -5,7 +5,7 @@ namespace Hubleto\Framework;
 /**
  * Default view renderer for Hubleto project.
  */
-class Renderer extends Core
+class Renderer extends Core implements Interfaces\RendererInterface
 {
 
   public \Twig\Loader\FilesystemLoader $twigLoader;

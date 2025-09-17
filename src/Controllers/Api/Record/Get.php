@@ -4,7 +4,7 @@ namespace Hubleto\Framework\Controllers\Api\Record;
 
 class Get extends \Hubleto\Framework\Controllers\ApiController {
 
-  public \Hubleto\Framework\Model $model;
+  public \Hubleto\Framework\Interfaces\ModelInterface $model;
 
   function __construct()
   {

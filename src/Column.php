@@ -1,8 +1,8 @@
 <?php
 
-namespace Hubleto\Framework\Db;
+namespace Hubleto\Framework;
 
-abstract class Column implements \JsonSerializable
+abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
 {
 
   protected \Hubleto\Framework\Model $model;
@@ -31,8 +31,11 @@ abstract class Column implements \JsonSerializable
   protected string $lookupModel = '';
   protected string $reactComponent = '';
   protected int $decimals = 4;
+  protected float $step = 1;
   protected int $byteSize = 14;
   protected array $inputProps = [];
+  protected string $endpoint = '';
+  protected bool $creatable = false;
 
   protected array $properties = [];
 
@@ -125,6 +128,15 @@ abstract class Column implements \JsonSerializable
   public function getDecimals(): int { return $this->decimals; }
   public function setDecimals(int $decimals): Column { $this->decimals = $decimals; return $this; }
 
+  public function getStep(): float { return $this->step; }
+  public function setStep(float $step): Column { $this->step = $step; return $this; }
+
+  public function getEndpoint(): string { return $this->endpoint; }
+  public function setEndpoint(string $endpoint): Column { $this->endpoint = $endpoint; return $this; }
+
+  public function getCreatable(): bool { return $this->creatable; }
+  public function setCreatable(bool $creatable = true): Column { $this->creatable = $creatable; return $this; }
+
   public function getInputProps(): array { return $this->inputProps; }
   public function setInputProps(array $inputProps): Column { $this->inputProps = $inputProps; return $this; }
 
@@ -146,11 +158,13 @@ abstract class Column implements \JsonSerializable
     if (!empty($this->getDescription())) $description->setDescription($this->getDescription());
     if (!empty($this->getUnit())) $description->setUnit($this->getUnit());
     if (!empty($this->getFormat())) $description->setFormat($this->getFormat());
-    // if (!empty($this->getTableCellRenderer())) $description->setTableCellRenderer($this->getTableCellRenderer());
     if (!empty($this->getLookupModel())) $description->setLookupModel($this->getLookupModel());
+    if (!empty($this->getEndpoint())) $description->setEndpoint($this->getEndpoint());
+    if (!empty($this->getCreatable())) $description->setCreatable($this->getCreatable());
     if ($this->defaultValue !== null) $description->setDefaultValue($this->defaultValue);
     $description->setExamples($this->examples);
     $description->setDecimals($this->decimals);
+    $description->setStep($this->step);
     $description->setEnumValues($this->enumValues);
     $description->setEnumCssClasses($this->enumCssClasses);
     $description->setPredefinedValues($this->predefinedValues);
@@ -177,8 +191,11 @@ abstract class Column implements \JsonSerializable
     if (isset($columnConfig['enumCssClasses'])) $this->setEnumCssClasses($columnConfig['enumCssClasses']);
     if (isset($columnConfig['predefinedValues'])) $this->setPredefinedValues($columnConfig['predefinedValues']);
     if (isset($columnConfig['lookupModel'])) $this->setLookupModel($columnConfig['lookupModel']);
-    if (isset($columnConfig['decimals'])) $this->setLookupModel($columnConfig['decimals']);
-    if (isset($columnConfig['byteSize'])) $this->setLookupModel($columnConfig['byteSize']);
+    if (isset($columnConfig['decimals'])) $this->setDecimals($columnConfig['decimals']);
+    if (isset($columnConfig['step'])) $this->setStep($columnConfig['step']);
+    if (isset($columnConfig['byteSize'])) $this->setByteSize($columnConfig['byteSize']);
+    if (isset($columnConfig['endpoint'])) $this->setEndpoint($columnConfig['endpoint']);
+    if (isset($columnConfig['creatable'])) $this->setCreatable($columnConfig['creatable']);
     return $this;
   }
 
@@ -199,7 +216,10 @@ abstract class Column implements \JsonSerializable
       'tableCellRenderer' => $this->tableCellRenderer,
       'reactComponent' => $this->reactComponent,
       'decimals' => $this->decimals,
+      'step' => $this->step,
       'byteSize' => $this->byteSize,
+      'endpoint' => $this->endpoint,
+      'creatable' => $this->creatable,
     ];
 
     if (count($this->enumValues) > 0) $column['enumValues'] = $this->enumValues;
