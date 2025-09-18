@@ -34,7 +34,11 @@ class EmailProvider extends Core implements Interfaces\EmailProviderInterface
     if (empty($template)) {
       $template = $this->defaultEmailTemplate;
     }
-    return $this->renderer()->renderView($template, ['title' => $title, 'body' => $rawBody]);
+    return $this->renderer()->renderView($template, [
+      'title' => $title,
+      'body' => $rawBody,
+      'env' => $this->env(),
+    ]);
   }
 
   /**
