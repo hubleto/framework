@@ -561,33 +561,44 @@ class Model extends Core implements Interfaces\ModelInterface
     ];
 
     if (!empty($tag)) {
-      $description->ui['moreActions'][] = [ 'title' => 'Columns', 'type' => 'stateChange', 'state' => 'showColumnConfigScreen', 'value' => true ];
-    }
+      $description->ui['moreActions'][] = [
+        'title' => 'Columns',
+        'type' => 'stateChange',
+        'state' => 'showColumnConfigScreen',
+        'value' => true,
+      ];
 
-    // getConfig - zistit, ake stlpce sa maju zobrazit / skryt
-    // + vypocitat $description->columns (v principe asi unset() pre stlpce, ktore sa maju skryt)
-
-    if (!empty($tag)) {
+      // hide && re-order columns based on user config
       $allColumnsConfig = @json_decode($this->configAsString('tableColumns') ?? '', true);
+      $columns = $description->columns;
+
+      // hide always hidden columns
+      foreach ($columns as $colName => $column) {
+        if ($column->getVisibility() == Column::ALWAYS_HIDDEN) unset($columns[$colName]);
+      }
+
       if (isset($allColumnsConfig[$tag])) {
-        $newColumnOrder = [];
+        // re-order columns
+        $columnsOrdered = [];
         foreach ($allColumnsConfig[$tag] as $colName => $is_hidden) {
-          if (isset($description->columns[$colName])) {
-            if (($is_hidden ?? false)) {
-              unset($description->columns[$colName]);
-            } else {
-              $newColumnOrder[$colName] = $description->columns[$colName];
-            }
+          if (isset($columns[$colName]) && !$is_hidden) {
+            $columnsOrdered[$colName] = $description->columns[$colName];
           }
         }
-        $description->columns = $newColumnOrder;
+        $columns = $columnsOrdered;
       } else {
-        foreach ($description->columns as $colName => $column) {
-          if (!$column->getProperty('defaultVisibility')) {
-            unset($description->columns[$colName]);
-          }
+        // hide default non-visible columns
+        foreach ($columns as $colName => $column) {
+          if ($column->getVisibility() != Column::DEFAULT_VISIBLE) unset($columns[$colName]);
         }
       }
+      
+      // show always visible columns
+      foreach ($description->columns as $colName => $column) {
+        if ($column->getVisibility() == Column::ALWAYS_VISIBLE) $columns[$colName] = $column;
+      }
+
+      $description->columns = $columns;
     }
 
     return $description;

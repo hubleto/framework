@@ -5,6 +5,11 @@ namespace Hubleto\Framework;
 abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
 {
 
+  const ALWAYS_VISIBLE = 1;
+  const ALWAYS_HIDDEN = 2;
+  const DEFAULT_VISIBLE = 3;
+  const DEFAULT_HIDDEN = 4;
+
   protected \Hubleto\Framework\Model $model;
 
   protected array $indexes = [];
@@ -14,6 +19,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   protected string $title = '';
   protected bool $readonly = false;
   protected bool $required = false;
+  protected int $visibility = 0;
   protected bool $hidden = false;
   protected string $rawSqlDefinition = '';
   protected string $placeholder = '';
@@ -79,6 +85,13 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
 
   public function getRequired(): bool { return $this->required; }
   public function setRequired(bool $required = true): Column { $this->required = $required; return $this; }
+
+  public function getVisibility(): int { return $this->visibility; }
+  public function setVisibility(int $visibility = 0): Column { $this->visibility = $visibility; return $this; }
+  public function setAlwaysVisible(): Column { $this->visibility = self::ALWAYS_VISIBLE; return $this; }
+  public function setAlwaysHidden(): Column { $this->visibility = self::ALWAYS_HIDDEN; return $this; }
+  public function setDefaultVisible(): Column { $this->visibility = self::DEFAULT_VISIBLE; return $this; }
+  public function setDefaultHidden(): Column { $this->visibility = self::DEFAULT_HIDDEN; return $this; }
 
   public function getPlaceholder(): bool { return $this->placeholder; }
   public function setPlaceholder(bool $placeholder = true): Column { $this->placeholder = $placeholder; return $this; }
@@ -178,10 +191,11 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   public function loadFromArray(array $columnConfig): Column
   {
     if (isset($columnConfig['title'])) $this->setTitle($columnConfig['title']);
-    if (isset($columnConfig['reactComponent'])) $this->setTitle($columnConfig['reactComponent']);
+    if (isset($columnConfig['reactComponent'])) $this->setReactComponent($columnConfig['reactComponent']);
     if (isset($columnConfig['placeholder'])) $this->setPlaceholder($columnConfig['placeholder']);
-    if (isset($columnConfig['readonly'])) $this->setRequired($columnConfig['readonly']);
-    if (isset($columnConfig['required'])) $this->setTitle($columnConfig['required']);
+    if (isset($columnConfig['readonly'])) $this->setReadonly($columnConfig['readonly']);
+    if (isset($columnConfig['required'])) $this->setRequired($columnConfig['required']);
+    if (isset($columnConfig['visibility'])) $this->setVisibility($columnConfig['visibility']);
     if (isset($columnConfig['description'])) $this->setDescription($columnConfig['description']);
     if (isset($columnConfig['unit'])) $this->setUnit($columnConfig['unit']);
     if (isset($columnConfig['format'])) $this->setFormat($columnConfig['format']);
@@ -206,6 +220,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
       'title' => $this->title,
       'readonly' => $this->readonly,
       'required' => $this->required,
+      'visibility' => $this->visibility,
       'defaultValue' => $this->defaultValue,
       'unit' => $this->unit,
       'description' => $this->description,

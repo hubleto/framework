@@ -16,6 +16,10 @@ class Table implements \JsonSerializable
     'showFilter' => true,
     'showSidebarFilter' => true,
     'showHeaderTitle' => true,
+    'showFulltextSearch' => false,
+    'showColumnSearch' => false,
+    'showMoreActionsButton' => false,
+    'showAddButton' => true,
   ];
 
   /** @property array{ canCreate: bool, canRead: bool, canUpdate: bool, canDelete: bool } */
@@ -45,6 +49,33 @@ class Table implements \JsonSerializable
   public function toArray(): array
   {
     return $this->jsonSerialize();
+  }
+
+  public function show(array $what): void
+  {
+    foreach ($what as $item) {
+      $item = 'show' . strtoupper(substr($item, 0, 1)) . substr($item, 1);
+      if (isset($this->ui[$item])) $this->ui[$item] = true;
+    }
+  }
+
+  public function hide(array $what): void
+  {
+    foreach ($what as $item) {
+      $item = 'show' . strtoupper(substr($item, 0, 1)) . substr($item, 1);
+      if (isset($this->ui[$item])) $this->ui[$item] = false;
+    }
+  }
+
+  public function showOnlyColumns(array $columnNames): void
+  {
+    $newColumns = [];
+    foreach ($columnNames as $colName) {
+      if (isset($this->columns[$colName])) {
+        $newColumns[$colName] = $this->columns[$colName];
+      }
+    }
+    $this->columns = $newColumns;
   }
 
 }
