@@ -17,6 +17,17 @@ class Locale extends Core implements Interfaces\LocaleInterface
   }
 
   /**
+   * [Description for getTimezone]
+   *
+   * @return string
+   * 
+   */
+  public function getTimezone(): string
+  {
+    return $this->config()->getAsString('locale/timezone', 'Europe/London');
+  }
+
+  /**
    * [Description for getDateShortFormat]
    *
    * @return string
