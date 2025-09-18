@@ -33,6 +33,8 @@ class App extends Core implements Interfaces\AppInterface
   public bool $isActivated = false;
   public bool $hasCustomSettings = false;
 
+  public string $sidebarView = '';
+
   /** @var array<int, array<\Hubleto\Framework\App, array>> */
   private array $settings = [];
 
