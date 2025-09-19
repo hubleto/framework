@@ -62,7 +62,8 @@ class Model extends Core implements Interfaces\ModelInterface
 
     $reflection = new \ReflectionClass($this);
     preg_match('/^(.*?)\\\Models\\\(.*?)$/', $reflection->getName(), $m);
-    $this->translationContext = $m[1] . '\\Loader::Models\\' . $m[2];
+    $this->translationContext = $m[1] . '\\Loader';
+    $this->translationContextInner = 'Models\\' . $m[2];
 
     $recordManagerClass = $this->recordManagerClass;
     if (!empty($recordManagerClass) && $this->isDatabaseConnected()) {
@@ -72,9 +73,9 @@ class Model extends Core implements Interfaces\ModelInterface
 
     $this->fullName = $reflection->getName();
 
-    if (empty($this->translationContext)) {
-      $this->translationContext = trim(str_replace('/', '\\', $this->fullName), '\\');
-    }
+    // if (empty($this->translationContext)) {
+    //   $this->translationContext = trim(str_replace('/', '\\', $this->fullName), '\\');
+    // }
 
     $tmp = explode("\\", $this->fullName);
     $this->shortName = end($tmp);

@@ -163,20 +163,20 @@ class App extends Core implements Interfaces\AppInterface
     return 0;
   }
 
-  /**
-   * [Description for translate]
-   *
-   * @param string $string
-   * @param array $vars
-   * @param string $context
-   * 
-   * @return string
-   * 
-   */
-  public function translate(string $string, array $vars = [], string $context = 'root'): string
-  {
-    return $this->translator()->translate($string, $vars, $this->fullName . '::' . $context);
-  }
+  // /**
+  //  * [Description for translate]
+  //  *
+  //  * @param string $string
+  //  * @param array $vars
+  //  * @param string $context
+  //  * 
+  //  * @return string
+  //  * 
+  //  */
+  // public function translate(string $string, array $vars = [], string $context = 'root'): string
+  // {
+  //   return $this->translator()->translate($string, $vars, $this->fullName . '::' . $context);
+  // }
 
   /**
    * [Description for installTables]

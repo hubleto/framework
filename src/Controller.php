@@ -80,9 +80,9 @@ class Controller extends Core implements Interfaces\ControllerInterface {
 
     $this->permission = $this->fullName;
 
-    if (empty($this->translationContext)) {
-      $this->translationContext = trim(str_replace('/', '\\', $this->fullName), '\\');
-    }
+    // if (empty($this->translationContext)) {
+    //   $this->translationContext = trim(str_replace('/', '\\', $this->fullName), '\\');
+    // }
   }
 
   /**
@@ -163,7 +163,7 @@ class Controller extends Core implements Interfaces\ControllerInterface {
    */
   public function prepareView(): void
   {
-    $this->translationContext = $this->translationContext;
+    // $this->translationContext = $this->translationContext;
     $this->viewParams = $this->router()->getUrlParams();
   }
   

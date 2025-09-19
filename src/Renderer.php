@@ -125,7 +125,8 @@ class Renderer extends Core implements Interfaces\RendererInterface
       // Find-out which route is used for rendering
 
       if (empty($route)) $route = $router->extractRouteFromRequest();
-      if (count($params) == 0) $params = $router->extractParamsFromRequest();
+      // if (count($params) == 0) $params = $router->extractParamsFromRequest();
+      // $router->setRouteVars($params);
 
       $router->setRoute($route);
 
@@ -136,8 +137,8 @@ class Renderer extends Core implements Interfaces\RendererInterface
       $controllerClassName = $routeData['controller'];
 
       $routeVars = $routeData['vars'];
-      $router->setRouteVars($params);
       $router->setRouteVars($routeVars);
+      $router->setRouteVars($params);
 
       if ($router->isUrlParam('sign-out')) {
         $this->authProvider()->signOut();

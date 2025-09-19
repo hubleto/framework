@@ -5,10 +5,11 @@ namespace Hubleto\Framework;
 /**
  * Shortcut to access all services used in the Hubleto project.
  */
-class Core
+class Core implements Interfaces\CoreInterface
 {
 
   public string $translationContext = '';
+  public string $translationContextInner = '';
 
   public function __construct()
   {
@@ -46,7 +47,7 @@ class Core
    * @return Env
    * 
    */
-  public function env(): Env
+  public function env(): Interfaces\EnvInterface
   {
     return $this->getService(Env::class);
   }
@@ -68,7 +69,7 @@ class Core
    * @return Db
    * 
    */
-  public function db(): Db
+  public function db(): Interfaces\DbInterface
   {
     return $this->getService(Db::class);
   }
@@ -90,7 +91,7 @@ class Core
    * @return Router
    * 
    */
-  public function router(): Router
+  public function router(): Interfaces\RouterInterface
   {
     return $this->getService(Router::class);
   }
@@ -202,9 +203,7 @@ class Core
    */
   public function translator(): Interfaces\TranslatorInterface
   {
-    $translator = $this->getService(Translator::class);
-    $translator->setContext($this->translationContext);
-    return $translator;
+    return $this->getService(Translator::class);
   }
 
   /**
@@ -233,68 +232,18 @@ class Core
     return $this->getService($controller);
   }
 
-
-
-
   /**
-   * Shorthand for core translate() function. Uses own language dictionary.
+   * Shorthand for translator's translate() function.
    *
    * @param  string $string String to be translated
-   * @param  string $context Context where the string is used
-   * @param  string $toLanguage Output language
+   * @param  array $vars Variables to be replaced
    * @return string Translated string.
    */
+  /**
+  * @param array<string, string> $vars
+  */
   public function translate(string $string, array $vars = []): string
   {
-    return $this->translator()->translate($string, $vars);
+    return $this->translator()->translate($this, $string, $vars);
   }
-
-  // public static function getDictionaryFilename(string $language): string
-  // {
-  //   if (strlen($language) == 2) {
-  //     $reflection = new \ReflectionClass(get_called_class());
-  //     $srcFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
-  //     return $srcFolder . '/Lang/' . $language . '.json';
-  //   } else {
-  //     return '';
-  //   }
-  // }
-
-  // /**
-  // * @return array|array<string, array<string, string>>
-  // */
-  // public static function loadDictionary(string $language): array
-  // {
-  //   $dict = [];
-  //   $dictFilename = static::getDictionaryFilename($language);
-  //   if (is_file($dictFilename)) $dict = (array) @json_decode((string) file_get_contents($dictFilename), true);
-  //   return $dict;
-  // }
-
-  // /**
-  // * @return array|array<string, array<string, string>>
-  // */
-  // public static function addToDictionary(string $language, string $contextInner, string $string): void
-  // {
-  //   $dictFilename = static::getDictionaryFilename($language);
-
-  //   $dict = static::loadDictionary($language);
-
-  //   $main = \Hubleto\Framework\Loader::getGlobalApp();
-
-  //   if (!empty($dict[$contextInner][$string])) return;
-
-  //   if ($main->config()->getAsBool('autoTranslate')) {
-  //     /** @disregard P1009 */
-  //     $tr = new \Stichoza\GoogleTranslate\GoogleTranslate();
-  //     $tr->setSource('en'); // Translate from
-  //     $tr->setTarget($language); // Translate to
-  //     $dict[$contextInner][$string] = $tr->translate($string);
-  //   } else {
-  //     $dict[$contextInner][$string] = '';
-  //   }
-
-  //   @file_put_contents($dictFilename, json_encode($dict, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-  // }
-
 }

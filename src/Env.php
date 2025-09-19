@@ -5,7 +5,7 @@ namespace Hubleto\Framework;
 /**
  * Storage for environment-specific configuration.
  */
-class Env extends Core
+class Env extends Core implements Interfaces\EnvInterface
 {
 
   public string $projectFolder = '';

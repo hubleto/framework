@@ -2,88 +2,58 @@
 
 namespace Hubleto\Framework;
 
-use Hubleto\Framework\Interfaces\AppManagerInterface;
-
 /**
  * Default translator for Hubleto project.
  */
-class Translator extends Core implements Interfaces\TranslatorInterface
+class Translator implements Interfaces\TranslatorInterface
 {
 
-  public string $context = '';
-  public string $dictionaryFilename = "Core-Loader";
+  public Core $service;
   public array $dictionary = [];
 
-  // public function __construct()
-  // {
-  //   $this->dictionary = [];
-  // }
-
-  public function getContext(): string
-  {
-    return $this->context;
-  }
-
-  public function setContext(string $context): void
-  {
-    $this->context = $context;
-  }
-
   /**
-  * @return array|array<string, array<string, string>>
-  */
-  public function loadDictionaryFromJsonFile(string $jsonFile): array
-  {
-    return (array) @json_decode((string) file_get_contents($jsonFile), true);
-  }
-
-  public function loadDictionaryForContext(string $language, string $contextFileRef): array
-  {
-    $dictionaryFilename = '';
-
-    if ($contextFileRef == 'Hubleto\\Erp') {
-      $dictionaryFilename = __DIR__ . '/../../lang/' . $language . '.json';
-    } elseif (str_starts_with($contextFileRef, 'Hubleto\\App')) {
-      $appClass = str_replace('/', '\\', $contextFileRef);
-
-      $app = $this->appManager()->getApp($appClass);
-      if ($app) {
-        $dictionaryFilename = $app->srcFolder . '/Lang/' . $language . '.json';
-      }
-    }
-
-    if (!empty($dictionaryFilename) && is_file($dictionaryFilename)) {
-      $dictionary = (array) @json_decode((string) file_get_contents($dictionaryFilename), true);
-      return $dictionary;
-    } else {
-      return [];
-    }
-  }
-
-  public function getDictionaryFilename(string $context, string $language = ''): string
+   * [Description for getDictionaryFilename]
+   *
+   * @param Interfaces\CoreInterface $service
+   * @param string $language
+   * 
+   * @return string
+   * 
+   */
+  public function getDictionaryFilename(Interfaces\CoreInterface $service, string $language): string
   {
     $dictionaryFile = '';
 
-    if (empty($language)) $language = $this->config()->getAsString('language', 'en');
-    if (empty($language)) $language = 'en';
-
     if (strlen($language) == 2) {
-      $dictionaryFile = $this->env()->srcFolder . "/Lang/{$language}.json";
+      $file = $service->translationContext;
+      $file = strtolower(strtr($file, '\\/', '--'));
+      $dictionaryFile = $service->env()->srcFolder . "/../lang/{$language}/{$file}.json";
     }
 
     return $dictionaryFile;
   }
 
-  public function addToDictionary(string $string, string $context, string $toLanguage): void
+  /**
+   * [Description for addToDictionary]
+   *
+   * @param Interfaces\CoreInterface $service
+   * @param string $language
+   * @param string $string
+   * 
+   * @return void
+   * 
+   */
+  public function addToDictionary(Interfaces\CoreInterface $service, string $language, string $contextInner, string $string): void
   {
-    $dictionaryFile = $this->getDictionaryFilename($context, $toLanguage);
-    $this->dictionary[$toLanguage][$context][$string] = '';
+return;
+    $dictionaryFile = $this->getDictionaryFilename($service, $language);
+    $this->dictionary[$language][$contextInner][$string] = '';
 
     if (is_file($dictionaryFile)) {
       file_put_contents(
         $dictionaryFile,
         json_encode(
-          $this->dictionary[$toLanguage],
+          $this->dictionary[$language],
           JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
         )
       );
@@ -91,24 +61,42 @@ class Translator extends Core implements Interfaces\TranslatorInterface
   }
 
   /**
-  * @return array|array<string, array<string, string>>
-  */
-  public function loadDictionary(string $language = ""): array
+   * [Description for loadDictionary]
+   *
+   * @param Interfaces\CoreInterface $service
+   * @param string $language
+   * 
+   * @return void
+   * 
+   */
+  public function loadDictionary(Interfaces\CoreInterface $service, string $language): void
   {
-    if (empty($language)) {
-      $language = $this->authProvider()->getUserLanguage();
-    }
+    $context = $service->translationContext;
 
-    if ($language == 'en') {
-      return [];
-    }
+    if ($language == 'en') return;
+    if (!empty($this->dictionary[$language][$context])) return;
 
+    $dictFilename = $this->getDictionaryFilename($service, $language);
+    if (is_file($dictFilename)) {
+      $this->dictionary[$language][$context] = (array) @json_decode((string) file_get_contents($dictFilename), true);
+    }
+  }
+
+  public function loadFullDictionary(Interfaces\CoreInterface $core, string $language): array
+  {
     $dictionary = [];
 
-    foreach ($this->appManager()->getEnabledApps() as $app) {
-      $appDict = $app->loadDictionary($language);
-      foreach ($appDict as $key => $value) {
-        $dictionary[$app->fullName][(string) $key] = $value;
+    if (strlen($language) == 2) {
+      $folder = $core->env()->srcFolder . "/../lang/{$language}";
+      $files = scandir($folder);
+      foreach ($files as $file) {
+        if (in_array($file, ['.', '..'])) continue;
+        if (substr($file, -5) !== '.json') continue;
+        try {
+          $dictionary[substr($file, 0, -5)] = json_decode(file_get_contents($folder . '/' . $file));
+        } catch (\Throwable $e) {
+          //
+        }
       }
     }
 
@@ -116,45 +104,37 @@ class Translator extends Core implements Interfaces\TranslatorInterface
   }
 
   /**
-  * @param array<string, string> $vars
-  */
-  public function translate(string $string, array $vars = []): string
+   * [Description for translate]
+   *
+   * @param Interfaces\CoreInterface $service
+   * @param string $string
+   * @param array $vars
+   * 
+   * @return string
+   * 
+   */
+  public function translate(Interfaces\CoreInterface $service, string $string, array $vars = []): string
   {
-    if (empty($toLanguage)) {
-      $toLanguage = $this->authProvider()->getUserLanguage();
-    }
+  
+    $language = $service->authProvider()->getUserLanguage();
+    if (empty($language) || strlen($language) !== 2) $language = 'en';
+    if ($language == 'en') return $string;
 
-    if (strpos($this->context, '::')) {
-      list($contextClass, $contextInner) = explode('::', $this->context);
-    } else {
-      $contextClass = '';
-      $contextInner = $this->context;
-    }
+    $context = $service->translationContext;
+    $contextInner = $service->translationContextInner;
 
-    if ($toLanguage == 'en') {
-      $translated = $string;
-    } else {
-      // 27.8.2025: Docasne vypnute
-      // if (empty($this->dictionary[$contextClass]) && class_exists($contextClass)) {
-      //   $this->dictionary[$contextClass] = $contextClass::loadDictionary($toLanguage);
-      // }
+    $translated = 't(' . $context . ':' . $contextInner . '; ' . $string . ')';
 
-      $translated = '';
+    try {
+      $this->loadDictionary($service, $language);
 
-      // 27.8.2025: Docasne vypnute
-      // if (!empty($this->dictionary[$contextClass][$contextInner][$string])) { // @phpstan-ignore-line
-      //   $translated = (string) $this->dictionary[$contextClass][$contextInner][$string];
-      // } elseif (class_exists($contextClass)) {
-      //   $contextClass::addToDictionary($toLanguage, $contextInner, $string);
-      // }
-
-      if (empty($translated)) {
-        $translated = 'translate(' . $this->context . '; ' . $string . ')';
+      if (!empty($this->dictionary[$language][$context][$contextInner][$string])) {
+        $translated = (string) $this->dictionary[$language][$context][$contextInner][$string];
+      } else {
+        $this->addToDictionary($service, $language, $contextInner, $string);
       }
-    }
-
-    if (empty($translated)) {
-      $translated = $string;
+    } catch (\Throwable $e) {
+      $translated = $e->getMessage() . $e->getTraceAsString();
     }
 
     foreach ($vars as $varName => $varValue) {

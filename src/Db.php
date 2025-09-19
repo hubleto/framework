@@ -5,7 +5,7 @@ namespace Hubleto\Framework;
 /**
  * Database abstraction layer.
  */
-class Db extends Core
+class Db extends Core implements Interfaces\DbInterface
 {
   public ?\PDO $connection = null;
   public bool $isConnected = false;

@@ -36,7 +36,7 @@ interface AppInterface
   public function hook(string $hook): void;
   public function getRootUrlSlug(): string;
   public function getNotificationsCount(): int;
-  public function translate(string $string, array $vars = [], string $context = 'root'): string;
+  // public function translate(string $string, array $vars = [], string $context = 'root'): string;
   public function installTables(int $round): void;
   public function getAvailableControllerClasses(): array;
   public function getAvailableModelClasses(): array;
