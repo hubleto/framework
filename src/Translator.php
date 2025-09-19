@@ -136,20 +136,27 @@ class Translator implements Interfaces\TranslatorInterface
     $context = $service->translationContext;
     $contextInner = $service->translationContextInner;
 
-    $translated = 't(' . $context . ':' . $contextInner . '; ' . $string . ')';
+    $debugTranslations = $service->config()->getAsBool('debugTranslations');
+
+    $translated = '';
 
     try {
       $this->loadDictionary($service, $language, $context);
 
       if (isset($this->dictionary[$language][$context][$contextInner][$string])) {
         $translated = (string) $this->dictionary[$language][$context][$contextInner][$string];
-        if ($translated == '') $translated = '{/ ' . $string . ' /}';
+        if ($translated == '' && $debugTranslations) $translated = '{/ ' . $string . ' /}';
       } else {
-        // $this->addToDictionary($service, $language, $context, $contextInner, $string);
+        $this->addToDictionary($service, $language, $context, $contextInner, $string);
+        if ($debugTranslations) {
+          $translated = 't(' . $context . ':' . $contextInner . '; ' . $string . ')';
+        }
       }
     } catch (\Throwable $e) {
       $translated = $e->getMessage() . $e->getTraceAsString();
     }
+
+    if (empty($translated)) $translated = $string;
 
     foreach ($vars as $varName => $varValue) {
       $translated = str_replace('{{ ' . $varName . ' }}', $varValue, $translated);

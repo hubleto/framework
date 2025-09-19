@@ -55,15 +55,17 @@ class Renderer extends Core implements Interfaces\RendererInterface
     ));
     $this->twig->addFunction(new \Twig\TwigFunction(
       'setTranslationContext',
-      function ($context) {
+      function ($context, $contextInner) {
         $this->translationContext = $context;
+        $this->translationContextInner = $contextInner;
       }
     ));
     $this->twig->addFunction(new \Twig\TwigFunction(
       'translate',
-      function ($string, $context = '') {
+      function ($string, $context = '', $contextInner = '') {
         if (empty($context)) $context = $this->translationContext;
-        return $this->translate($string, [], $context);
+        if (empty($contextInner)) $contextInner = $this->translationContextInner;
+        return $this->translate($string, [], $context, $contextInner);
       }
     ));
 
