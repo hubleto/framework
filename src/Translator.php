@@ -82,6 +82,15 @@ return;
     }
   }
 
+  /**
+   * [Description for loadFullDictionary]
+   *
+   * @param Interfaces\CoreInterface $core
+   * @param string $language
+   * 
+   * @return array
+   * 
+   */
   public function loadFullDictionary(Interfaces\CoreInterface $core, string $language): array
   {
     $dictionary = [];
@@ -130,8 +139,9 @@ return;
     try {
       $this->loadDictionary($service, $language);
 
-      if (!empty($this->dictionary[$language][$context][$contextInner][$string])) {
+      if (isset($this->dictionary[$language][$context][$contextInner][$string])) {
         $translated = (string) $this->dictionary[$language][$context][$contextInner][$string];
+        if ($translated == '') $translated = '{/ ' . $string . ' /}';
       } else {
         $this->addToDictionary($service, $language, $contextInner, $string);
       }
