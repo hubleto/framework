@@ -88,14 +88,16 @@ return;
 
     if (strlen($language) == 2) {
       $folder = $core->env()->srcFolder . "/../lang/{$language}";
-      $files = scandir($folder);
-      foreach ($files as $file) {
-        if (in_array($file, ['.', '..'])) continue;
-        if (substr($file, -5) !== '.json') continue;
-        try {
-          $dictionary[substr($file, 0, -5)] = json_decode(file_get_contents($folder . '/' . $file));
-        } catch (\Throwable $e) {
-          //
+      if (is_dir($folder)) {
+        $files = scandir($folder);
+        foreach ($files as $file) {
+          if (in_array($file, ['.', '..'])) continue;
+          if (substr($file, -5) !== '.json') continue;
+          try {
+            $dictionary[substr($file, 0, -5)] = json_decode(file_get_contents($folder . '/' . $file));
+          } catch (\Throwable $e) {
+            //
+          }
         }
       }
     }
