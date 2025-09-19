@@ -54,7 +54,7 @@ class Translator implements Interfaces\TranslatorInterface
     // var_dump($dictionary[$context][$contextInner]);exit;
 
     if (is_file($dictionaryFile)) {
-      file_put_contents(
+      @file_put_contents(
         $dictionaryFile,
         json_encode(
           $dictionary[$context],
