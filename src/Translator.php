@@ -14,20 +14,20 @@ class Translator implements Interfaces\TranslatorInterface
   /**
    * [Description for getDictionaryFilename]
    *
-   * @param Interfaces\CoreInterface $service
+   * @param string $context
    * @param string $language
    * 
    * @return string
    * 
    */
-  public function getDictionaryFilename(Interfaces\CoreInterface $service, string $language): string
+  public function getDictionaryFilename(Interfaces\CoreInterface $core, string $language, string $context): string
   {
     $dictionaryFile = '';
 
     if (strlen($language) == 2) {
-      $file = $service->translationContext;
+      $file = $context;
       $file = strtolower(strtr($file, '\\/', '--'));
-      $dictionaryFile = $service->env()->srcFolder . "/../lang/{$language}/{$file}.json";
+      $dictionaryFile = $core->env()->srcFolder . "/../lang/{$language}/{$file}.json";
     }
 
     return $dictionaryFile;
@@ -43,17 +43,21 @@ class Translator implements Interfaces\TranslatorInterface
    * @return void
    * 
    */
-  public function addToDictionary(Interfaces\CoreInterface $service, string $language, string $contextInner, string $string): void
+  public function addToDictionary(Interfaces\CoreInterface $core, string $language, string $context, string $contextInner, string $string): void
   {
-return;
-    $dictionaryFile = $this->getDictionaryFilename($service, $language);
-    $this->dictionary[$language][$contextInner][$string] = '';
+
+    $dictionaryFile = $this->getDictionaryFilename($core, $language, $context);
+    $dictionary = $this->loadFullDictionary($core, $language);
+    $dictionary[$context][$contextInner][$string] = '';
+    // var_dump($dictionaryFile);
+    // var_dump(array_keys($dictionary));
+    // var_dump($dictionary[$context][$contextInner]);exit;
 
     if (is_file($dictionaryFile)) {
       file_put_contents(
         $dictionaryFile,
         json_encode(
-          $this->dictionary[$language],
+          $dictionary[$context],
           JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
         )
       );
@@ -69,14 +73,12 @@ return;
    * @return void
    * 
    */
-  public function loadDictionary(Interfaces\CoreInterface $service, string $language): void
+  public function loadDictionary(Interfaces\CoreInterface $core, string $language, string $context): void
   {
-    $context = $service->translationContext;
-
     if ($language == 'en') return;
     if (!empty($this->dictionary[$language][$context])) return;
 
-    $dictFilename = $this->getDictionaryFilename($service, $language);
+    $dictFilename = $this->getDictionaryFilename($core, $language, $context);
     if (is_file($dictFilename)) {
       $this->dictionary[$language][$context] = (array) @json_decode((string) file_get_contents($dictFilename), true);
     }
@@ -103,7 +105,7 @@ return;
           if (in_array($file, ['.', '..'])) continue;
           if (substr($file, -5) !== '.json') continue;
           try {
-            $dictionary[substr($file, 0, -5)] = json_decode(file_get_contents($folder . '/' . $file));
+            $dictionary[substr($file, 0, -5)] = json_decode(file_get_contents($folder . '/' . $file), true);
           } catch (\Throwable $e) {
             //
           }
@@ -137,13 +139,13 @@ return;
     $translated = 't(' . $context . ':' . $contextInner . '; ' . $string . ')';
 
     try {
-      $this->loadDictionary($service, $language);
+      $this->loadDictionary($service, $context, $language);
 
       if (isset($this->dictionary[$language][$context][$contextInner][$string])) {
         $translated = (string) $this->dictionary[$language][$context][$contextInner][$string];
         if ($translated == '') $translated = '{/ ' . $string . ' /}';
       } else {
-        $this->addToDictionary($service, $language, $contextInner, $string);
+        // $this->addToDictionary($service, $language, $context, $contextInner, $string);
       }
     } catch (\Throwable $e) {
       $translated = $e->getMessage() . $e->getTraceAsString();
