@@ -145,7 +145,7 @@ class Translator implements Interfaces\TranslatorInterface
 
       if (isset($this->dictionary[$language][$context][$contextInner][$string])) {
         $translated = (string) $this->dictionary[$language][$context][$contextInner][$string];
-        if ($translated == '' && $debugTranslations) $translated = '{/ ' . $string . ' /}';
+        if ($translated == '' && $debugTranslations) $translated = '** ' . $string . ' **';
       } else {
         $this->addToDictionary($service, $language, $context, $contextInner, $string);
         if ($debugTranslations) {
