@@ -62,7 +62,7 @@ class Model extends Core implements Interfaces\ModelInterface
 
     $reflection = new \ReflectionClass($this);
     preg_match('/^(.*?)\\\Models\\\(.*?)$/', $reflection->getName(), $m);
-    $this->translationContext = $m[1] . '\\Loader';
+    $this->translationContext = str_replace('\\', '-', strtolower($m[1] . '\\Loader'));
     $this->translationContextInner = 'Models\\' . $m[2];
 
     $recordManagerClass = $this->recordManagerClass;
@@ -72,10 +72,6 @@ class Model extends Core implements Interfaces\ModelInterface
     }
 
     $this->fullName = $reflection->getName();
-
-    // if (empty($this->translationContext)) {
-    //   $this->translationContext = trim(str_replace('/', '\\', $this->fullName), '\\');
-    // }
 
     $tmp = explode("\\", $this->fullName);
     $this->shortName = end($tmp);

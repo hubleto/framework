@@ -49,7 +49,7 @@ class App extends Core implements Interfaces\AppInterface
     $this->srcFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
     $this->namespace = $reflection->getNamespaceName();
     $this->fullName = $reflection->getName();
-    $this->translationContext = trim(str_replace('\\', '/', $this->fullName), '/');
+    $this->translationContext = strtolower(str_replace('\\', '-', $this->fullName));
     $this->translationContextInner = 'manifest';
 
     $tmp = str_replace('\\Loader', '', $this->fullName);

@@ -139,7 +139,7 @@ class Translator implements Interfaces\TranslatorInterface
     $translated = 't(' . $context . ':' . $contextInner . '; ' . $string . ')';
 
     try {
-      $this->loadDictionary($service, $context, $language);
+      $this->loadDictionary($service, $language, $context);
 
       if (isset($this->dictionary[$language][$context][$contextInner][$string])) {
         $translated = (string) $this->dictionary[$language][$context][$contextInner][$string];
