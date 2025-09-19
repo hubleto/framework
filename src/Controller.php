@@ -71,6 +71,12 @@ class Controller extends Core implements Interfaces\ControllerInterface {
   {
     $reflection = new \ReflectionClass($this);
 
+    preg_match('/^(.*?)\\\Controllers\\\(.*?)$/', $reflection->getName(), $m);
+    if (isset($m[1]) && isset($m[2])) {
+      $this->translationContext = str_replace('\\', '-', strtolower($m[1] . '\\Loader'));
+      $this->translationContextInner = 'Controllers\\' . $m[2];
+    }
+
     $this->name = str_replace("\\", "/", str_replace("Hubleto\\Framework\\", "", get_class($this)));
 
     $this->fullName = str_replace("\\", "/", $reflection->getName());

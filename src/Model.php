@@ -62,8 +62,10 @@ class Model extends Core implements Interfaces\ModelInterface
 
     $reflection = new \ReflectionClass($this);
     preg_match('/^(.*?)\\\Models\\\(.*?)$/', $reflection->getName(), $m);
-    $this->translationContext = str_replace('\\', '-', strtolower($m[1] . '\\Loader'));
-    $this->translationContextInner = 'Models\\' . $m[2];
+    if (isset($m[1]) && isset($m[2])) {
+      $this->translationContext = str_replace('\\', '-', strtolower($m[1] . '\\Loader'));
+      $this->translationContextInner = 'Models\\' . $m[2];
+    }
 
     $recordManagerClass = $this->recordManagerClass;
     if (!empty($recordManagerClass) && $this->isDatabaseConnected()) {
