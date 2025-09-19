@@ -50,6 +50,7 @@ class App extends Core implements Interfaces\AppInterface
     $this->namespace = $reflection->getNamespaceName();
     $this->fullName = $reflection->getName();
     $this->translationContext = trim(str_replace('\\', '/', $this->fullName), '/');
+    $this->translationContextInner = 'manifest';
 
     $tmp = str_replace('\\Loader', '', $this->fullName);
     $this->shortName = substr($tmp, strrpos($tmp, '\\') + 1);
