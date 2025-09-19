@@ -46,12 +46,13 @@ class Translator implements Interfaces\TranslatorInterface
   public function addToDictionary(Interfaces\CoreInterface $core, string $language, string $context, string $contextInner, string $string): void
   {
 
+    $debugTranslations = $core->config()->getAsBool('debugTranslations');
+
+    if (!$debugTranslations) return;
+
     $dictionaryFile = $this->getDictionaryFilename($core, $language, $context);
     $dictionary = $this->loadFullDictionary($core, $language);
     $dictionary[$context][$contextInner][$string] = '';
-    // var_dump($dictionaryFile);
-    // var_dump(array_keys($dictionary));
-    // var_dump($dictionary[$context][$contextInner]);exit;
 
     if (is_file($dictionaryFile)) {
       @file_put_contents(
