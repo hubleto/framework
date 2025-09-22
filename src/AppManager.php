@@ -307,7 +307,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
   {
     $appNamespace = $this->sanitizeAppNamespace($appNamespace);
 
-    \Hubleto\Terminal::cyan("    -> Installing {$appNamespace}, round {$round}.\n");
+    $this->terminal()->cyan("    -> Installing {$appNamespace}, round {$round}.\n");
 
     if ($this->isAppInstalled($appNamespace) && !$forceInstall) {
       throw new \Exception("{$appNamespace} already installed. Set forceInstall to true if you want to reinstall.");
@@ -329,7 +329,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
     foreach ($dependencies as $dependencyAppNamespace) {
       $dependencyAppNamespace = (string) $dependencyAppNamespace;
       if (!$this->isAppInstalled($dependencyAppNamespace)) {
-        \Hubleto\Terminal::cyan("    -> Installing dependency {$dependencyAppNamespace}.\n");
+        $this->terminal()->cyan("    -> Installing dependency {$dependencyAppNamespace}.\n");
         $this->installApp($round, $dependencyAppNamespace, [], $forceInstall);
       }
     }

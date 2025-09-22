@@ -163,9 +163,20 @@ class Core implements Interfaces\CoreInterface
   }
 
   /**
+   * Shortcut for the terminal service.
+   *
+   * @return Interfaces\TerminalInterface
+   * 
+   */
+  public function terminal(): Interfaces\TerminalInterface
+  {
+    return $this->getService(Terminal::class);
+  }
+
+  /**
    * Shortcut for the logger service.
    *
-   * @return Logger
+   * @return Interfaces\LoggerInterface
    * 
    */
   public function logger(): Interfaces\LoggerInterface
@@ -176,7 +187,7 @@ class Core implements Interfaces\CoreInterface
   /**
    * Shortcut for the locale service.
    *
-   * @return Locale
+   * @return Interfaces\LocaleInterface
    * 
    */
   public function locale(): Interfaces\LocaleInterface
@@ -187,7 +198,7 @@ class Core implements Interfaces\CoreInterface
   /**
    * Shortcut for the renderer service.
    *
-   * @return Renderer
+   * @return Interfaces\RendererInterface
    * 
    */
   public function renderer(): Interfaces\RendererInterface

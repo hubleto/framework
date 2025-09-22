@@ -65,7 +65,7 @@ class Renderer extends Core implements Interfaces\RendererInterface
       function ($string, $context = '', $contextInner = '') {
         if (empty($context)) $context = $this->translationContext;
         if (empty($contextInner)) $contextInner = $this->translationContextInner;
-        return $this->translate($string, [], $context, $contextInner);
+        return $this->translate($string ?? '', [], $context, $contextInner);
       }
     ));
 
