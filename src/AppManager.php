@@ -98,33 +98,10 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
       $appNamespaceParts[0] != 'Hubleto'
       && $appNamespaceParts[1] != 'App'
     ) {
-      throw new \Exception('Application namespace must start with \'Hubleto\App\'. See https://developer.hubleto.com/apps for more details.');
+      throw new \Exception('Application namespace must start with \'Hubleto\\App\'. See https://developer.hubleto.com/apps for more details.');
     }
-
-    switch ($appNamespaceParts[2]) {
-      case 'Community':
-        if (count($appNamespaceParts) != 4) {
-          throw new \Exception('Community app namespace must have exactly 4 parts');
-        }
-        break;
-      case 'Premium':
-        if (count($appNamespaceParts) != 4) {
-          throw new \Exception('Premium app namespace must have exactly 4 parts');
-        }
-        break;
-      case 'External':
-        if (count($appNamespaceParts) != 5) {
-          throw new \Exception('External app namespace must have exactly 4 parts');
-        }
-        break;
-      case 'Custom':
-        if (count($appNamespaceParts) != 4) {
-          throw new \Exception('Custom app namespace must have exactly 4 parts');
-        }
-        break;
-      default:
-        throw new \Exception('Only following types of apps are available: Community, Premium, External or Custom.');
-        break;
+    if (count($appNamespaceParts) != 4) {
+      throw new \Exception('App namespace (' . $appNamespace . ') must have exactly 4 parts and has ' . count($appNamespaceParts));
     }
 
   }
@@ -393,55 +370,6 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
   public function enableApp(string $appNamespace): void
   {
     $this->config()->save('apps/' . $this->getAppNamespaceForConfig($appNamespace) . '/enabled', '1');
-  }
-
-  public function createApp(string $appNamespace, string $appSrcFolder): void
-  {
-    if (empty($appSrcFolder)) {
-      throw new \Exception('App folder for \'' . $appNamespace . '\' not configured.');
-    }
-    if (!is_dir($appSrcFolder)) {
-      throw new \Exception('App folder for \'' . $appNamespace . '\' is not a folder.');
-    }
-
-    $appNamespace = trim($appNamespace, '\\');
-    $appNamespaceParts = explode('\\', $appNamespace);
-    $appName = $appNamespaceParts[count($appNamespaceParts) - 1];
-    $appType = strtolower($appNamespaceParts[2]);
-
-    $tplVars = [
-      'appNamespace' => $appNamespace,
-      'appType' => $appType,
-      'appName' => $appName,
-      'appRootUrlSlug' => Helper::str2url($appName),
-      'appViewNamespace' => str_replace('\\', ':', $appNamespace),
-      'appNamespaceForwardSlash' => str_replace('\\', '/', $appNamespace),
-      'now' => date('Y-m-d H:i:s'),
-    ];
-
-    $tplFolder = __DIR__ . '/../cli/Templates/app';
-
-    $this->renderer()->addNamespace($tplFolder, 'appTemplate');
-
-    if (!is_dir($appSrcFolder . '/Controllers')) {
-      mkdir($appSrcFolder . '/Controllers');
-    }
-    if (!is_dir($appSrcFolder . '/Views')) {
-      mkdir($appSrcFolder . '/Views');
-    }
-    if (!is_dir($appSrcFolder . '/Extendibles')) {
-      mkdir($appSrcFolder . '/Extendibles');
-    }
-
-    file_put_contents($appSrcFolder . '/Loader.php', $this->renderer()->renderView('@appTemplate/Loader.php.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Loader.tsx', $this->renderer()->renderView('@appTemplate/Loader.tsx.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Calendar.php', $this->renderer()->renderView('@appTemplate/Calendar.php.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/manifest.yaml', $this->renderer()->renderView('@appTemplate/manifest.yaml.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Controllers/Home.php', $this->renderer()->renderView('@appTemplate/Controllers/Home.php.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Controllers/Settings.php', $this->renderer()->renderView('@appTemplate/Controllers/Settings.php.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Views/Home.twig', $this->renderer()->renderView('@appTemplate/Views/Home.twig.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Views/Settings.twig', $this->renderer()->renderView('@appTemplate/Views/Settings.twig.twig', $tplVars));
-    file_put_contents($appSrcFolder . '/Extendibles/AppMenu.php', $this->renderer()->renderView('@appTemplate/Extendibles/AppMenu.php.twig', $tplVars));
   }
 
   public function canAppDangerouslyInjectDesktopHtmlContent(string $appNamespace): bool

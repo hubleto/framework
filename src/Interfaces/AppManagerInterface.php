@@ -23,7 +23,6 @@ interface AppManagerInterface
   public function installApp(int $round, string $appNamespace, array $appConfig = [], bool $forceInstall = false): bool;
   public function disableApp(string $appNamespace): void;
   public function enableApp(string $appNamespace): void;
-  public function createApp(string $appNamespace, string $appSrcFolder): void;
   public function canAppDangerouslyInjectDesktopHtmlContent(string $appNamespace): bool;
 
 }
