@@ -253,8 +253,8 @@ class Core implements Interfaces\CoreInterface
   /**
   * @param array<string, string> $vars
   */
-  public function translate(string $string, array $vars = []): string
+  public function translate(string $string, array $vars = [], string $contextInner = ''): string
   {
-    return $this->translator()->translate($this, $string, $vars);
+    return $this->translator()->translate($this, $string, $vars, $contextInner);
   }
 }

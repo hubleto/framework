@@ -5,6 +5,7 @@ namespace Hubleto\Framework\Interfaces;
 interface LocaleInterface
 {
 
+  public function getTimezone(): string;
   public function getDateShortFormat(): string;
   public function getDateLongFormat(): string;
   public function getDatetimeFormat(): string;

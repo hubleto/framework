@@ -53,6 +53,8 @@ class Translator implements Interfaces\TranslatorInterface
     $dictionaryFile = $this->getDictionaryFilename($core, $language, $context);
     $dictionary = $this->loadFullDictionary($core, $language);
     $dictionary[$context][$contextInner][$string] = '';
+      if ($string == 'Export to CSV') echo '-'.$dictionaryFile;
+
 
     if (is_file($dictionaryFile)) {
       @file_put_contents(
@@ -127,15 +129,24 @@ class Translator implements Interfaces\TranslatorInterface
    * @return string
    * 
    */
-  public function translate(Interfaces\CoreInterface $service, string $string, array $vars = []): string
+  public function translate(Interfaces\CoreInterface $service, string $string, array $vars = [], string $context = ''): string
   {
   
     $language = $service->authProvider()->getUserLanguage();
     if (empty($language) || strlen($language) !== 2) $language = 'en';
     if ($language == 'en') return $string;
 
-    $context = $service->translationContext;
-    $contextInner = $service->translationContextInner;
+    if (!empty($context)) {
+      if (strpos($context, ':') === false) { // $context is given but contains only $contextInner
+        $contextInner = $context;
+        $context = '';
+      } else { // $context is given and contains also $contextInner
+        list($context, $contextInner) = explode(':', $context);
+      }
+    }
+
+    if (empty($context)) $context = $service->translationContext;
+    if (empty($contextInner)) $contextInner = $service->translationContextInner;
 
     $debugTranslations = $service->config()->getAsBool('debugTranslations');
 

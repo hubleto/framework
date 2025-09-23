@@ -24,6 +24,6 @@ interface CoreInterface
   public function translator(): TranslatorInterface;
   public function getModel(string $model): ModelInterface;
   public function getController(string $controller): ControllerInterface;
-  public function translate(string $string, array $vars = []): string;
+  public function translate(string $string, array $vars = [], string $contextInner = ''): string;
 
 }

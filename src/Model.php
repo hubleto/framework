@@ -555,8 +555,8 @@ class Model extends Core implements Interfaces\ModelInterface
     ];
 
     $description->ui['moreActions'] = [
-      [ 'title' => 'Export to CSV', 'type' => 'stateChange', 'state' => 'showExportCsvScreen', 'value' => true ],
-      [ 'title' => 'Import from CSV', 'type' => 'stateChange', 'state' => 'showImportCsvScreen', 'value' => true ],
+      [ 'title' => $this->translate('Export to CSV', [], 'hubleto-erp-loader:Model'), 'type' => 'stateChange', 'state' => 'showExportCsvScreen', 'value' => true ],
+      [ 'title' => $this->translate('Import from CSV', [], 'hubleto-erp-loader:Model'), 'type' => 'stateChange', 'state' => 'showImportCsvScreen', 'value' => true ],
     ];
 
     if (!empty($tag)) {
