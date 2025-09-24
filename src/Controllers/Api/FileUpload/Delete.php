@@ -8,7 +8,7 @@ namespace Hubleto\Framework\Controllers\Components\Inputs\FileUpload;
 class Delete extends \Hubleto\Framework\Controller {
   public bool $hideDefaultDesktop = TRUE;
 
-  public function renderJson(): ?array {
+  public function renderJson(): array {
     try {
       $fileFullPath =
         $this->config()->getAsString('uploadFolder')

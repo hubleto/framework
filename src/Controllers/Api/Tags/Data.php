@@ -15,7 +15,7 @@ class Data extends \Hubleto\Framework\Controller {
     parent::__construct();
   }
 
-  public function renderJson(): ?array { 
+  public function renderJson(): array { 
     try {
       $id = $this->router()->urlParamAsInteger('id');
       $model = $this->router()->urlParamAsString('model');

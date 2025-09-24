@@ -11,7 +11,7 @@ interface ControllerInterface
   public function postInit(): void;
   public function run(): mixed;
   public function renderString(): string;
-  public function renderJson(): ?array;
+  public function renderJson(): array;
   public function prepareViewParams();
   public function prepareView(): void;
   public function setView(string $view): void;

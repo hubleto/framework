@@ -5,7 +5,7 @@ namespace Hubleto\Framework;
 class Terminal implements Interfaces\TerminalInterface
 {
 
-  public mixed $output = STDOUT;
+  public mixed $output = null;
 
   public function setOutput(mixed $output): void
   {
@@ -19,7 +19,8 @@ class Terminal implements Interfaces\TerminalInterface
 
   public function echo(string $string): void
   {
-    if ($this->output !== null) fwrite($this->output, $string);
+    if ($this->isLaunchedFromTerminal()) fwrite($this->output ?? STDOUT, $string);
+    else echo $string;
   }
 
   /**

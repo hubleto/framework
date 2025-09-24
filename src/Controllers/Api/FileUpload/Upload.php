@@ -8,7 +8,7 @@ namespace Hubleto\Framework\Controllers\Components\Inputs\FileUpload;
 class Upload extends \Hubleto\Framework\Controller {
   public bool $hideDefaultDesktop = TRUE;
 
-  public function renderJson(): ?array {
+  public function renderJson(): array {
     try {
       $filesToUpload = $_FILES['upload'];
 

@@ -142,9 +142,9 @@ class Controller extends Core implements Interfaces\ControllerInterface {
    *
    * @return array Array to be returned as a JSON.
    */
-  public function renderJson(): ?array
+  public function renderJson(): array
   {
-    return null;
+    return [];
   }
 
   /**
