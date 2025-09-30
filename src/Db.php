@@ -105,7 +105,11 @@ class Db extends Core implements Interfaces\DbInterface
         $stmt = $this->connection->prepare(trim($query));
         $stmt->execute($data);
       } catch (\Exception $e) {
-        throw new \Hubleto\Framework\Exceptions\DBException('Failed to execute query: ' . $query, 0, $e);
+        throw new \Hubleto\Framework\Exceptions\DBException(
+          'Failed to execute query: ' . $query . '\n' . print_r($stmt->errorInfo(), true),
+          0,
+          $e
+        );
       }
     }
   }
