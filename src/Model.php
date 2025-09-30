@@ -715,6 +715,11 @@ class Model extends Core implements Interfaces\ModelInterface
     );
   }
 
+  public function getLookupValue(array $dataRaw): string
+  {
+    return $dataRaw['_LOOKUP'] ?? '[empty]';
+  }
+
   /**
    * Used to encrypt passowrd to store it securely.
    *

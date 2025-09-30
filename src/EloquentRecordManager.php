@@ -79,10 +79,6 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
         $lookupTableName = $lookupModel->getFullTableSqlName();
         $joinAlias = 'join_' . $columnName;
 
-        // $selectRaw[] = "(" .
-        //   str_replace("{%TABLE%}", $joinAlias, $lookupModel->getLookupSqlValue())
-        //   . ") as `_LOOKUP[{$columnName}]`"
-        // ;
         $selectRaw[] =
           "(select _LOOKUP from ("
           . $lookupModel->record->prepareLookupQuery('')->toRawSql()
@@ -138,11 +134,6 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     $query = $this;
 
     if (!empty($search)) {
-      // $query = $query->where(function($q) use ($search) {
-      //   foreach ($this->model->columnNames() as $columnName) {
-      //     $q->orWhere($this->model->table . '.' . $columnName, 'LIKE', '%' . $search . '%');
-      //   }
-      // });
       $query = $query->having('_LOOKUP', 'like', '%'.$search.'%');
     }
 
@@ -159,6 +150,8 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
 
     $query = $query->selectRaw(join(',', $selectRaw));
 
+    foreach ($this->model->relations as $relationName => $relation) $query = $query->with($relationName);
+
     return $query;
   }
 
@@ -167,7 +160,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     $data = [];
 
     foreach ($dataRaw as $key => $value) {
-      $data[$key]['_LOOKUP'] = $value['_LOOKUP'];
+      $data[$key]['_LOOKUP'] = $this->model->getLookupValue($value);
       if (!empty($value['_LOOKUP_CLASS'])) $data[$key]['_LOOKUP_CLASS'] = $value['_LOOKUP_CLASS'];
       if (!empty($value['_LOOKUP_COLOR'])) $data[$key]['_LOOKUP_COLOR'] = $value['_LOOKUP_COLOR'];
       if (isset($value['id'])) {
