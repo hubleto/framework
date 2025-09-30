@@ -717,7 +717,7 @@ class Model extends Core implements Interfaces\ModelInterface
 
   public function getLookupValue(array $dataRaw): string
   {
-    return $dataRaw['_LOOKUP'] ?? '[empty]';
+    return trim($dataRaw['_LOOKUP']) ?? '[empty]';
   }
 
   /**
