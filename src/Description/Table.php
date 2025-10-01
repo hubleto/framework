@@ -36,6 +36,12 @@ class Table implements \JsonSerializable
   /** @property array<\Hubleto\Framework\Db\Input> */
   public array $inputs = [];
 
+  /**
+   * [Description for jsonSerialize]
+   *
+   * @return array
+   * 
+   */
   public function jsonSerialize(): array
   {
     $json = [];
@@ -46,11 +52,25 @@ class Table implements \JsonSerializable
     return $json;
   }
 
+  /**
+   * [Description for toArray]
+   *
+   * @return array
+   * 
+   */
   public function toArray(): array
   {
     return $this->jsonSerialize();
   }
 
+  /**
+   * [Description for show]
+   *
+   * @param array $what
+   * 
+   * @return void
+   * 
+   */
   public function show(array $what): void
   {
     foreach ($what as $item) {
@@ -59,6 +79,14 @@ class Table implements \JsonSerializable
     }
   }
 
+  /**
+   * [Description for hide]
+   *
+   * @param array $what
+   * 
+   * @return void
+   * 
+   */
   public function hide(array $what): void
   {
     foreach ($what as $item) {
@@ -67,6 +95,14 @@ class Table implements \JsonSerializable
     }
   }
 
+  /**
+   * [Description for showOnlyColumns]
+   *
+   * @param array $columnNames
+   * 
+   * @return void
+   * 
+   */
   public function showOnlyColumns(array $columnNames): void
   {
     $newColumns = [];
@@ -76,6 +112,19 @@ class Table implements \JsonSerializable
       }
     }
     $this->columns = $newColumns;
+  }
+
+  /**
+   * [Description for addFilter]
+   *
+   * @param string $filterName
+   * @param array $filterConfig
+   * 
+   * @return [type]
+   * 
+   */
+  public function addFilter(string $filterName, array $filterConfig) {
+    $this->ui['filters'][$filterName] = $filterConfig;
   }
 
 }
