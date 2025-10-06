@@ -27,6 +27,7 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
     $tmp = $this->sessionManager()->get('userProfile') ?? [];
     return [
       'id' => (int) ($tmp['id'] ?? 0),
+      'email' => (string) ($tmp['email'] ?? ''),
       'login' => (string) ($tmp['login'] ?? ''),
       'is_active' => (bool) ($tmp['is_active'] ?? false),
     ];

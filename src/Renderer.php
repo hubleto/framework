@@ -234,7 +234,7 @@ class Renderer extends Core implements Interfaces\RendererInterface
           'config' => $this->config()->get(),
           // 'routeUrl' => $router->getRoute(),
           // 'routeParams' => $this->router()->getRouteVars(),
-          // 'route' => $router->getRoute(),
+          'route' => $router->getRoute(),
           // 'session' => $this->sessionManager()->get(),
           // 'controller' => $controllerObject,
           'viewParams' => $controllerObject->getViewParams(),

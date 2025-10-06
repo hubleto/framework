@@ -76,7 +76,14 @@ class User extends Model {
     ]);
   }
 
-  public function getClientIpAddress() {
+  /**
+   * [Description for getClientIpAddress]
+   *
+   * @return string
+   * 
+   */
+  public function getClientIpAddress(): string
+  {
     if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
       $ip = $_SERVER['HTTP_CLIENT_IP'];
     } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -87,7 +94,16 @@ class User extends Model {
     return $ip;
   }
 
-  public function updateAccessInformation(int $idUser) {
+  /**
+   * [Description for updateAccessInformation]
+   *
+   * @param int $idUser
+   * 
+   * @return void
+   * 
+   */
+  public function updateAccessInformation(int $idUser): void
+  {
     $clientIp = $this->getClientIpAddress();
     $this->record->where('id', $idUser)->update([
       'last_access_time' => date('Y-m-d H:i:s'),
@@ -95,7 +111,16 @@ class User extends Model {
     ]);
   }
 
-  public function updateLoginAndAccessInformation(int $idUser) {
+  /**
+   * [Description for updateLoginAndAccessInformation]
+   *
+   * @param int $idUser
+   * 
+   * @return void
+   * 
+   */
+  public function updateLoginAndAccessInformation(int $idUser): void
+  {
     $clientIp = $this->getClientIpAddress();
     $this->record->where('id', $idUser)->update([
       'last_login_time' => date('Y-m-d H:i:s'),
@@ -105,20 +130,57 @@ class User extends Model {
     ]);
   }
 
-  public function isUserActive($user): bool {
+  /**
+   * [Description for isUserActive]
+   *
+   * @param mixed $user
+   * 
+   * @return bool
+   * 
+   */
+  public function isUserActive($user): bool
+  {
     return $user['is_active'] == 1;
   }
 
-  public function authCookieGetLogin() {
+  /**
+   * [Description for authCookieGetLogin]
+   *
+   * @return string
+   * 
+   */
+  public function authCookieGetLogin(): string
+  {
     list($tmpHash, $tmpLogin) = explode(",", $_COOKIE[$this->sessionManager()->getSalt() . '-user']);
     return $tmpLogin;
   }
 
-  public function authCookieSerialize($login, $password) {
+  /**
+   * [Description for authCookieSerialize]
+   *
+   * @param mixed $login
+   * @param mixed $password
+   * 
+   * @return string
+   * 
+   */
+  public function authCookieSerialize($login, $password): string
+  {
     return md5($login.".".$password).",".$login;
   }
 
-  public function generateToken($idUser, $tokenSalt, $tokenType) {
+  /**
+   * [Description for generateToken]
+   *
+   * @param mixed $idUser
+   * @param mixed $tokenSalt
+   * @param mixed $tokenType
+   * 
+   * @return string
+   * 
+   */
+  public function generateToken($idUser, $tokenSalt, $tokenType): string
+  {
     /** @var \Hubleto\Framework\Models\Token $tokenModel */
     $tokenModel = $this->getModel(\Hubleto\Framework\Models\Token::class);
     $token = $tokenModel->generateToken($tokenSalt, $tokenType);
@@ -130,7 +192,17 @@ class User extends Model {
     return $token['token'];
   }
 
-  public function generatePasswordResetToken($idUser, $tokenSalt) {
+  /**
+   * [Description for generatePasswordResetToken]
+   *
+   * @param mixed $idUser
+   * @param mixed $tokenSalt
+   * 
+   * @return string
+   * 
+   */
+  public function generatePasswordResetToken($idUser, $tokenSalt): string
+  {
     return $this->generateToken(
       $idUser,
       $tokenSalt,
@@ -138,7 +210,17 @@ class User extends Model {
     );
   }
 
-  public function validateToken($token, $deleteAfterValidation = TRUE) {
+  /**
+   * [Description for validateToken]
+   *
+   * @param mixed $token
+   * @param bool $deleteAfterValidation
+   * 
+   * @return array
+   * 
+   */
+  public function validateToken($token, $deleteAfterValidation = true): array
+  {
     /** @var \Hubleto\Framework\Models\Token $tokenModel */
     $tokenModel = $this->getModel(\Hubleto\Framework\Models\Token::class);
     $tokenData = $tokenModel->validateToken($token);
@@ -163,14 +245,32 @@ class User extends Model {
     return $userData;
   }
 
-  public function getQueryForUser(int $idUser) {
+  /**
+   * [Description for getQueryForUser]
+   *
+   * @param int $idUser
+   * 
+   * @return mixed
+   * 
+   */
+  public function getQueryForUser(int $idUser): mixed
+  {
     return $this->record
       ->where('id', $idUser)
       ->where('is_active', '<>', 0)
     ;
   }
 
-  public function loadUser(int $idUser) {
+  /**
+   * [Description for loadUser]
+   *
+   * @param int $idUser
+   * 
+   * @return array
+   * 
+   */
+  public function loadUser(int $idUser): array
+  {
     $user = $this->getQueryForUser($idUser)->first()?->toArray();
 
     $tmpRoles = [];
@@ -182,17 +282,45 @@ class User extends Model {
     return $user;
   }
 
-  public function getByEmail(string $email) {
+  /**
+   * [Description for getByEmail]
+   *
+   * @param string $email
+   * 
+   * @return array
+   * 
+   */
+  public function getByEmail(string $email): array
+  {
     $user = $this->record->where("email", $email)->first();
 
     return !empty($user) ? $user->toArray() : [];
   }
 
-  public function encryptPassword(string $password): string {
+  /**
+   * [Description for encryptPassword]
+   *
+   * @param string $password
+   * 
+   * @return string
+   * 
+   */
+  public function encryptPassword(string $password): string
+  {
     return password_hash($password, PASSWORD_DEFAULT);
   }
 
-  public function updatePassword(int $idUser, string $password) {
+  /**
+   * [Description for updatePassword]
+   *
+   * @param int $idUser
+   * @param string $password
+   * 
+   * @return mixed
+   * 
+   */
+  public function updatePassword(int $idUser, string $password): mixed
+  {
     return $this->record
       ->where('id', $idUser)
       ->update(
