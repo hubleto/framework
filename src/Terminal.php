@@ -251,9 +251,13 @@ class Terminal implements Interfaces\TerminalInterface
   public function colored(string $bgColor, string $fgColor, string $message): void
   {
     $this->color($fgColor, $bgColor);
-    $this->echo($message);
-    $this->color('white', 'black');
-    $this->echo($message);
+    if (str_ends_with($message, "\n")) {
+      $this->echo(substr($message, 0, -1));
+      $this->color('white', 'black');
+      $this->echo("\n");
+    } else {
+      $this->echo($message);
+    }
   }
 
   /**
