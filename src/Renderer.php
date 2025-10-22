@@ -2,6 +2,8 @@
 
 namespace Hubleto\Framework;
 
+use Hubleto\Framework\Exceptions\Exception;
+
 /**
  * Default view renderer for Hubleto project.
  */
@@ -208,14 +210,10 @@ class Renderer extends Core implements Interfaces\RendererInterface
       if ($controllerObject->returnType == Controller::RETURN_TYPE_JSON) {
         try {
           $returnArray = $controllerObject->renderJson();
-        } catch (\Throwable $e) {
+        } catch (Exception $e) {
           http_response_code(400);
 
-          $returnArray = [
-            'status' => 'error',
-            'code' => $e->getCode(),
-            'message' => $e->getMessage(),
-          ];
+          return $e->getResponseArray();
         }
         $return = json_encode($returnArray);
       } elseif ($controllerObject->returnType == Controller::RETURN_TYPE_STRING) {
@@ -278,15 +276,14 @@ class Renderer extends Core implements Interfaces\RendererInterface
       return $return;
 
     } catch (Exceptions\ControllerNotFound $e) {
-      header('HTTP/1.1 400 Bad Request', true, 400);
-      return $this->renderFatal('Controller not found: ' . $e->getMessage(), false);
+      return $this->renderFatal($e, false);
     } catch (Exceptions\NotEnoughPermissionsException $e) {
       $message = $e->getMessage();
-      if ($this->authProvider()->isUserInSession()) {
-        $message .= " Hint: Sign out at {$this->env()->projectUrl}?sign-out and sign in again or check your permissions.";
-      }
-      return $this->renderFatal($message, false);
-      // header('HTTP/1.1 401 Unauthorized', true, 401);
+//      if ($this->authProvider()->isUserInSession()) {
+//        $message .= " Hint: Sign out at {$this->env()->projectUrl}?sign-out and sign in again or check your permissions.";
+//      }
+      header('HTTP/1.1 401 Unauthorized', true, 401);
+      return $this->renderFatal($e, false);
     } catch (Exceptions\GeneralException $e) {
       header('HTTP/1.1 400 Bad Request', true, 400);
       return "Hubleto run failed: [".get_class($e)."] ".$e->getMessage();
@@ -295,28 +292,25 @@ class Renderer extends Core implements Interfaces\RendererInterface
       header('HTTP/1.1 400 Bad Request', true, 400);
       exit;
       return '';
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       $error = error_get_last();
 
       if ($error && $error['type'] == E_ERROR) {
         $return = $this->renderFatal(
-          '<div style="margin-bottom:1em;">'
-            . $error['message'] . ' in ' . $error['file'] . ':' . $error['line']
-          . '</div>'
-          . '<pre style="font-size:0.75em;font-family:Courier New">'
-            . $e->getTraceAsString()
-          . '</pre>',
-          true
+          $e
         );
       } else {
-        $return = $this->renderFatal($this->renderExceptionHtml($e));
+        $return = $this->renderFatal($e);
       }
-
-      return $return;
 
       if (php_sapi_name() !== 'cli') {
         header('HTTP/1.1 400 Bad Request', true, 400);
       }
+
+      return $return;
+    } catch (\Exception $e) {
+      header('HTTP/1.1 500 Internal Server Error', true, 500);
+      return "Unhandled exception: [".get_class($e)."] ".$e->getMessage();
     }
   }
 
@@ -328,41 +322,37 @@ class Renderer extends Core implements Interfaces\RendererInterface
     ]);
   }
 
-  public function renderWarning($message, $isHtml = true): string
+  public function renderWarning(Exception $exception, $isHtml = true): string
   {
     if ($this->router()->isAjax()) {
-      return json_encode([
-        "status" => "warning",
-        "message" => $message,
-      ]);
+      return json_encode($exception->getResponseArray());
     } else {
       return "
         <div class='alert alert-warning' role='alert'>
-          ".($isHtml ? $message : htmlspecialchars($message))."
+          ".($isHtml ? $exception->getMessage() : htmlspecialchars($exception->getMessage()))."
         </div>
       ";
     }
   }
 
-  public function renderFatal($message, $isHtml = true): string
+  public function renderFatal(Exception $exception, $isHtml = true): string
   {
+    header('HTTP/1.1 400 Bad Request', true, 400);
+
     if ($this->router()->isAjax()) {
-      return json_encode([
-        "status" => "error",
-        "message" => $message,
-      ]);
+      return json_encode($exception->getResponseArray());
     } else {
       return "
         <div class='alert alert-danger' role='alert' style='z-index:99999999'>
-          ".($isHtml ? $message : htmlspecialchars($message))."
+          ".($isHtml ? $exception->getMessage() : htmlspecialchars($exception->getMessage()))."
         </div>
       ";
     }
   }
 
-  public function renderHtmlFatal($message): string
+  public function renderHtmlFatal(Exception $exception): string
   {
-    return $this->renderFatal($message, true);
+    return $this->renderFatal($exception, true);
   }
 
   public function renderExceptionHtml($exception, array $args = []): string
@@ -489,9 +479,9 @@ class Renderer extends Core implements Interfaces\RendererInterface
     return $html;//$this->renderHtmlWarning($html);
   }
 
-  public function renderHtmlWarning($warning): string
+  public function renderHtmlWarning(Exception $exception): string
   {
-    return $this->renderWarning($warning, true);
+    return $this->renderWarning($exception, true);
   }
 
   public function onBeforeRender(): void

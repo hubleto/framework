@@ -7,4 +7,4 @@ namespace Hubleto\Framework\Exceptions;
  *
  * @package Exceptions
  */
-class DBDuplicateEntryException extends \Exception { }
+class DBDuplicateEntryException extends Exception { }

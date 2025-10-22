@@ -2,6 +2,8 @@
 
 namespace Hubleto\Framework\Interfaces;
 
+use Hubleto\Framework\Exceptions\Exception;
+
 interface RendererInterface
 {
 
@@ -11,11 +13,11 @@ interface RendererInterface
   public function renderView(string $view, array $vars = []): string;
   public function render(string $route = '', array $params = []): string;
   public function renderSuccess($return): string;
-  public function renderWarning($message, $isHtml = true): string;
-  public function renderFatal($message, $isHtml = true): string;
-  public function renderHtmlFatal($message): string;
+  public function renderWarning(Exception $exception, $isHtml = true): string;
+  public function renderFatal(Exception $exception, $isHtml = true): string;
+  public function renderHtmlFatal(Exception $exception): string;
   public function renderExceptionHtml($exception, array $args = []): string;
-  public function renderHtmlWarning($warning): string;
+  public function renderHtmlWarning(Exception $exception): string;
   public function onBeforeRender(): void;
   public function onAfterRender(): void;
 

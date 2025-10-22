@@ -7,4 +7,4 @@ namespace Hubleto\Framework\Exceptions;
  *
  * @package Exceptions
  */
-class ModelInstallationException extends \Exception { }
+class ModelInstallationException extends Exception { }

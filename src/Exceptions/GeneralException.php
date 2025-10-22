@@ -7,4 +7,4 @@ namespace Hubleto\Framework\Exceptions;
  *
  * @package Exceptions
  */
-class GeneralException extends \Exception { }
+class GeneralException extends Exception { }

@@ -2,6 +2,8 @@
 
 namespace Hubleto\Framework\Controllers;
 
+use Hubleto\Framework\Exceptions\RecordSaveException;
+
 class ApiController extends \Hubleto\Framework\Controller
 {
   public int $returnType = self::RETURN_TYPE_JSON;
@@ -17,6 +19,15 @@ class ApiController extends \Hubleto\Framework\Controller
   {
     try {
       return $this->response();
+    } catch (RecordSaveException $e) {
+      http_response_code(422);
+
+      return [
+        'status' => 'error',
+        'code' => $e->getCode(),
+        'message' => $e->getMessage(),
+        'invalidInputs' => $e->invalidInputs,
+      ];
     } catch (\Throwable $e) {
       http_response_code(400);
 

@@ -8,4 +8,4 @@ namespace Hubleto\Framework\Exceptions;
  *
  * @package Exceptions
  */
-class NotEnoughPermissionsException extends \Exception { }
+class NotEnoughPermissionsException extends Exception { }

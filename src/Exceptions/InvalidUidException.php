@@ -7,4 +7,4 @@ namespace Hubleto\Framework\Exceptions;
  *
  * @package Exceptions
  */
-class InvalidUidException extends \Exception { }
+class InvalidUidException extends Exception { }

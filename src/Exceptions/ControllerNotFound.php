@@ -7,4 +7,4 @@ namespace Hubleto\Framework\Exceptions;
  *
  * @package Exceptions
  */
-class ControllerNotFound extends \Exception { }
+class ControllerNotFound extends Exception { }

@@ -447,7 +447,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       }
 
     } catch (\Illuminate\Database\QueryException $e) {
-      throw new Exceptions\RecordSaveException($e->getConnectionName(), $e->getSql(), $e);
+      throw new Exceptions\DBException($e->getMessage(), $e->getCode(), $e);
     } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
       if ($e->errorInfo[1] == 1062) {
         $columns = $this->model->getColumns();
@@ -459,15 +459,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
 
         $errorMessage = "Value '{$invalidValue}' for {$invalidIndexName} already exists.";
 
-        throw new Exceptions\RecordSaveException(
-          $errorMessage,
-          $e->errorInfo[1]
-        );
+        throw new Exceptions\DBException($errorMessage, $e->getCode(), $e);
       } else {
-        throw new Exceptions\RecordSaveException(
-          $e->errorInfo[2],
-          $e->errorInfo[1]
-        );
+        throw new Exceptions\DBException($e->getMessage(), $e->getCode(), $e);
       }
     }
 
@@ -482,6 +476,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    */
   public function recordValidate(array $record, array $validateRelations = [], string $relation = ''): array
   {
+    $readableInvalidInputs = [];
     $invalidInputs = [];
 
     foreach ($this->model->getColumns() as $colName => $column) {
@@ -489,14 +484,18 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
         $column->getRequired()
         && (!isset($record[$colName]) || $column->isEmpty($record[$colName]))
       ) {
-        $invalidInputs[] = $this->model->shortName . "." . $column->getTitle() ." is required.";
+        $readableInvalidInputs[] = $this->model->shortName . "." . $column->getTitle() ." is required.";
+
+        $invalidInputs[] = $this->model->shortName . "." . $column->getTitle();
       } else if (isset($record[$colName]) && !$column->validate($record[$colName])) {
-        $invalidInputs[] = $this->model->shortName . "." . $column->getTitle() ." contains invalid value.";
+        $readableInvalidInputs[] = $this->model->shortName . "." . $column->getTitle() ." contains invalid value.";
+
+        $invalidInputs[] = $this->model->shortName . "." . $column->getTitle();
       }
     }
 
-    if (!empty($invalidInputs)) {
-      throw new Exceptions\RecordSaveException(json_encode($invalidInputs), 87335);
+    if (!empty($readableInvalidInputs)) {
+      throw new Exceptions\RecordSaveException(join("\n", $readableInvalidInputs), $invalidInputs);
     }
 
     foreach ($this->model->relations as $relName => $relDefinition) {

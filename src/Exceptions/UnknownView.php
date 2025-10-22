@@ -8,4 +8,4 @@ namespace Hubleto\Framework\Exceptions;
  *
  * @package Exceptions
  */
-class UnknownView extends \Exception { }
+class UnknownView extends Exception { }

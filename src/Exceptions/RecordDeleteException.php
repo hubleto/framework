@@ -8,4 +8,4 @@ namespace Hubleto\Framework\Exceptions;
  *
  * @package Exceptions
  */
-class RecordDeleteException extends \Exception { }
+class RecordDeleteException extends Exception { }

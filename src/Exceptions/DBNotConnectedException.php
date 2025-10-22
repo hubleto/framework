@@ -7,4 +7,4 @@ namespace Hubleto\Framework\Exceptions;
  *
  * @package Exceptions
  */
-class DBNotConnectedException extends \Exception { }
+class DBNotConnectedException extends Exception { }

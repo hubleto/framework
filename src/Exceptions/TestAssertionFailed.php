@@ -7,4 +7,4 @@ namespace Hubleto\Framework\Exceptions;
  *
  * @package Exceptions
  */
-class TestAssertionFailed extends \Exception { }
+class TestAssertionFailed extends Exception { }
