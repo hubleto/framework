@@ -447,7 +447,13 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       }
 
     } catch (\Illuminate\Database\QueryException $e) {
-      throw new Exceptions\DBException($e->getMessage(), $e->getCode(), $e);
+      if ($e->getCode() == 23000) {
+        $errorMessage = "A field contains a value that already exists.";
+
+        throw new Exceptions\DBDuplicateEntryException($errorMessage, $e->getCode(), $e);
+      } else {
+        throw new Exceptions\DBException($e->getMessage(), $e->getCode(), $e);
+      }
     } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
       if ($e->errorInfo[1] == 1062) {
         $columns = $this->model->getColumns();
@@ -486,11 +492,12 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       ) {
         $readableInvalidInputs[] = $this->model->shortName . "." . $column->getTitle() ." is required.";
 
-        $invalidInputs[] = $this->model->shortName . "." . $column->getTitle();
+        $invalidInputs[] = ['name' => $this->model->shortName . "." . $colName, 'id' => $record['id'] ?? -1];
       } else if (isset($record[$colName]) && !$column->validate($record[$colName])) {
         $readableInvalidInputs[] = $this->model->shortName . "." . $column->getTitle() ." contains invalid value.";
 
-        $invalidInputs[] = $this->model->shortName . "." . $column->getTitle();
+        // todo
+        $invalidInputs[] = ['name' => $this->model->shortName . "." . $colName, 'id' => $record['id'] ?? -1];
       }
     }
 
