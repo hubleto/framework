@@ -20,5 +20,6 @@ interface TerminalInterface
   public function white(string $message): void;
   public function colored(string $bgColor, string $fgColor, string $message): void;
   public function insertCodeToFile(string $file, string $tag, array $codeLines): bool;
+  public function error(string $message): void;
 
 }

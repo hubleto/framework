@@ -32,7 +32,7 @@ class Terminal implements Interfaces\TerminalInterface
    * @return void
    * 
    */
-  public function color(string $fgColor, string $bgColor = 'black'): void
+  public function color(string $fgColor, string $bgColor = 'default'): void
   {
     if (php_sapi_name() !== 'cli') {
       return;
@@ -49,7 +49,7 @@ class Terminal implements Interfaces\TerminalInterface
       'white' => "\033[47m",
     ];
 
-    $this->echo($bgSequences[$bgColor] ?? '');
+    $this->echo($bgSequences[$bgColor] ?? "\033[0m");
 
     $fgSequences = [
       'black' => "\033[30m",
@@ -62,7 +62,7 @@ class Terminal implements Interfaces\TerminalInterface
       'white' => "\033[37m",
     ];
 
-    $this->echo($fgSequences[$fgColor] ?? '');
+    $this->echo($fgSequences[$fgColor] ?? "\033[0m");
   }
 
   /**
@@ -190,7 +190,13 @@ class Terminal implements Interfaces\TerminalInterface
   {
     $this->color('red');
     $this->echo($message);
-    $this->color('white');
+    $this->color('default');
+  }
+
+  public function error(string $message): void {
+    $this->color('red');
+    file_put_contents( "php://stderr", $message );
+    $this->color('default');
   }
 
   /**
@@ -205,7 +211,7 @@ class Terminal implements Interfaces\TerminalInterface
   {
     $this->color('blue');
     $this->echo($message);
-    $this->color('white');
+    $this->color('default');
   }
 
   /**
@@ -220,7 +226,7 @@ class Terminal implements Interfaces\TerminalInterface
   {
     $this->color('cyan');
     $this->echo($message);
-    $this->color('white');
+    $this->color('default');
   }
 
   /**
@@ -235,7 +241,7 @@ class Terminal implements Interfaces\TerminalInterface
   {
     $this->color('white');
     $this->echo($message);
-    $this->color('white');
+    $this->color('default');
   }
 
   /**
@@ -253,7 +259,7 @@ class Terminal implements Interfaces\TerminalInterface
     $this->color($fgColor, $bgColor);
     if (str_ends_with($message, "\n")) {
       $this->echo(substr($message, 0, -1));
-      $this->color('white', 'black');
+      $this->color('default', 'default');
       $this->echo("\n");
     } else {
       $this->echo($message);
