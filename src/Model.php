@@ -12,6 +12,7 @@ class Model extends Core implements Interfaces\ModelInterface
 {
   const HAS_ONE = 'hasOne';
   const HAS_MANY = 'hasMany';
+  const HAS_MANY_THROUGH = 'hasManyThrough';
   const BELONGS_TO = 'belongsTo';
 
   /**
