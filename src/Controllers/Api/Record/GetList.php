@@ -18,12 +18,17 @@ class GetList extends \Hubleto\Framework\Controllers\ApiController {
 
   public function response(): array
   {
-    return $this->model->recordGetList(
-      $this->router()->urlParamAsString('fulltextSearch'),
-      $this->router()->urlParamAsArray('columnSearch'),
-      $this->router()->urlParamAsArray('orderBy'),
-      $this->router()->urlParamAsInteger('itemsPerPage', 15),
-      $this->router()->urlParamAsInteger('page'),
-    );
+    try {
+      return $this->model->recordGetList(
+        $this->router()->urlParamAsString('fulltextSearch'),
+        $this->router()->urlParamAsArray('columnSearch'),
+        $this->router()->urlParamAsArray('orderBy'),
+        $this->router()->urlParamAsInteger('itemsPerPage', 15),
+        $this->router()->urlParamAsInteger('page'),
+      );
+    } catch (\Throwable $e) {
+      var_dump($e->getMessage());
+      var_dump($e->getTraceAsString());exit;
+    }
   }
 }

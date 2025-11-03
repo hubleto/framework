@@ -197,36 +197,89 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     if (count($columnSearch) > 0) {
       foreach ($this->model->getColumns() as $columnName => $column) {
         if (!empty($columnSearch[$columnName])) {
-          $enumValues = $column->getEnumValues();
-          if (count($enumValues) > 0) {
-            $query->having('_ENUM[' . $columnName . ']', 'like', "%{$columnSearch[$columnName]}%");
-          } else if ($column->getType() == 'lookup') {
-            $query->having('_LOOKUP[' . $columnName . ']', 'like', "%{$columnSearch[$columnName]}%");
-          } else if (in_array($column->getType(), ['int', 'decimal', 'float'])) {
-            $q = trim(str_replace(' ', '', str_replace(',', '.', $columnSearch[$columnName])));
+          $searchValues = [];
+          $searchGlue = 'OR';
 
-            preg_match('/(.*?)([\\d\\.]+)/', $q, $m);
-
-            $operation = $m[1];
-            $value = (float) $m[2];
-
-            $query->where($columnName, $operation, $value);
-          } else if (in_array($column->getType(), ['date', 'datetime', 'time'])) {
-            if (is_array($columnSearch[$columnName])) {
-              if (count($columnSearch[$columnName]) == 1) {
-                $from = $to = $columnSearch[$columnName][0];
-              } else if (count($columnSearch[$columnName]) == 2) {
-                list($from, $to) = $columnSearch[$columnName];
-              }
-
-              $query->having($columnName, '>=', date('Y-m-d 00:00:00', strtotime((string) $from)));
-              $query->having($columnName, '<=', date('Y-m-d 23:59:59', strtotime((string) $to)));
-            }
-          } else if (in_array($column->getType(), ['boolean'])) {
-            $query->having($columnName, $columnSearch[$columnName] === "true");
+          if (is_array($columnSearch[$columnName])) {
+            $searchValues = $columnSearch[$columnName];
+            $searchGlue = array_shift($searchValues);
           } else {
-            $query->having($columnName, 'like', "%{$columnSearch[$columnName]}%");
+            $searchValues = [ $columnSearch[$columnName] ];
           }
+
+          $query = $query->having(function($q) use ($column, $columnName, $searchValues, $searchGlue) {
+            foreach ($searchValues as $searchValue) {
+              $enumValues = $column->getEnumValues();
+              if (count($enumValues) > 0) {
+                switch ($searchGlue) {
+                  case 'OR':
+                  default:
+                    $q = $q->orHaving('_ENUM[' . $columnName . ']', 'like', "%{$searchValue}%");
+                  break;
+                  case 'AND';
+                    $q = $q->having('_ENUM[' . $columnName . ']', 'like', "%{$searchValue}%");
+                  break;
+                }
+              } else if ($column->getType() == 'lookup') {
+                switch ($searchGlue) {
+                  case 'OR':
+                  default:
+                    $q = $q->orHaving('_LOOKUP[' . $columnName . ']', 'like', "%{$searchValue}%");
+                  break;
+                  case 'AND';
+                    $q = $q->having('_LOOKUP[' . $columnName . ']', 'like', "%{$searchValue}%");
+                  break;
+                }
+              } else if (in_array($column->getType(), ['int', 'decimal', 'float'])) {
+                $tmpSearchValue = trim(str_replace(' ', '', str_replace(',', '.', $searchValue)));
+                preg_match('/(.*?)([\\d\\.]+)/', $tmpSearchValue, $m);
+
+                $operation = $m[1];
+                $value = (float) $m[2];
+
+                switch ($searchGlue) {
+                  case 'OR':
+                  default:
+                    $q = $q->orHaving($columnName, $operation, $value);
+                  break;
+                  case 'AND';
+                    $q = $q->having($columnName, $operation, $value);
+                  break;
+                }
+              } else if (in_array($column->getType(), ['date', 'datetime', 'time'])) {
+                if (is_array($searchValue)) {
+                  if (count($searchValue) == 1) {
+                    $from = $to = $searchValue[0];
+                  } else if (count($searchValue) == 2) {
+                    list($from, $to) = $searchValue;
+                  }
+
+                  $q->having($columnName, '>=', date('Y-m-d 00:00:00', strtotime((string) $from)));
+                  $q->having($columnName, '<=', date('Y-m-d 23:59:59', strtotime((string) $to)));
+                }
+              } else if (in_array($column->getType(), ['boolean'])) {
+                switch ($searchGlue) {
+                  case 'OR':
+                  default:
+                    $q = $q->orHaving($columnName, $searchValue === "true");
+                  break;
+                  case 'AND';
+                    $q = $q->having($columnName, $searchValue === "true");
+                  break;
+                }
+              } else {
+                switch ($searchGlue) {
+                  case 'OR':
+                  default:
+                    $q = $q->orHaving($columnName, 'like', "%{$searchValue}%");
+                  break;
+                  case 'AND';
+                    $q = $q->having($columnName, 'like', "%{$searchValue}%");
+                  break;
+                }
+              }
+            }
+          });
         }
       }
     }
