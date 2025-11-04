@@ -38,6 +38,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   protected string $reactComponent = '';
   protected int $decimals = 4;
   protected float $step = 1;
+  protected string $icon = '';
   protected int $byteSize = 14;
   protected array $inputProps = [];
   protected string $endpoint = '';
@@ -144,6 +145,9 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   public function getStep(): float { return $this->step; }
   public function setStep(float $step): Column { $this->step = $step; return $this; }
 
+  public function getIcon(): string { return $this->icon; }
+  public function setIcon(string $icon): Column { $this->icon = $icon; return $this; }
+
   public function getEndpoint(): string { return $this->endpoint; }
   public function setEndpoint(string $endpoint): Column { $this->endpoint = $endpoint; return $this; }
 
@@ -178,6 +182,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
     $description->setExamples($this->examples);
     $description->setDecimals($this->decimals);
     $description->setStep($this->step);
+    $description->setIcon($this->icon);
     $description->setEnumValues($this->enumValues);
     $description->setEnumCssClasses($this->enumCssClasses);
     $description->setPredefinedValues($this->predefinedValues);
@@ -207,6 +212,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
     if (isset($columnConfig['lookupModel'])) $this->setLookupModel($columnConfig['lookupModel']);
     if (isset($columnConfig['decimals'])) $this->setDecimals($columnConfig['decimals']);
     if (isset($columnConfig['step'])) $this->setStep($columnConfig['step']);
+    if (isset($columnConfig['icon'])) $this->setIcon($columnConfig['icon']);
     if (isset($columnConfig['byteSize'])) $this->setByteSize($columnConfig['byteSize']);
     if (isset($columnConfig['endpoint'])) $this->setEndpoint($columnConfig['endpoint']);
     if (isset($columnConfig['creatable'])) $this->setCreatable($columnConfig['creatable']);
@@ -232,6 +238,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
       'reactComponent' => $this->reactComponent,
       'decimals' => $this->decimals,
       'step' => $this->step,
+      'icon' => $this->icon,
       'byteSize' => $this->byteSize,
       'endpoint' => $this->endpoint,
       'creatable' => $this->creatable,
