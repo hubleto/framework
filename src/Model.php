@@ -604,60 +604,78 @@ class Model extends Core implements Interfaces\ModelInterface
     return $description;
   }
 
-  //////////////////////////////////////////////////////////////////
-  // Record-related methods
-
   /**
-   * [Description for recordGet]
+   * [Description for convertRecordsToTree]
    *
-   * @param callable|null|null $queryModifierCallback
+   * @param array $records
+   * @param int $idParent
+   * @param int $level
    * 
    * @return array
    * 
    */
-  public function recordGet(callable|null $queryModifierCallback = null): array
+  public function convertRecordsToTree(array $records, int $idParent = 0, int $level = 0): array
   {
-    $query = $this->record->prepareReadQuery();
-    if ($queryModifierCallback !== null) $queryModifierCallback($query);
-    $record = $this->record->recordRead($query);
-    $record = $this->onAfterLoadRecord($record);
-    return $record;
+    $tree = [];
+    foreach ($records as $record) {
+      $recordId = (int) $record['id'];
+      $recordIdParent = (int) $record['id_parent'];
+      if ($recordIdParent == $idParent) {
+        $tree[] = [
+          'level' => $level,
+          'id' => $recordId,
+          'idParent' => $recordIdParent,
+          'title' => $record['_LOOKUP'],
+          'children' => $this->convertRecordsToTree($records, $recordId, $level + 1),
+        ];
+      }
+    }
+    return $tree;
   }
 
   /**
-   * [Description for recordGetList]
+   * [Description for loadTableData]
    *
    * @param string $fulltextSearch
    * @param array $columnSearch
    * @param array $orderBy
    * @param int $itemsPerPage
    * @param int $page
+   * @param string $dataView
    * @param mixed 
    * 
    * @return array
    * 
    */
-  public function recordGetList(
+  public function loadTableData(
     string $fulltextSearch = '',
     array $columnSearch = [],
     array $orderBy = [],
     int $itemsPerPage = 15,
     int $page = 0,
+    string $dataView = ''
   ): array
   {
     $query = $this->record->prepareReadQuery();
     $query = $this->record->addFulltextSearchToQuery($query, $fulltextSearch);
     $query = $this->record->addColumnSearchToQuery($query, $columnSearch);
     $query = $this->record->addOrderByToQuery($query, $orderBy);
-    $paginatedRecords = $this->record->recordReadMany($query, $itemsPerPage, $page);
+    $tableData = $this->record->recordReadMany($query, $itemsPerPage, $page);
 
-    foreach ($paginatedRecords['data'] as $key => $record) {
-      $paginatedRecords['data'][$key] = $this->onAfterLoadRecord($record);
+    foreach ($tableData['data'] as $key => $record) {
+      $tableData['data'][$key] = $this->onAfterLoadRecord($record);
     }
 
-    $paginatedRecords = $this->onAfterLoadRecords($paginatedRecords);
+    if ($dataView == 'tree') {
+      $query = $this->record->prepareReadQuery();
+      $allRecords = $query->get()->toArray();
+      $tableData['tree'] = $this->convertRecordsToTree($allRecords);
+      
+    }
 
-    return $paginatedRecords;
+    $tableData = $this->onAfterLoadRecords($tableData);
+
+    return $tableData;
   }
 
   /**
@@ -694,7 +712,7 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function getById(int $id)
   {
-    $item = $this->recordGet(function($q) use ($id) { $q->where($this->table . '.id', $id); });
+    $item = $this->record->recordRead(function($q) use ($id) { $q->where($this->table . '.id', $id); });
     return $item;
   }
 

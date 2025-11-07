@@ -14,10 +14,6 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   public Loader $main;
   public Model $model;
 
-  // /** What relations to be included in loaded record. If null, default relations will be selected. */
-  // /** @property array<string> */
-  // protected array $relationsToRead = [];
-
   protected int $maxReadLevel = 2;
 
   public function __construct(array $attributes = [])
@@ -25,16 +21,27 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     parent::__construct($attributes);
   }
 
+  /**
+   * [Description for getPermissions]
+   *
+   * @param array $record
+   * 
+   * @return array
+   * 
+   */
   public function getPermissions(array $record): array
   {
     return [true, true, true, true];
   }
 
   /**
-   * prepareReadQuery
-   * @param mixed $query Leave empty for default behaviour.
-   * @param int $level Leave empty for default behaviour.
-   * @return mixed Eloquent query used to read record.
+   * [Description for prepareReadQuery]
+   *
+   * @param mixed|null $query
+   * @param int $level
+   * 
+   * @return mixed
+   * 
    */
   public function prepareReadQuery(mixed $query = null, int $level = 0): mixed
   {
@@ -126,8 +133,29 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   }
 
   /**
-   * prepareLookupQuery
-   * @param string $searc What string to lookup for
+   * [Description for recordGet]
+   *
+   * @param callable|null|null $queryModifierCallback
+   * 
+   * @return array
+   * 
+   */
+  public function recordGet(callable|null $queryModifierCallback = null): array
+  {
+    $query = $this->prepareReadQuery();
+    if ($queryModifierCallback !== null) $queryModifierCallback($query);
+    $record = $this->recordRead($query);
+    $record = $this->model->onAfterLoadRecord($record);
+    return $record;
+  }
+
+  /**
+   * [Description for prepareLookupQuery]
+   *
+   * @param string $search
+   * 
+   * @return mixed
+   * 
    */
   public function prepareLookupQuery(string $search): mixed
   {
@@ -155,6 +183,14 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return $query;
   }
 
+  /**
+   * [Description for prepareLookupData]
+   *
+   * @param array $dataRaw
+   * 
+   * @return array
+   * 
+   */
   public function prepareLookupData(array $dataRaw): array
   {
     $data = [];
@@ -174,6 +210,15 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return $data;
   }
 
+  /**
+   * [Description for addFulltextSearchToQuery]
+   *
+   * @param mixed $query
+   * @param string $fulltextSearch
+   * 
+   * @return mixed
+   * 
+   */
   public function addFulltextSearchToQuery(mixed $query, string $fulltextSearch): mixed
   {
     if (!empty($fulltextSearch)) {
@@ -192,6 +237,15 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return $query;
   }
 
+  /**
+   * [Description for addColumnSearchToQuery]
+   *
+   * @param mixed $query
+   * @param array $columnSearch
+   * 
+   * @return mixed
+   * 
+   */
   public function addColumnSearchToQuery(mixed $query, array $columnSearch): mixed
   {
     if (count($columnSearch) > 0) {
@@ -287,6 +341,15 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return $query;
   }
 
+  /**
+   * [Description for addOrderByToQuery]
+   *
+   * @param mixed $query
+   * @param array $orderBy
+   * 
+   * @return mixed
+   * 
+   */
   public function addOrderByToQuery(mixed $query, array $orderBy): mixed
   {
     if (isset($orderBy['field']) && isset($orderBy['direction'])) {
@@ -296,6 +359,16 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return $query;
   }
 
+  /**
+   * [Description for recordReadMany]
+   *
+   * @param mixed $query
+   * @param int $itemsPerPage
+   * @param int $page
+   * 
+   * @return array
+   * 
+   */
   public function recordReadMany(mixed $query, int $itemsPerPage, int $page): array
   {
     $data = $query->paginate(
@@ -322,6 +395,14 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return $data;
   }
 
+  /**
+   * [Description for recordRead]
+   *
+   * @param mixed $query
+   * 
+   * @return array
+   * 
+   */
   public function recordRead(mixed $query): array {
     $record = $query->first()?->toArray();
     if (!is_array($record)) $record = [];
@@ -344,6 +425,14 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return $record;
   }
 
+  /**
+   * [Description for recordEncryptIds]
+   *
+   * @param array $record
+   * 
+   * @return array
+   * 
+   */
   public function recordEncryptIds(array $record): array
   {
 
@@ -359,6 +448,14 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return $record;
   }
 
+  /**
+   * [Description for recordDecryptIds]
+   *
+   * @param array $record
+   * 
+   * @return array
+   * 
+   */
   public function recordDecryptIds(array $record): array
   {
     foreach ($this->model->getColumns() as $colName => $column) {
@@ -391,16 +488,33 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return $record;
   }
 
-  public function recordCreate(array $record): array
+  /**
+   * [Description for recordCreate]
+   *
+   * @param array $record
+   * 
+   * @return array
+   * 
+   */
+  public function recordCreate(array $record, $useProvidedRecordId = false): array
   {
     $record = $this->model->onBeforeCreate($record);
-    unset($record['id']);
+    if (!$useProvidedRecordId) unset($record['id']);
     $normalizedRecord = $this->recordNormalize($record);
     $record['id'] = $this->create($normalizedRecord)->id;
     $record = $this->model->onAfterCreate($record);
     return $record;
   }
 
+  /**
+   * [Description for recordUpdate]
+   *
+   * @param array $record
+   * @param array $originalRecord
+   * 
+   * @return array
+   * 
+   */
   public function recordUpdate(array $record, array $originalRecord = []): array
   {
     // $originalRecord = $record;
@@ -411,6 +525,14 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return $record;
   }
 
+  /**
+   * [Description for recordDelete]
+   *
+   * @param int|string $id
+   * 
+   * @return int
+   * 
+   */
   public function recordDelete(int|string $id): int
   {
     $this->model->onBeforeDelete((int) $id);
@@ -428,6 +550,17 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return $rowsDeleted;
   }
 
+  /**
+   * [Description for recordSave]
+   *
+   * @param array $record
+   * @param int $idMasterRecord
+   * @param array $saveRelations
+   * @param string $relation
+   * 
+   * @return array
+   * 
+   */
   public function recordSave(array $record, int $idMasterRecord = 0, array $saveRelations = [], string $relation = ''): array
   {
 
@@ -527,11 +660,15 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return $savedRecord;
   }
 
-
   /**
-   * validate
-   * @param array<string, mixed> $record
-   * @return array<string, mixed>
+   * [Description for recordValidate]
+   *
+   * @param array $record
+   * @param array $validateRelations
+   * @param string $relation
+   * 
+   * @return array
+   * 
    */
   public function recordValidate(array $record, array $validateRelations = [], string $relation = ''): array
   {
@@ -586,6 +723,14 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return $record;
   }
 
+  /**
+   * [Description for recordNormalize]
+   *
+   * @param array $record
+   * 
+   * @return array
+   * 
+   */
   public function recordNormalize(array $record): array {
     $columns = $this->model->getColumns();
 

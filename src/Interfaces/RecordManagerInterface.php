@@ -16,6 +16,7 @@ interface RecordManagerInterface {
    * @return mixed Object for reading records.
    */
   public function prepareReadQuery(mixed $query = null, int $level = 0): mixed;
+  public function recordGet(callable|null $queryModifierCallback = null): array;
   public function addFulltextSearchToQuery(mixed $query, string $fulltextSearch): mixed;
   public function addColumnSearchToQuery(mixed $query, array $columnSearch): mixed;
   public function addOrderByToQuery(mixed $query, array $orderBy): mixed;
@@ -24,7 +25,7 @@ interface RecordManagerInterface {
 
   public function recordEncryptIds(array $record): array;
   public function recordDecryptIds(array $record): array;
-  public function recordCreate(array $record): array;
+  public function recordCreate(array $record, $useProvidedRecordId = false): array;
   public function recordUpdate(array $record, array $originalRecord = []): array;
   public function recordDelete(int|string $id): int;
   public function recordSave(array $record, int $idMasterRecord = 0): array;
