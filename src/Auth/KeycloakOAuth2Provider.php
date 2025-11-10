@@ -2,24 +2,41 @@
 
 namespace Hubleto\Framework\Auth;
 
-class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
+class KeycloakOAuth2Provider extends \Hubleto\Framework\AuthProvider {
   public $provider;
 
-  function __construct(array $config = [])
+  function init(): void
   {
-    parent::__construct();
-
+    /** @disregard P1009 */
     $this->provider = new \League\OAuth2\Client\Provider\GenericProvider([
-      'clientId'                => $config['clientId'],
-      'clientSecret'            => $config['clientSecret'],
-      'redirectUri'             => $config['redirectUri'],
-      'urlAuthorize'            => $config['urlAuthorize'],
-      'urlAccessToken'          => $config['urlAccessToken'],
-      'urlResourceOwnerDetails' => $config['urlResourceOwnerDetails'],
+      'clientId' => $this->config()->getAsString('auth/clientId'),
+      'clientSecret' => $this->config()->getAsString('auth/clientSecret'),
+      'redirectUri' => $this->config()->getAsString('auth/redirectUri'),
+      'urlAuthorize' => $this->config()->getAsString('auth/urlAuthorize'),
+      'urlAccessToken' => $this->config()->getAsString('auth/urlAccessToken'),
+      'urlResourceOwnerDetails' => $this->config()->getAsString('auth/urlResourceOwnerDetails'),
     ], [
       'httpClient' => new \GuzzleHttp\Client([\GuzzleHttp\RequestOptions::VERIFY => false]),
     ]);
 
+  }
+
+  public function getUserFromSession(): array
+  {
+    $tmp = $this->sessionManager()->get('userProfile') ?? [];
+    return [
+      'id' => (int) ($tmp['id'] ?? 0),
+      'username' => (string) ($tmp['username'] ?? ''),
+      'email' => (string) ($tmp['email'] ?? ''),
+      'login' => (string) ($tmp['login'] ?? ''),
+      'is_active' => (bool) ($tmp['is_active'] ?? false),
+    ];
+  }
+
+  public function isUserInSession(): bool
+  {
+    $user = $this->getUserFromSession();
+    return isset($user['username']) && !empty($user['username']);
   }
 
   public function signOut()
@@ -69,7 +86,6 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\Auth {
     if ($accessToken) {
       try {
         $resourceOwner = $this->provider->getResourceOwner($accessToken);
-
         if ($resourceOwner) $this->signIn($resourceOwner->toArray());
         else $this->deleteSession();
       } catch (\Exception $e) {

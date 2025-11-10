@@ -2,6 +2,7 @@
 
 namespace Hubleto\Framework;
 
+use Hubleto\Framework\AuthProvider;
 use Hubleto\Framework\Exceptions\Exception;
 
 /**
@@ -124,7 +125,12 @@ class Renderer extends Core implements Interfaces\RendererInterface
     try {
 
       $router = $this->router();
+
+      /** @var PermissionManager */
       $permissionManager = $this->permissionsManager();
+
+      /** @var AuthProvider */
+      $authProvider = $this->getService(AuthProvider::class);
 
       // Find-out which route is used for rendering
 
@@ -145,7 +151,7 @@ class Renderer extends Core implements Interfaces\RendererInterface
       $router->setRouteVars($params);
 
       if ($router->isUrlParam('sign-out')) {
-        $this->authProvider()->signOut();
+        $authProvider->signOut();
       }
 
       if ($router->isUrlParam('signed-out')) {
@@ -162,7 +168,7 @@ class Renderer extends Core implements Interfaces\RendererInterface
       $controllerObject = $this->getController($controllerClassName);
 
       // authenticate user, if any
-      $this->authProvider()->auth();
+      $authProvider->auth();
       $this->config()->filterByUser();
 
       if (empty($this->permission) && !empty($controllerObject->permission)) {
@@ -183,7 +189,7 @@ class Renderer extends Core implements Interfaces\RendererInterface
       }
 
       if ($controllerObject->requiresAuthenticatedUser) {
-        if (!$this->authProvider()->isUserInSession()) {
+        if (!$authProvider->isUserInSession()) {
           $controllerObject = $this->getController(Controllers\SignIn::class);
           $permissionManager->setPermission($controllerObject->permission);
         }
@@ -228,7 +234,7 @@ class Renderer extends Core implements Interfaces\RendererInterface
         
         $contentParams = [
           'hubleto' => $this,
-          'user' => $this->authProvider()->getUser(),
+          'user' => $authProvider->getUser(),
           'config' => $this->config()->get(),
           // 'routeUrl' => $router->getRoute(),
           // 'routeParams' => $this->router()->getRouteVars(),
@@ -278,10 +284,6 @@ class Renderer extends Core implements Interfaces\RendererInterface
     } catch (Exceptions\ControllerNotFound $e) {
       return $this->renderFatal($e, false);
     } catch (Exceptions\NotEnoughPermissionsException $e) {
-      $message = $e->getMessage();
-//      if ($this->authProvider()->isUserInSession()) {
-//        $message .= " Hint: Sign out at {$this->env()->projectUrl}?sign-out and sign in again or check your permissions.";
-//      }
       header('HTTP/1.1 401 Unauthorized', true, 401);
       return $this->renderFatal($e, false);
     } catch (Exceptions\GeneralException $e) {
