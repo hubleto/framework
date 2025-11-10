@@ -10,7 +10,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   protected $guarded = [];
   public $timestamps = false;
   public static $snakeAttributes = false;
-  
+
   public Loader $main;
   public Model $model;
 
@@ -25,9 +25,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    * [Description for getPermissions]
    *
    * @param array $record
-   * 
+   *
    * @return array
-   * 
+   *
    */
   public function getPermissions(array $record): array
   {
@@ -39,9 +39,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    *
    * @param mixed|null $query
    * @param int $level
-   * 
+   *
    * @return mixed
-   * 
+   *
    */
   public function prepareReadQuery(mixed $query = null, int $level = 0): mixed
   {
@@ -136,9 +136,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    * [Description for recordGet]
    *
    * @param callable|null|null $queryModifierCallback
-   * 
+   *
    * @return array
-   * 
+   *
    */
   public function recordGet(callable|null $queryModifierCallback = null): array
   {
@@ -153,9 +153,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    * [Description for prepareLookupQuery]
    *
    * @param string $search
-   * 
+   *
    * @return mixed
-   * 
+   *
    */
   public function prepareLookupQuery(string $search): mixed
   {
@@ -187,9 +187,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    * [Description for prepareLookupData]
    *
    * @param array $dataRaw
-   * 
+   *
    * @return array
-   * 
+   *
    */
   public function prepareLookupData(array $dataRaw): array
   {
@@ -215,9 +215,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    *
    * @param mixed $query
    * @param string $fulltextSearch
-   * 
+   *
    * @return mixed
-   * 
+   *
    */
   public function addFulltextSearchToQuery(mixed $query, string $fulltextSearch): mixed
   {
@@ -242,9 +242,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    *
    * @param mixed $query
    * @param array $columnSearch
-   * 
+   *
    * @return mixed
-   * 
+   *
    */
   public function addColumnSearchToQuery(mixed $query, array $columnSearch): mixed
   {
@@ -270,7 +270,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
                   default:
                     $q = $q->orHaving('_ENUM[' . $columnName . ']', 'like', "%{$searchValue}%");
                   break;
-                  case 'AND';
+                  case 'AND':
                     $q = $q->having('_ENUM[' . $columnName . ']', 'like', "%{$searchValue}%");
                   break;
                 }
@@ -280,7 +280,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
                   default:
                     $q = $q->orHaving('_LOOKUP[' . $columnName . ']', 'like', "%{$searchValue}%");
                   break;
-                  case 'AND';
+                  case 'AND':
                     $q = $q->having('_LOOKUP[' . $columnName . ']', 'like', "%{$searchValue}%");
                   break;
                 }
@@ -296,7 +296,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
                   default:
                     $q = $q->orHaving($columnName, $operation, $value);
                   break;
-                  case 'AND';
+                  case 'AND':
                     $q = $q->having($columnName, $operation, $value);
                   break;
                 }
@@ -317,7 +317,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
                   default:
                     $q = $q->orHaving($columnName, $searchValue === "true");
                   break;
-                  case 'AND';
+                  case 'AND':
                     $q = $q->having($columnName, $searchValue === "true");
                   break;
                 }
@@ -327,7 +327,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
                   default:
                     $q = $q->orHaving($columnName, 'like', "%{$searchValue}%");
                   break;
-                  case 'AND';
+                  case 'AND':
                     $q = $q->having($columnName, 'like', "%{$searchValue}%");
                   break;
                 }
@@ -346,9 +346,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    *
    * @param mixed $query
    * @param array $orderBy
-   * 
+   *
    * @return mixed
-   * 
+   *
    */
   public function addOrderByToQuery(mixed $query, array $orderBy): mixed
   {
@@ -365,9 +365,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    * @param mixed $query
    * @param int $itemsPerPage
    * @param int $page
-   * 
+   *
    * @return array
-   * 
+   *
    */
   public function recordReadMany(mixed $query, int $itemsPerPage, int $page): array
   {
@@ -399,9 +399,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    * [Description for recordRead]
    *
    * @param mixed $query
-   * 
+   *
    * @return array
-   * 
+   *
    */
   public function recordRead(mixed $query): array {
     $record = $query->first()?->toArray();
@@ -429,9 +429,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    * [Description for recordEncryptIds]
    *
    * @param array $record
-   * 
+   *
    * @return array
-   * 
+   *
    */
   public function recordEncryptIds(array $record): array
   {
@@ -452,9 +452,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    * [Description for recordDecryptIds]
    *
    * @param array $record
-   * 
+   *
    * @return array
-   * 
+   *
    */
   public function recordDecryptIds(array $record): array
   {
@@ -492,9 +492,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    * [Description for recordCreate]
    *
    * @param array $record
-   * 
+   *
    * @return array
-   * 
+   *
    */
   public function recordCreate(array $record, $useProvidedRecordId = false): array
   {
@@ -511,9 +511,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    *
    * @param array $record
    * @param array $originalRecord
-   * 
+   *
    * @return array
-   * 
+   *
    */
   public function recordUpdate(array $record, array $originalRecord = []): array
   {
@@ -529,9 +529,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    * [Description for recordDelete]
    *
    * @param int|string $id
-   * 
+   *
    * @return int
-   * 
+   *
    */
   public function recordDelete(int|string $id): int
   {
@@ -557,9 +557,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    * @param int $idMasterRecord
    * @param array $saveRelations
    * @param string $relation
-   * 
+   *
    * @return array
-   * 
+   *
    */
   public function recordSave(array $record, int $idMasterRecord = 0, array $saveRelations = [], string $relation = ''): array
   {
@@ -666,9 +666,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    * @param array $record
    * @param array $validateRelations
    * @param string $relation
-   * 
+   *
    * @return array
-   * 
+   *
    */
   public function recordValidate(array $record, array $validateRelations = [], string $relation = ''): array
   {
@@ -727,9 +727,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    * [Description for recordNormalize]
    *
    * @param array $record
-   * 
+   *
    * @return array
-   * 
+   *
    */
   public function recordNormalize(array $record): array {
     $columns = $this->model->getColumns();
