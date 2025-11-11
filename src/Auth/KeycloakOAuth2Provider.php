@@ -2,8 +2,11 @@
 
 namespace Hubleto\Framework\Auth;
 
-class KeycloakOAuth2Provider extends \Hubleto\Framework\AuthProvider {
+class KeycloakOAuth2Provider extends \Hubleto\Framework\AuthProvider
+{
+
   public $provider;
+  public bool $logInfo = false;
 
   function init(): void
   {
@@ -18,6 +21,8 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\AuthProvider {
     ], [
       'httpClient' => new \GuzzleHttp\Client([\GuzzleHttp\RequestOptions::VERIFY => false]),
     ]);
+
+    $this->logInfo = $this->config()->getAsBool('auth/logInfo');
 
   }
 
@@ -70,7 +75,9 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\AuthProvider {
 
   public function auth(): void
   {
+    if ($this->logInfo) $this->logger()->info('Keycloak: auth()');
     $accessToken = $this->getAccessToken();
+    if ($this->logInfo) $this->logger()->info('Keycloak: accessToken length = ' . strlen($accessToken));
 
     if ($accessToken && $accessToken->hasExpired()) {
       try {
@@ -84,10 +91,19 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\AuthProvider {
     }
 
     if ($accessToken) {
+      if ($this->logInfo) $this->logger()->info('Keycloak: if accessToken');
+
       try {
         $resourceOwner = $this->provider->getResourceOwner($accessToken);
-        if ($resourceOwner) $this->signIn($resourceOwner->toArray());
-        else $this->deleteSession();
+
+        if ($resourceOwner) {
+          if ($this->logInfo) $this->logger()->info('Keycloak: resourceOwner = ' . print_r($resourceOwner->toArray(), true));
+          $this->signIn($resourceOwner->toArray());
+        } else {
+          if ($this->logInfo) $this->logger()->info('Keycloak: delete session');
+          $this->deleteSession();
+        }
+
       } catch (\Exception $e) {
         $this->deleteSession();
       }
@@ -95,6 +111,8 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\AuthProvider {
 
       $authCode = $this->router()->urlParamAsString('code');
       $authState = $this->router()->urlParamAsString('state');
+
+      if ($this->logInfo) $this->logger()->info('Keycloak: authCode = ' . $authCode . ', authState = ' . $authState);
 
       // If we don't have an authorization code then get one
       if (empty($authCode)) {
@@ -143,6 +161,8 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\AuthProvider {
           $resourceOwner = $this->provider->getResourceOwner($accessToken);
 
           $authResult = $resourceOwner->toArray();
+
+          if ($this->logInfo) $this->logger()->info('Keycloak: authResult' . var_dump($authResult));
 
         } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
 
