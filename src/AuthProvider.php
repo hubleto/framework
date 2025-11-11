@@ -8,10 +8,10 @@ namespace Hubleto\Framework;
 class AuthProvider extends Core implements Interfaces\AuthInterface
 {
 
-  public string $loginAttribute = 'login';
-  public string $passwordAttribute = 'password';
-  public string $activeAttribute = 'is_active';
-  public string $verifyMethod = 'password_verify';
+  public $loginAttribute = 'login';
+  public $passwordAttribute = 'password';
+  public $activeAttribute = 'is_active';
+  public $verifyMethod = 'password_verify';
 
   public bool $logInfo = false;
 
