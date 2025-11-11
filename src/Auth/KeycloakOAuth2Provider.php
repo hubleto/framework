@@ -31,7 +31,7 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\AuthProvider
     $tmp = $this->sessionManager()->get('userProfile') ?? [];
     return [
       'id' => (int) ($tmp['id'] ?? 0),
-      'sub' => (string) ($tmp['usernsubame'] ?? ''),
+      'sub' => (string) ($tmp['sub'] ?? ''),
       'username' => (string) ($tmp['username'] ?? ''),
       'email' => (string) ($tmp['email'] ?? ''),
       'login' => (string) ($tmp['login'] ?? ''),
