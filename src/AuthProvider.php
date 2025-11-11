@@ -8,10 +8,12 @@ namespace Hubleto\Framework;
 class AuthProvider extends Core implements Interfaces\AuthInterface
 {
 
-  public $loginAttribute = 'login';
-  public $passwordAttribute = 'password';
-  public $activeAttribute = 'is_active';
-  public $verifyMethod = 'password_verify';
+  public string $loginAttribute = 'login';
+  public string $passwordAttribute = 'password';
+  public string $activeAttribute = 'is_active';
+  public string $verifyMethod = 'password_verify';
+
+  public bool $logInfo = false;
 
   public array $user = [];
 
@@ -36,6 +38,7 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
   public function updateUserInSession(array $user): void
   {
     $this->sessionManager()->set('userProfile', $user);
+    if ($this->logInfo) $this->logger()->info('Auth: updateUserInSession' . var_dump($user));
   }
 
   public function isUserInSession(): bool

@@ -6,7 +6,6 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\AuthProvider
 {
 
   public $provider;
-  public bool $logInfo = false;
 
   function init(): void
   {
@@ -29,7 +28,7 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\AuthProvider
   public function getUserFromSession(): array
   {
     $tmp = $this->sessionManager()->get('userProfile') ?? [];
-    return [
+    $userInSession = [
       'id' => (int) ($tmp['id'] ?? 0),
       'sub' => (string) ($tmp['sub'] ?? ''),
       'username' => (string) ($tmp['username'] ?? ''),
@@ -37,6 +36,8 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\AuthProvider
       'login' => (string) ($tmp['login'] ?? ''),
       'is_active' => (bool) ($tmp['is_active'] ?? false),
     ];
+    if ($this->logInfo) $this->logger()->info('Auth: getUserFromSession' . var_dump($userInSession));
+    return $userInSession;
   }
 
   public function isUserInSession(): bool
