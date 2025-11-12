@@ -14,6 +14,8 @@ class Logger extends Core implements Interfaces\LoggerInterface {
   public bool $cliEchoEnabled = false;
   public string $logFolder = "";
   public bool $enabled = false;
+
+  private array $logCache = [];
  
   public function __construct()
   {
@@ -23,6 +25,16 @@ class Logger extends Core implements Interfaces\LoggerInterface {
     $this->enabled = !empty($this->logFolder) && is_dir($this->logFolder);
 
     $this->initInternalLogger('core');
+  }
+
+  public function clearLogCache(): void
+  {
+    $this->logCache = [];
+  }
+
+  public function getLogCache(): array
+  {
+    return $this->logCache;
   }
 
   /**
@@ -123,6 +135,7 @@ class Logger extends Core implements Interfaces\LoggerInterface {
   public function info($message, array $context = [], $loggerName = 'core'): void
   {
     if (!$this->enabled) return;
+    $this->logCache[] = '[INFO] ' . $message;
     $this->getInternalLogger($loggerName)->info($message, $context);
     $this->cliEcho($message, $loggerName, 'INFO');
   }
@@ -140,6 +153,7 @@ class Logger extends Core implements Interfaces\LoggerInterface {
   public function warning($message, array $context = [], $loggerName = 'core'): void
   {
     if (!$this->enabled) return;
+    $this->logCache[] = '[WARNING] ' . $message;
     $this->getInternalLogger($loggerName)->warning($message, $context);
     $this->cliEcho($message, $loggerName, 'WARNING');
   }
@@ -157,6 +171,7 @@ class Logger extends Core implements Interfaces\LoggerInterface {
   public function error($message, array $context = [], $loggerName = 'core'): void
   {
     if (!$this->enabled) return;
+    $this->logCache[] = '[ERROR] ' . $message;
     $this->getInternalLogger($loggerName)->error($message, $context);
     $this->cliEcho($message, $loggerName, 'ERROR');
   }
