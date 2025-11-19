@@ -48,7 +48,6 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     if ($query === null) $query = $this;
 
     $selectRaw = [];
-    $withs = [];
     $joins = [];
 
     foreach ($this->model->getColumns() as $colName => $column) {
@@ -112,10 +111,8 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     }
 
     // TODO: Toto je pravdepodobne potencialna SQL injection diera. Opravit.
-    $query = $query->selectRaw(join(",\n", $selectRaw)); //->with($withs);
+    $query = $query->selectRaw(join(",\n", $selectRaw));
     foreach ($this->model->relations as $relName => $relDefinition) {
-      // if (count($this->relationsToRead) > 0 && !in_array($relName, $this->relationsToRead)) continue;
-
       $relModel = new $relDefinition[1]();
 
       if ($level < $this->maxReadLevel) {
