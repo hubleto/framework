@@ -313,13 +313,13 @@ class App extends Core implements Interfaces\AppInterface
       $mRolePermission->grantPermissionByString($role['id'], 'Hubleto/Erp/Core/Api/GetTemplateChartData');
     }
 
-    $controllerClasses = $this->getAvailableControllerClasses();
-    foreach ($controllerClasses as $controllerClass) {
-      $cObj = $this->getController($controllerClass);
-      foreach ($userRoles as $role) {
-        $mRolePermission->grantPermissionByString($role['id'], $cObj->fullName);
-      }
-    }
+    // $controllerClasses = $this->getAvailableControllerClasses();
+    // foreach ($controllerClasses as $controllerClass) {
+    //   $cObj = $this->getController($controllerClass);
+    //   foreach ($userRoles as $role) {
+    //     $mRolePermission->grantPermissionByString($role['id'], $cObj->fullName);
+    //   }
+    // }
 
   }
 
