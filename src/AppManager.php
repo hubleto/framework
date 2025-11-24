@@ -100,8 +100,14 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
     ) {
       throw new \Exception('Application namespace must start with \'Hubleto\\App\'. See https://developer.hubleto.com/apps for more details.');
     }
-    if (count($appNamespaceParts) != 4) {
-      throw new \Exception('App namespace (' . $appNamespace . ') must have exactly 4 parts and has ' . count($appNamespaceParts));
+    if ($appNamespaceParts[2] == 'External') {
+      if (count($appNamespaceParts) != 5) {
+        throw new \Exception('External app namespace (' . $appNamespace . ') must have exactly 5 parts and has ' . count($appNamespaceParts));
+      }
+    } else {
+      if (count($appNamespaceParts) != 4) {
+        throw new \Exception('App namespace (' . $appNamespace . ') must have exactly 4 parts and has ' . count($appNamespaceParts));
+      }
     }
 
   }

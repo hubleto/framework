@@ -88,7 +88,7 @@ class Helper
       $html = curl_exec($ch);
       self::$loadUrlError = curl_error($ch);
 
-      curl_close($ch);
+      // curl_close($ch);
     } else {
       $error = 'CURL is not available';
     }
