@@ -32,4 +32,13 @@ class Config extends Model
     ]);
   }
 
+  public function describeTable(): \Hubleto\Framework\Description\Table
+  {
+    $description = parent::describeTable();
+    $description->ui['addButtonText'] = 'Add config';
+    $description->show(['header', 'fulltextSearch', 'columnSearch']);
+    $description->hide(['footer']);
+    return $description;
+  }
+
 }
