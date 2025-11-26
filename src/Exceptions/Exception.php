@@ -21,6 +21,7 @@ abstract class Exception extends \Exception
       'status' => $this->status->toString(),
       'code' => static::CODE,
       'message' => $this->getMessage(),
+      'trace' => $this->getTraceAsString(),
       ...$this->getExtraParams(),
     ];
   }
