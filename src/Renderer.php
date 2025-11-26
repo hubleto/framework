@@ -120,8 +120,6 @@ class Renderer extends Core implements Interfaces\RendererInterface
   public function render(string $route = '', array $params = []): string
   {
 
-    /** @var Controller $controllerObject */
-
     try {
 
       $router = $this->router();
