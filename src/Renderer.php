@@ -217,7 +217,7 @@ class Renderer extends Core implements Interfaces\RendererInterface
         } catch (Exception $e) {
           http_response_code(400);
 
-          return $e->getResponseArray();
+          $returnArray = $e->getResponseArray();
         }
         $return = json_encode($returnArray);
       } elseif ($controllerObject->returnType == Controller::RETURN_TYPE_STRING) {
