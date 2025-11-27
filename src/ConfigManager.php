@@ -8,6 +8,21 @@ namespace Hubleto\Framework;
 class ConfigManager extends Core implements Interfaces\ConfigManagerInterface
 {
   protected array $configData = [];
+  private string $prefix = '';
+
+  public function forApp(string $appClass): ConfigManager
+  {
+    /** @var Interfaces\ConfigManagerInterface */
+    $new = new (get_class($this));
+    $new->setConfig($this->configData);
+    $new->setPrefix('apps/' . str_replace('\\Loader', '', $appClass) . '/');
+    return $new;
+  }
+
+  public function setPrefix(string $prefix): void
+  {
+    $this->prefix = $prefix;
+  }
 
   public function setConfig(array $configData)
   {
@@ -23,6 +38,8 @@ class ConfigManager extends Core implements Interfaces\ConfigManagerInterface
 
   public function get(string $path = '', $default = null): mixed
   {
+    $path = $this->prefix . $path;
+
     if ($path === '') return $this->configData;
     else {
       $config = $this->configData;

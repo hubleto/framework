@@ -5,6 +5,8 @@ namespace Hubleto\Framework\Interfaces;
 interface ConfigManagerInterface
 {
 
+  public function forApp(string $appClass);
+  public function setPrefix(string $prefix);
   public function setConfig(array $configData);
   public function empty(string $path): bool;
   public function get(string $path = '', $default = null): mixed;
