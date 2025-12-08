@@ -17,29 +17,101 @@ class App extends Core implements Interfaces\AppInterface
   public const APP_TYPE_PREMIUM = 'premium';
   public const APP_TYPE_EXTERNAL = 'external';
 
+  /**
+   * Basic identification of the app. More details at https://developer.hubleto.com/docs/apps/manifest
+   *
+   * @var array
+   */
   public array $manifest = [];
 
+  /**
+   * If set to `false`, app is not accessible.
+   * Apps get enabled in `AppManager`.
+   *
+   * @var bool
+   */
   public bool $enabled = false;
+
+  /**
+   * If set to `false`, app cannot be disabled.
+   * Some core apps (e.g., `Desktop`) have this set to `false`.
+   *
+   * @var bool
+   */
   public bool $canBeDisabled = true;
 
+  /**
+   * If set to `true`, permission checking is not performed for this app.`
+   *
+   * @var bool
+   */
   public bool $permittedForAllUsers = false;
 
+  /**
+   * Path to source code of this app. Usefull when accessing app's resources.
+   *
+   * @var string
+   */
   public string $srcFolder = '';
+
+  /**
+   * TWIG namespace of this app.
+   *
+   * @var string
+   */
   public string $viewNamespace = '';
+
+  /**
+   * PHP namespace of this app.
+   *
+   * @var string
+   */
   public string $namespace = '';
+
+  /**
+   * Full classname of this app.
+   *
+   * @var string
+   */
   public string $fullName = '';
+
+  /**
+   * Short name of this app, extracted from the namespace.
+   *
+   * @var string
+   */
   public string $shortName = '';
 
+  /**
+   * If set to `true`, app is activated in the UI. Only enabled app can be activated.
+   * Only one app can be activated at a time.
+   *
+   * @var bool
+   */
   public bool $isActivated = false;
-  public bool $hasCustomSettings = false;
 
+  /**
+   * Path to TWIG view for rendering the apps's sidebar.
+   *
+   * @var string
+   */
   public string $sidebarView = '';
 
   /** @var array<int, array<\Hubleto\Framework\App, array>> */
   private array $settings = [];
 
+  /**
+   * List of app's search switches used in global Hubleto fulltext search.
+   *
+   * @var array
+   */
   public array $searchSwitches = [];
 
+  /**
+   * Default app's constructor.
+   *
+   * 
+   */
   public function __construct()
   {
     parent::__construct();

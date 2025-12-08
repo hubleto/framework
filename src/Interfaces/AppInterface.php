@@ -25,7 +25,6 @@ interface AppInterface
   // public string $fullName { get; set; }
 
   // public bool $isActivated { get; set; }
-  // public bool $hasCustomSettings { get; set; }
 
   // /** @var array<int, array<\Hubleto\Framework\App, array>> */
   // public array $settings { get; set; }
