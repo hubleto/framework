@@ -37,7 +37,6 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
             $this->enabledApps[$appNamespace]->enabled = true;
           }
         } catch (\Throwable $e) {
-          throw new \Exception("Failed to initialize app {$appNamespace}." . $e->getMessage());
           // do nothing, if app cannot be instantiated
         }
       }

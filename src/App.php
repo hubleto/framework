@@ -62,21 +62,21 @@ class App extends Core implements Interfaces\AppInterface
   public string $viewNamespace = '';
 
   /**
-   * PHP namespace of this app.
+   * App's PHP namespace.
    *
    * @var string
    */
   public string $namespace = '';
 
   /**
-   * Full classname of this app.
+   * App's full classname.
    *
    * @var string
    */
   public string $fullName = '';
 
   /**
-   * Short name of this app, extracted from the namespace.
+   * App's short name, extracted from the namespace.
    *
    * @var string
    */
