@@ -263,7 +263,7 @@ class Model extends Core implements Interfaces\ModelInterface
       }
 
       $this->config()->save(
-        'models/' . str_replace("/", "-", $this->fullName) . '/installed-version',
+        'models/' . str_replace("/", "-", $this->fullName) . '/installed-upgrade',
         max(array_keys($this->upgrades()))
       );
 
@@ -347,6 +347,77 @@ class Model extends Core implements Interfaces\ModelInterface
     return [
       0 => [], // upgrade to version 0 is the same as installation
     ];
+  }
+
+  /**
+   * [Description for getInstalledUpgrade]
+   *
+   * @return int
+   * 
+   */
+  private function getInstalledUpgrade(): int
+  {
+    return $this->config()->getAsInteger('installed-upgrade', 0);
+  }
+
+  /**
+   * [Description for getLatestUpgrade]
+   *
+   * @return int
+   * 
+   */
+  private function getLatestUpgrade(): int
+  {
+    return max(array_keys($this->upgrades()));
+  }
+
+  /**
+   * [Description for hasAvailableUpgrades]
+   *
+   * @return array
+   * 
+   */
+  public function getAvailableUpgrades(): array
+  {
+    $availableUpgrades = [];
+    $installedUpgrade = $this->getInstalledUpgrade();
+    $latestUpgrade = $this->getLatestUpgrade();
+
+    $upgrades = $this->upgrades();
+
+    for ($v = $installedUpgrade + 1; $v <= $latestUpgrade; $v++) {
+      $availableUpgrades[] = $upgrades[$v];
+    }
+    
+    return $availableUpgrades;
+  }
+
+  /**
+   * Installs all upgrades of the model. Internaly stores current version and
+   * compares it to list of available upgrades.
+   *
+   * @return void
+   * @throws DBException When an error occured during the upgrade.
+   */
+  public function installUpgrades(): void
+  {
+    $availableUpgrades = $this->getAvailableUpgrades();
+
+    if (count($availableUpgrades) > 0) {
+      try {
+        $this->db()->startTransaction();
+
+        foreach ($availableUpgrades as $upgrade) {
+          $this->db()->execute($upgrade);
+        }
+
+        $this->db()->commit();
+        $this->config()->save('installed-upgrade', $this->getLatestUpgrade());
+      } catch (DBException $e) {
+        $this->db()->rollback();
+        throw new DBException($e->getMessage());
+      }
+    }
   }
 
   //////////////////////////////////////////////////////////////////
