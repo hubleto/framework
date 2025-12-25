@@ -6,6 +6,9 @@ interface CoreInterface
 {
 
   public static function getServiceStatic(string $service): mixed;
+
+  public function setDebugLevel(int $level): void;
+  public function getDebugLevel(): int;
   public function getService(string $service): mixed;
   public function env(): EnvInterface;
   public function authProvider(): AuthInterface;

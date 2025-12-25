@@ -24,6 +24,11 @@ class ConfigManager extends Core implements Interfaces\ConfigManagerInterface
     $this->prefix = $prefix;
   }
 
+  public function getPrefix(): string
+  {
+    return $this->prefix;
+  }
+
   public function setConfig(array $configData)
   {
     $this->configData = $configData;

@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Interfaces;
 
-interface ConfigManagerInterface
+interface ConfigManagerInterface extends CoreInterface
 {
 
   public function forApp(string $appClass);

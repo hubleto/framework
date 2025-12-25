@@ -8,11 +8,43 @@ namespace Hubleto\Framework;
 class Core implements Interfaces\CoreInterface
 {
 
+  const DEBUG_LEVEL_NONE = 0;
+  const DEBUG_LEVEL_ERROR = 1;
+  const DEBUG_LEVEL_WARNING = 2;
+  const DEBUG_LEVEL_INFO = 3;
+  const DEBUG_LEVEL_DEBUG = 4;
+
+  protected int $debugLevel = 0;
+
   public string $translationContext = '';
   public string $translationContextInner = '';
 
   public function __construct()
   {
+  }
+
+  /**
+   * [Description for setDebugLevel]
+   *
+   * @param int $level
+   * 
+   * @return void
+   * 
+   */
+  public function setDebugLevel(int $level): void
+  {
+    $this->debugLevel = $level;
+  }
+
+  /**
+   * [Description for getDebugLevel]
+   *
+   * @return int
+   * 
+   */
+  public function getDebugLevel(): int
+  {
+    return $this->debugLevel;
   }
 
   /**

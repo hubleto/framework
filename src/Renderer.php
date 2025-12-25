@@ -127,14 +127,18 @@ class Renderer extends Core implements Interfaces\RendererInterface
       /** @var PermissionManager */
       $permissionManager = $this->permissionsManager();
 
+      $this->logger()->info("PermissionManager initiated.");
+
       /** @var AuthProvider */
       $authProvider = $this->getService(AuthProvider::class);
+
+      $this->logger()->info("AuthManager initiated.");
 
       // Find-out which route is used for rendering
 
       if (empty($route)) $route = $router->extractRouteFromRequest();
-      // if (count($params) == 0) $params = $router->extractParamsFromRequest();
-      // $router->setRouteVars($params);
+
+      $this->logger()->info("Extracted route: " . $route);
 
       $router->setRoute($route);
 
@@ -142,17 +146,23 @@ class Renderer extends Core implements Interfaces\RendererInterface
       // First, try the new routing principle with httpGet
       $routeData = $router->parseRoute(Router::HTTP_GET, $router->getRoute());
 
+      $this->logger()->info("Route parsed, controller: " . ($routeData['controller'] ?? 'n/a'));
+
       $controllerClassName = $routeData['controller'];
 
       $routeVars = $routeData['vars'];
       $router->setRouteVars($routeVars);
       $router->setRouteVars($params);
 
+      $this->logger()->info("Route vars extracted: " . json_encode($routeVars));
+
       if ($router->isUrlParam('sign-out')) {
+        $this->logger()->info("Signing out user as per request.");
         $authProvider->signOut();
       }
 
       if ($router->isUrlParam('signed-out')) {
+        $this->logger()->info("Redirecting to home page after sign out.");
         $router->redirectTo('');
         exit;
       }
@@ -167,6 +177,9 @@ class Renderer extends Core implements Interfaces\RendererInterface
 
       // authenticate user, if any
       $authProvider->auth();
+
+      $this->logger()->info("User authenticated.");
+
       $this->config()->filterByUser();
 
       if (empty($this->permission) && !empty($controllerObject->permission)) {
@@ -188,6 +201,7 @@ class Renderer extends Core implements Interfaces\RendererInterface
 
       if ($controllerObject->requiresAuthenticatedUser) {
         if (!$authProvider->isUserInSession()) {
+          $this->logger()->info("User not authenticated, redirecting to sign-in controller.");
           $controllerObject = $this->getController(Controllers\SignIn::class);
           $permissionManager->setPermission($controllerObject->permission);
         }

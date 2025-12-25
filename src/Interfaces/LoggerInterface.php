@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Interfaces;
 
-interface LoggerInterface
+interface LoggerInterface extends CoreInterface
 {
 
   public function initInternalLogger(string $loggerName = ""): void;

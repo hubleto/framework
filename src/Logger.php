@@ -9,6 +9,7 @@ use Monolog\Handler\RotatingFileHandler;
  */
 class Logger extends Core implements Interfaces\LoggerInterface {
 
+
   public array $loggers = [];
 
   public bool $cliEchoEnabled = false;
@@ -23,6 +24,7 @@ class Logger extends Core implements Interfaces\LoggerInterface {
 
     $this->logFolder = $this->config()->getAsString('logFolder');
     $this->enabled = !empty($this->logFolder) && is_dir($this->logFolder);
+    $this->debugLevel = $this->config()->getAsInteger('debugLevel', self::DEBUG_LEVEL_NONE);
 
     $this->initInternalLogger('core');
   }
@@ -118,6 +120,7 @@ class Logger extends Core implements Interfaces\LoggerInterface {
   public function debug($message, array $context = [], $loggerName = 'core'): void
   {
     if (!$this->enabled) return;
+    if ($this->debugLevel < self::DEBUG_LEVEL_DEBUG) return;
     $this->getInternalLogger($loggerName)->debug($message, $context);
     $this->cliEcho($message, $loggerName, 'DEBUG');
   }
@@ -135,6 +138,7 @@ class Logger extends Core implements Interfaces\LoggerInterface {
   public function info($message, array $context = [], $loggerName = 'core'): void
   {
     if (!$this->enabled) return;
+    if ($this->debugLevel < self::DEBUG_LEVEL_INFO) return;
     $this->logCache[] = '[INFO] ' . $message;
     $this->getInternalLogger($loggerName)->info($message, $context);
     $this->cliEcho($message, $loggerName, 'INFO');
@@ -153,6 +157,7 @@ class Logger extends Core implements Interfaces\LoggerInterface {
   public function warning($message, array $context = [], $loggerName = 'core'): void
   {
     if (!$this->enabled) return;
+    if ($this->debugLevel < self::DEBUG_LEVEL_WARNING) return;
     $this->logCache[] = '[WARNING] ' . $message;
     $this->getInternalLogger($loggerName)->warning($message, $context);
     $this->cliEcho($message, $loggerName, 'WARNING');
@@ -171,6 +176,7 @@ class Logger extends Core implements Interfaces\LoggerInterface {
   public function error($message, array $context = [], $loggerName = 'core'): void
   {
     if (!$this->enabled) return;
+    if ($this->debugLevel < self::DEBUG_LEVEL_ERROR) return;
     $this->logCache[] = '[ERROR] ' . $message;
     $this->getInternalLogger($loggerName)->error($message, $context);
     $this->cliEcho($message, $loggerName, 'ERROR');

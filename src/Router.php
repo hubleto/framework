@@ -105,7 +105,13 @@ class Router extends Core implements Interfaces\RouterInterface {
       'controller' => '',
       'vars' => [],
     ];
-    foreach ($this->getRoutes($method) as $routePattern => $controller) {
+
+    $routes = $this->getRoutes($method);
+
+    $this->logger()->debug("Parsing route '{$route}' for method '{$method}'.");
+    $this->logger()->debug("Available routes: " . json_encode($routes));
+
+    foreach ($routes as $routePattern => $controller) {
       $routeMatch = true;
       $routeVars = [];
 
