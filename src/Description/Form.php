@@ -11,7 +11,7 @@ class Form implements \JsonSerializable
     'title' => '',
     'subTitle' => '',
     'showSaveButton' => true,
-    'showCopyButton' => false,
+    'showCopyButton' => true,
     'showDeleteButton' => true,
     'saveButtonText' => '',
     'addButtonText' => '',
