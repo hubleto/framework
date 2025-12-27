@@ -115,6 +115,23 @@ class Table implements \JsonSerializable
   }
 
   /**
+   * [Description for hideColumns]
+   *
+   * @param array $columnNames
+   * 
+   * @return void
+   * 
+   */
+  public function hideColumns(array $columnNames): void
+  {
+    foreach ($columnNames as $colName) {
+      if (isset($this->columns[$colName])) {
+        unset($this->columns[$colName]);
+      }
+    }
+  }
+
+  /**
    * [Description for addFilter]
    *
    * @param string $filterName
