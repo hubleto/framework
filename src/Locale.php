@@ -458,7 +458,7 @@ class Locale extends Core implements Interfaces\LocaleInterface
    */
   public function getDateShortFormat(): string
   {
-    return "Y-m-d";
+    return $this->config()->getAsString('locale/dateShort', 'Y-m-d');
   }
 
   /**
@@ -469,7 +469,7 @@ class Locale extends Core implements Interfaces\LocaleInterface
    */
   public function getDateLongFormat(): string
   {
-    return "jS F Y";
+    return $this->config()->getAsString('locale/dateLong', 'jS F Y');
   }
 
   /**
@@ -497,6 +497,28 @@ class Locale extends Core implements Interfaces\LocaleInterface
   }
 
   /**
+   * [Description for getDecimalsSeparator]
+   *
+   * @return string
+   * 
+   */
+  public function getDecimalsSeparator(): string
+  {
+    return $this->config()->getAsString('locale/decimalsSeparator', '.');
+  }
+
+  /**
+   * [Description for getThousandsSeparator]
+   *
+   * @return string
+   * 
+   */
+  public function getThousandsSeparator(): string
+  {
+    return $this->config()->getAsString('locale/thousandsSeparator', ' ');
+  }
+
+  /**
    * [Description for getCurrencySymbol]
    *
    * @return string
@@ -504,8 +526,7 @@ class Locale extends Core implements Interfaces\LocaleInterface
    */
   public function getCurrencySymbol(): string
   {
-    $symbol = $this->config()->getAsString('locale/currency/symbol');
-    return empty($symbol) ? "€" : $symbol;
+    return $this->config()->getAsString('locale/currencySymbol', '€');
   }
 
   /**
@@ -516,8 +537,7 @@ class Locale extends Core implements Interfaces\LocaleInterface
    */
   public function getCurrencyIsoCode(): string
   {
-    $isoCode = $this->config()->getAsString('locale/currency/isoCode');
-    return empty($isoCode) ? "EUR" : $isoCode;
+    return $this->config()->getAsString('locale/currencyIsoCode', 'EUR');
   }
 
   /**
@@ -535,9 +555,27 @@ class Locale extends Core implements Interfaces\LocaleInterface
       "dateLongFormat" => $this->getDateLongFormat(),
       "timeFormat" => $this->getTimeFormat(),
       "datetimeFormat" => $this->getDatetimeFormat(),
+      "decimalsSeparator" => $this->getDecimalsSeparator(),
+      "thousandsSeparator" => $this->getThousandsSeparator(),
       "currencySymbol" => $this->getCurrencySymbol(),
       "currencyIsoCode" => $this->getCurrencyIsoCode(),
     ];
+  }
+
+  /**
+   * [Description for formatNumber]
+   *
+   * @param string|float $value
+   * @param string $symbol
+   * 
+   * @return string
+   * 
+   */
+  public function formatNumber(string|float $value, int $decimals): string
+  {
+    $decimalsSeparator = $this->getDecimalsSeparator();
+    $thousandsSeparator = $this->getThousandsSeparator();
+    return number_format((float) $value, $decimals, $decimalsSeparator, $thousandsSeparator);
   }
 
   /**
@@ -552,7 +590,7 @@ class Locale extends Core implements Interfaces\LocaleInterface
   public function formatCurrency(string|float $value, string $symbol = ''): string
   {
     if ($symbol == '') $symbol = $this->getCurrencySymbol();
-    return number_format((float) $value, 2, ",", " ") . ' ' . $symbol;
+    return $this->formatNumber($value, 2) . ' ' . $symbol;
   }
 
   /**
@@ -567,7 +605,7 @@ class Locale extends Core implements Interfaces\LocaleInterface
   {
     if (is_string($dateOrTimestamp)) $ts = strtotime($dateOrTimestamp);
     else $ts = $dateOrTimestamp;
-    return $ts . '-' . date($this->getDateShortFormat(), $ts);
+    return date($this->getDateShortFormat(), $ts);
   }
 
   /**

@@ -17,6 +17,7 @@ class Env extends Core implements Interfaces\EnvInterface
   public string $srcFolder = '';
   public string $releaseFolder = '.';
 
+  public string $uploadUrl = '';
   public string $assetsUrl = '';
 
   public string $requestedUri = "";
@@ -37,6 +38,7 @@ class Env extends Core implements Interfaces\EnvInterface
     $this->uploadFolder = $this->config()->getAsString('uploadFolder');
     if (empty($this->uploadFolder)) $this->secureFolder = $this->projectFolder . '/upload';
 
+    $this->uploadUrl = $this->config()->getAsString('uploadUrl');
     $this->assetsUrl = $this->config()->getAsString('assetsUrl');
 
     if (php_sapi_name() !== 'cli') {
