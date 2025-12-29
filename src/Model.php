@@ -805,9 +805,35 @@ class Model extends Core implements Interfaces\ModelInterface
     );
   }
 
+  /**
+   * [Description for getLookupValue]
+   *
+   * @param array $dataRaw
+   * 
+   * @return string
+   * 
+   */
   public function getLookupValue(array $dataRaw): string
   {
     return trim($dataRaw['_LOOKUP']) ?? '[empty]';
+  }
+
+  /**
+   * [Description for getItemDetailUrl]
+   *
+   * @param int $id
+   * 
+   * @return string
+   * 
+   */
+  public function getItemDetailUrl(int $id): string
+  {
+    $urlDetail = $this->lookupUrlDetail ?? '';
+    if (!empty($urlDetail)) {
+      return str_replace('{%ID%}', (string)$id, $urlDetail);
+    } else {
+      return '';
+    }
   }
 
   /**

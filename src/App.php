@@ -226,12 +226,12 @@ class App extends Core implements Interfaces\AppInterface
   }
 
   /**
-   * [Description for getNotificationsCount]
+   * [Description for getSidebarBadgeNumber]
    *
    * @return int
    * 
    */
-  public function getNotificationsCount(): int
+  public function getSidebarBadgeNumber(): int
   {
     return 0;
   }

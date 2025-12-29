@@ -54,6 +54,7 @@ interface ModelInterface
   public function diffRecords(array $record1, array $record2): array;
   public function getById(int $id);
   public function getLookupSqlValue(string $tableAlias = ''): string;
+  public function getItemDetailUrl(int $id): string;
   public function encryptPassword(string $original): string;
 
   //////////////////////////////////////////////////////////////////
