@@ -11,7 +11,7 @@ class Form implements \JsonSerializable
     'title' => '',
     'subTitle' => '',
     'showSaveButton' => true,
-    'showCopyButton' => true,
+    'showCopyButton' => false,
     'showDeleteButton' => true,
     'saveButtonText' => '',
     'addButtonText' => '',
@@ -76,6 +76,38 @@ class Form implements \JsonSerializable
   public function toArray(): array
   {
     return $this->jsonSerialize();
+  }
+
+  /**
+   * [Description for show]
+   *
+   * @param array $what
+   * 
+   * @return void
+   * 
+   */
+  public function show(array $what): void
+  {
+    foreach ($what as $item) {
+      $item = 'show' . strtoupper(substr($item, 0, 1)) . substr($item, 1);
+      if (isset($this->ui[$item])) $this->ui[$item] = true;
+    }
+  }
+
+  /**
+   * [Description for hide]
+   *
+   * @param array $what
+   * 
+   * @return void
+   * 
+   */
+  public function hide(array $what): void
+  {
+    foreach ($what as $item) {
+      $item = 'show' . strtoupper(substr($item, 0, 1)) . substr($item, 1);
+      if (isset($this->ui[$item])) $this->ui[$item] = false;
+    }
   }
 
 }
