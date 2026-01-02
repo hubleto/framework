@@ -583,7 +583,8 @@ class Model extends Core implements Interfaces\ModelInterface
   }
 
   /**
-   * [Description for describeTable]
+   * Returns a table description of the model.
+   * The descriptions contains configuration for table UI, columns and permissions.
    *
    * @return \Hubleto\Framework\Description\Table
    * 
@@ -676,7 +677,8 @@ class Model extends Core implements Interfaces\ModelInterface
   }
 
   /**
-   * [Description for convertRecordsToTree]
+   * Used to convert flat list of records into tree structure.
+   * Suitable for models having parent-child relationship.
    *
    * @param array $records
    * @param int $idParent
@@ -705,7 +707,7 @@ class Model extends Core implements Interfaces\ModelInterface
   }
 
   /**
-   * [Description for loadTableData]
+   * Loads records to be displayed in table.
    *
    * @param string $fulltextSearch
    * @param array $columnSearch
@@ -727,6 +729,8 @@ class Model extends Core implements Interfaces\ModelInterface
     string $dataView = ''
   ): array
   {
+    $this->record->maxReadLevel = $this->getMaxReadLevel();
+
     $query = $this->record->prepareReadQuery();
     $query = $this->record->addFulltextSearchToQuery($query, $fulltextSearch);
     $query = $this->record->addColumnSearchToQuery($query, $columnSearch);
@@ -834,6 +838,19 @@ class Model extends Core implements Interfaces\ModelInterface
     } else {
       return '';
     }
+  }
+
+  /**
+   * Returns maxReadLevel value used in loadTableData() method.
+   * By default is set to 0 to save bandwidth when loading data.
+   * Override this method in your model if you need to load more details.
+   *
+   * @return int
+   * 
+   */
+  public function getMaxReadLevel(): int
+  {
+    return 0;
   }
 
   /**

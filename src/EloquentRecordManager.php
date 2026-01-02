@@ -14,7 +14,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   public Loader $main;
   public Model $model;
 
-  protected int $maxReadLevel = 2;
+  public int $maxReadLevel = 2;
 
   public function __construct(array $attributes = [])
   {
