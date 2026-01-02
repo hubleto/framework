@@ -15,7 +15,7 @@ interface RecordManagerInterface {
    * @param int $level Leave empty for default behaviour.
    * @return mixed Object for reading records.
    */
-  public function prepareReadQuery(mixed $query = null, int $level = 0): mixed;
+  public function prepareReadQuery(mixed $query = null, int $level = 0, array|null $includeRelations = null): mixed;
   public function recordGet(callable|null $queryModifierCallback = null): array;
   public function addFulltextSearchToQuery(mixed $query, string $fulltextSearch): mixed;
   public function addColumnSearchToQuery(mixed $query, array $columnSearch): mixed;

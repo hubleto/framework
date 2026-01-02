@@ -22,9 +22,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   }
 
   /**
-   * [Description for getPermissions]
+   * Gets permissions for the given record.
    *
-   * @param array $record
+   * @param array $record Record to check permissions for.
    *
    * @return array
    *
@@ -35,15 +35,16 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   }
 
   /**
-   * [Description for prepareReadQuery]
+   * Prepares the read query for fetching records.
    *
-   * @param mixed|null $query
-   * @param int $level
+   * @param mixed|null $query Leave empty for default behaviour.
+   * @param int $level Level of recursion for including relations.
+   * @param array|null $includeRelations If not null, only these relations will be included in the read query.
    *
    * @return mixed
    *
    */
-  public function prepareReadQuery(mixed $query = null, int $level = 0): mixed
+  public function prepareReadQuery(mixed $query = null, int $level = 0, array|null $includeRelations = null): mixed
   {
     if ($query === null) $query = $this;
 
@@ -113,6 +114,8 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     // TODO: Toto je pravdepodobne potencialna SQL injection diera. Opravit.
     $query = $query->selectRaw(join(",\n", $selectRaw));
     foreach ($this->model->relations as $relName => $relDefinition) {
+      if (is_array($includeRelations) && !in_array($relName, $includeRelations)) continue;
+
       $relModel = new $relDefinition[1]();
 
       if ($level < $this->maxReadLevel) {
@@ -147,9 +150,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   }
 
   /**
-   * [Description for prepareLookupQuery]
+   * Prepares the lookup query for fetching records.
    *
-   * @param string $search
+   * @param string $search String to filter lookup values.
    *
    * @return mixed
    *

@@ -729,9 +729,10 @@ class Model extends Core implements Interfaces\ModelInterface
     string $dataView = ''
   ): array
   {
-    $this->record->maxReadLevel = $this->getMaxReadLevel();
+    $this->record->maxReadLevel = $this->getMaxReadLevelForLoadTableData();
+    $includeRelations = $this->getRelationsIncludedInLoadTableData();
 
-    $query = $this->record->prepareReadQuery();
+    $query = $this->record->prepareReadQuery(null, 0, $includeRelations);
     $query = $this->record->addFulltextSearchToQuery($query, $fulltextSearch);
     $query = $this->record->addColumnSearchToQuery($query, $columnSearch);
     $query = $this->record->addOrderByToQuery($query, $orderBy);
@@ -848,9 +849,22 @@ class Model extends Core implements Interfaces\ModelInterface
    * @return int
    * 
    */
-  public function getMaxReadLevel(): int
+  public function getMaxReadLevelForLoadTableData(): int
   {
     return 0;
+  }
+
+  /**
+   * Returns list of relations to be included when loading table data.
+   * By default, empty array is returned, which means no relations are included.
+   * Override this method in your model if you need to specify particular relations.
+   *
+   * @return array
+   * 
+   */
+  public function getRelationsIncludedInLoadTableData(): array|null
+  {
+    return null;
   }
 
   /**

@@ -14,8 +14,8 @@ class RecordManager extends EloquentRecordManager
     return [false, false, false, false];
   }
 
-  public function prepareReadQuery(mixed $query = null, int $level = 0): mixed
+  public function prepareReadQuery(mixed $query = null, int $level = 0, array|null $includeRelations = null): mixed
   {
-    return parent::prepareReadQuery($query, $level);
+    return parent::prepareReadQuery($query, $level, $includeRelations);
   }
 }
