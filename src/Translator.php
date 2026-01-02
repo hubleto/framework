@@ -53,8 +53,6 @@ class Translator implements Interfaces\TranslatorInterface
     $dictionaryFile = $this->getDictionaryFilename($core, $language, $context);
     $dictionary = $this->loadFullDictionary($core, $language);
     $dictionary[$context][$contextInner][$string] = '';
-      if ($string == 'Export to CSV') echo '-'.$dictionaryFile;
-
 
     if (is_file($dictionaryFile)) {
       @file_put_contents(
@@ -155,14 +153,20 @@ class Translator implements Interfaces\TranslatorInterface
     try {
       $this->loadDictionary($service, $language, $context);
 
+      if ($debugTranslations) {
+        $languages = $service->locale()->getAvailableLanguages();
+        foreach ($languages as $tmpLanguage) {
+          if (!isset($this->dictionary[$tmpLanguage][$context][$contextInner][$string])) {
+            $this->addToDictionary($service, $tmpLanguage, $context, $contextInner, $string);
+          }
+        }
+      }
+
       if (isset($this->dictionary[$language][$context][$contextInner][$string])) {
         $translated = (string) $this->dictionary[$language][$context][$contextInner][$string];
         if ($translated == '' && $debugTranslations) $translated = '** ' . $string . ' **';
-      } else {
-        $this->addToDictionary($service, $language, $context, $contextInner, $string);
-        if ($debugTranslations) {
-          $translated = 't(' . $context . ':' . $contextInner . '; ' . $string . ')';
-        }
+      } else if ($debugTranslations) {
+        $translated = 't(' . $context . ':' . $contextInner . '; ' . $string . ')';
       }
     } catch (\Throwable $e) {
       $translated = $e->getMessage() . $e->getTraceAsString();

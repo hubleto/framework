@@ -16,6 +16,13 @@ class Locale extends Core implements Interfaces\LocaleInterface
     $this->locale = $this->config()->getAsArray('locale');
   }
 
+  public function getAvailableLanguages(): array
+  {
+    return $this->config()->getAsArray('availableLanguages', [
+      "en" => [ "flagImage" => "en.jpg", "name" => "English" ],
+    ]);
+  }
+
   public function getTimezones(): array
   {
     return [
