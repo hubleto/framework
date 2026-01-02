@@ -571,7 +571,7 @@ class Locale extends Core implements Interfaces\LocaleInterface
    * @return string
    * 
    */
-  public function formatNumber(string|float $value, int $decimals): string
+  public function formatNumber(null|string|float $value, int $decimals): string
   {
     $decimalsSeparator = $this->getDecimalsSeparator();
     $thousandsSeparator = $this->getThousandsSeparator();
@@ -587,8 +587,9 @@ class Locale extends Core implements Interfaces\LocaleInterface
    * @return string
    * 
    */
-  public function formatCurrency(string|float $value, string $symbol = ''): string
+  public function formatCurrency(null|string|float $value, null|string $symbol = ''): string
   {
+    $symbol = (string) $symbol;
     if ($symbol == '') $symbol = $this->getCurrencySymbol();
     return $this->formatNumber($value, 2) . ' ' . $symbol;
   }
@@ -601,10 +602,10 @@ class Locale extends Core implements Interfaces\LocaleInterface
    * @return string
    * 
    */
-  public function formatDateShort(string|int $dateOrTimestamp): string
+  public function formatDateShort(null|string|int $dateOrTimestamp): string
   {
     if (is_string($dateOrTimestamp)) $ts = strtotime($dateOrTimestamp);
-    else $ts = $dateOrTimestamp;
+    else $ts = (int) $dateOrTimestamp;
     return date($this->getDateShortFormat(), $ts);
   }
 
@@ -616,10 +617,10 @@ class Locale extends Core implements Interfaces\LocaleInterface
    * @return string
    * 
    */
-  public function formatDateLong(string|int $dateOrTimestamp): string
+  public function formatDateLong(null|string|int $dateOrTimestamp): string
   {
     if (is_string($dateOrTimestamp)) $ts = strtotime($dateOrTimestamp);
-    else $ts = $dateOrTimestamp;
+    else $ts = (int) $dateOrTimestamp;
     return date($this->getDateLongFormat(), $ts);
   }
 
@@ -631,10 +632,10 @@ class Locale extends Core implements Interfaces\LocaleInterface
    * @return string
    * 
    */
-  public function formatDatetime(string|int $datetimeOrTimestamp): string
+  public function formatDatetime(null|string|int $datetimeOrTimestamp): string
   {
     if (is_string($datetimeOrTimestamp)) $ts = strtotime($datetimeOrTimestamp);
-    else $ts = $datetimeOrTimestamp;
+    else $ts = (int) $datetimeOrTimestamp;
     return date($this->getDatetimeFormat(), $ts);
   }
 
@@ -647,10 +648,10 @@ class Locale extends Core implements Interfaces\LocaleInterface
    * @return string
    * 
    */
-  public function formatTime(string|int $timeOrTimestamp, bool $addSeconds = true): string
+  public function formatTime(null|string|int $timeOrTimestamp, bool $addSeconds = true): string
   {
     if (is_string($timeOrTimestamp)) $ts = strtotime($timeOrTimestamp);
-    else $ts = $timeOrTimestamp;
+    else $ts = (int) $timeOrTimestamp;
     return date($this->getTimeFormat($addSeconds), $ts);
   }
 
