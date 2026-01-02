@@ -132,7 +132,6 @@ class Translator implements Interfaces\TranslatorInterface
   
     $language = $service->authProvider()->getUserLanguage();
     if (empty($language) || strlen($language) !== 2) $language = 'en';
-    if ($language == 'en') return $string;
 
     if (!empty($context)) {
       if (strpos($context, ':') === false) { // $context is given but contains only $contextInner
@@ -148,6 +147,8 @@ class Translator implements Interfaces\TranslatorInterface
 
     $debugTranslations = $service->config()->getAsBool('debugTranslations');
 
+    if ($language == 'en' && !$debugTranslations) return $string;
+
     $translated = '';
 
     try {
@@ -155,7 +156,9 @@ class Translator implements Interfaces\TranslatorInterface
 
       if ($debugTranslations) {
         $languages = $service->locale()->getAvailableLanguages();
-        foreach ($languages as $tmpLanguage) {
+        foreach ($languages as $tmpLanguage => $tmpLanguageData) {
+          if ($tmpLanguage == 'en') continue;
+          $this->loadDictionary($service, $tmpLanguage, $context);
           if (!isset($this->dictionary[$tmpLanguage][$context][$contextInner][$string])) {
             $this->addToDictionary($service, $tmpLanguage, $context, $contextInner, $string);
           }
