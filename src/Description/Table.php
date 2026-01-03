@@ -115,6 +115,19 @@ class Table implements \JsonSerializable
   }
 
   /**
+   * [Description for showOnlyColumns]
+   *
+   * @param array $columnNames
+   * 
+   * @return void
+   * 
+   */
+  public function addColumn(string $colName, mixed $column): void
+  {
+    $this->columns[$colName] = $column;
+  }
+
+  /**
    * [Description for hideColumns]
    *
    * @param array $columnNames

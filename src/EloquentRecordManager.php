@@ -35,6 +35,135 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   }
 
   /**
+   * [Description for prepareSelectsForReadQuery]
+   *
+   * @param mixed|null $query
+   * @param int $level
+   * @param array|null|null $includeRelations
+   * 
+   * @return array
+   * 
+   */
+  public function prepareSelectsForReadQuery(mixed $query = null, int $level = 0, array|null $includeRelations = null): array
+  {
+    $selects = [];
+
+    foreach ($this->model->getColumns() as $colName => $column) {
+      $colDefinition = $column->toArray();
+      if ((bool) ($colDefinition['hidden'] ?? false)) continue;
+
+      if ($colDefinition['type'] == 'virtual') {
+        $virtSql = $column->getProperty('sql');
+        if (!empty($virtSql)) $selects[] = '(' . $virtSql . ') as `' . $colName . '`';
+      } else {
+        $selects[] = $this->model->table . '.' . $colName;
+
+        if (isset($colDefinition['enumValues']) && is_array($colDefinition['enumValues'])) {
+          $tmpSelect = "CASE";
+          foreach ($colDefinition['enumValues'] as $eKey => $eVal) {
+            $tmpSelect .= " WHEN `{$this->model->table}`.`{$colName}` = '{$eKey}' THEN '{$eVal}'";
+          }
+          $tmpSelect .= " ELSE '' END AS `_ENUM[{$colName}]`";
+
+          $selects[] = $tmpSelect;
+        }
+      }
+    }
+
+    $selects[] = $level . ' as _LEVEL';
+    $selects[] = '(' . str_replace('{%TABLE%}', $this->model->table, $this->model->getLookupSqlValue()) . ') as _LOOKUP';
+
+    // LOOKUPS and RELATIONSHIPS
+    foreach ($this->model->getColumns() as $columnName => $column) {
+      $colDefinition = $column->toArray();
+      if ($colDefinition['type'] == 'lookup') {
+        $lookupModel = $this->model->getModel($colDefinition['model']);
+
+        $selects[] =
+          "(select _LOOKUP from ("
+          . $lookupModel->record->prepareLookupQuery('')->toRawSql()
+          . ") dummy where `id` = `{$this->table}`.`{$columnName}`) as `_LOOKUP[{$columnName}]`"
+        ;
+        $selects[] =
+          "(select _LOOKUP_CLASS from ("
+          . $lookupModel->record->prepareLookupQuery('')->toRawSql()
+          . ") dummy where `id` = `{$this->table}`.`{$columnName}`) as `_LOOKUP_CLASS[{$columnName}]`"
+        ;
+        $selects[] =
+          "(select _LOOKUP_COLOR from ("
+          . $lookupModel->record->prepareLookupQuery('')->toRawSql()
+          . ") dummy where `id` = `{$this->table}`.`{$columnName}`) as `_LOOKUP_COLOR[{$columnName}]`"
+        ;
+      }
+    }
+
+    return $selects;
+  }
+
+  /**
+   * [Description for prepareJoinsForReadQuery]
+   *
+   * @param mixed|null $query
+   * @param int $level
+   * @param array|null|null $includeRelations
+   * 
+   * @return array
+   * 
+   */
+  public function prepareJoinsForReadQuery(mixed $query = null, int $level = 0, array|null $includeRelations = null): array
+  {
+    $joins = [];
+
+    // LOOKUPS and RELATIONSHIPS
+    foreach ($this->model->getColumns() as $columnName => $column) {
+      $colDefinition = $column->toArray();
+      if ($colDefinition['type'] == 'lookup') {
+        $lookupModel = $this->model->getModel($colDefinition['model']);
+        $lookupDatabase = $lookupModel->record->getConnection()->getDatabaseName();
+        $lookupTableName = $lookupModel->getFullTableSqlName();
+        $joinAlias = 'join_' . $columnName;
+
+        $joins[] = [
+          $lookupDatabase . '.' . $lookupTableName . ' as ' . $joinAlias,
+          $joinAlias . '.id',
+          '=',
+          $this->table . '.' . $columnName
+        ];
+      }
+    }
+
+    return $joins;
+  }
+
+  /**
+   * [Description for prepareRelationsForReadQuery]
+   *
+   * @param mixed|null $query
+   * @param int $level
+   * @param array|null|null $includeRelations
+   * 
+   * @return array
+   * 
+   */
+  public function prepareRelationsForReadQuery(mixed $query = null, int $level = 0, array|null $includeRelations = null): mixed
+  {
+
+    foreach ($this->model->relations as $relName => $relDefinition) {
+      if (is_array($includeRelations) && !in_array($relName, $includeRelations)) continue;
+
+      $relModel = new $relDefinition[1]();
+
+      if ($level < $this->maxReadLevel) {
+        $query->with([$relName => function($q) use($relModel, $level) {
+          return $relModel->record->prepareReadQuery($q, $level + 1);
+        }]);
+      }
+    }
+
+    return $query;
+  }
+
+  /**
    * Prepares the read query for fetching records.
    *
    * @param mixed|null $query Leave empty for default behaviour.
@@ -48,86 +177,17 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   {
     if ($query === null) $query = $this;
 
-    $selectRaw = [];
-    $joins = [];
-
-    foreach ($this->model->getColumns() as $colName => $column) {
-      $colDefinition = $column->toArray();
-      if ((bool) ($colDefinition['hidden'] ?? false)) continue;
-
-      if ($colDefinition['type'] == 'virtual') {
-        $virtSql = $column->getProperty('sql');
-        if (!empty($virtSql)) $selectRaw[] = '(' . $virtSql . ') as `' . $colName . '`';
-      } else {
-        $selectRaw[] = $this->model->table . '.' . $colName;
-
-        if (isset($colDefinition['enumValues']) && is_array($colDefinition['enumValues'])) {
-          $tmpSelect = "CASE";
-          foreach ($colDefinition['enumValues'] as $eKey => $eVal) {
-            $tmpSelect .= " WHEN `{$this->model->table}`.`{$colName}` = '{$eKey}' THEN '{$eVal}'";
-          }
-          $tmpSelect .= " ELSE '' END AS `_ENUM[{$colName}]`";
-
-          $selectRaw[] = $tmpSelect;
-        }
-      }
-    }
-
-    $selectRaw[] = $level . ' as _LEVEL';
-    $selectRaw[] = '(' . str_replace('{%TABLE%}', $this->model->table, $this->model->getLookupSqlValue()) . ') as _LOOKUP';
-
-    // LOOKUPS and RELATIONSHIPS
-    foreach ($this->model->getColumns() as $columnName => $column) {
-      $colDefinition = $column->toArray();
-      if ($colDefinition['type'] == 'lookup') {
-        $lookupModel = $this->model->getModel($colDefinition['model']);
-        // $lookupConnection = $lookupModel->record->getConnectionName();
-        $lookupDatabase = $lookupModel->record->getConnection()->getDatabaseName();
-        $lookupTableName = $lookupModel->getFullTableSqlName();
-        $joinAlias = 'join_' . $columnName;
-
-        $selectRaw[] =
-          "(select _LOOKUP from ("
-          . $lookupModel->record->prepareLookupQuery('')->toRawSql()
-          . ") dummy where `id` = `{$this->table}`.`{$columnName}`) as `_LOOKUP[{$columnName}]`"
-        ;
-        $selectRaw[] =
-          "(select _LOOKUP_CLASS from ("
-          . $lookupModel->record->prepareLookupQuery('')->toRawSql()
-          . ") dummy where `id` = `{$this->table}`.`{$columnName}`) as `_LOOKUP_CLASS[{$columnName}]`"
-        ;
-        $selectRaw[] =
-          "(select _LOOKUP_COLOR from ("
-          . $lookupModel->record->prepareLookupQuery('')->toRawSql()
-          . ") dummy where `id` = `{$this->table}`.`{$columnName}`) as `_LOOKUP_COLOR[{$columnName}]`"
-        ;
-
-        $joins[] = [
-          $lookupDatabase . '.' . $lookupTableName . ' as ' . $joinAlias,
-          $joinAlias.'.id',
-          '=',
-          $this->table.'.'.$columnName
-        ];
-      }
-    }
+    $selects = $this->prepareSelectsForReadQuery($query, $level, $includeRelations);
+    $joins = $this->prepareJoinsForReadQuery($query, $level, $includeRelations);
 
     // TODO: Toto je pravdepodobne potencialna SQL injection diera. Opravit.
-    $query = $query->selectRaw(join(",\n", $selectRaw));
-    foreach ($this->model->relations as $relName => $relDefinition) {
-      if (is_array($includeRelations) && !in_array($relName, $includeRelations)) continue;
-
-      $relModel = new $relDefinition[1]();
-
-      if ($level < $this->maxReadLevel) {
-        $query->with([$relName => function($q) use($relModel, $level) {
-          return $relModel->record->prepareReadQuery($q, $level + 1);
-        }]);
-      }
-    }
+    $query = $query->selectRaw(join(",\n", $selects));
 
     foreach ($joins as $join) {
       $query->leftJoin($join[0], $join[1], $join[2], $join[3]);
     }
+
+    $query = $this->prepareRelationsForReadQuery($query, $level, $includeRelations);
 
     return $query;
   }
