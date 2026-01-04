@@ -441,7 +441,12 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     )->toArray();
 
     foreach ($data['data'] as $key => $record) {
-      $data['data'][$key]['_PERMISSIONS'] = $this->getPermissions($record);
+      $permissions = $this->getPermissions($record);
+      if (!$permissions[1]) {
+        $data['data'][$key] = [ '_PERMISSIONS' => $permissions ];
+      } else {
+        $data['data'][$key]['_PERMISSIONS'] = $permissions;
+      }
     }
 
     // Laravel pagination
