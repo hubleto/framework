@@ -884,87 +884,90 @@ class Model extends Core implements Interfaces\ModelInterface
   // Callbacks
 
   /**
-   * [Description for onBeforeCreate]
-   *
-   * @param array $record
-   * 
-   * @return array
-   * 
+   * onBeforeCreate
+   * @param array<string, mixed> $record
+   * @return array<string, mixed>
+   * @throws \Hubleto\Framework\Exceptions\RecordSaveException
    */
   public function onBeforeCreate(array $record): array
   {
-    $this->hookManager()->run('model:on-before-create', [$this, $record]);
+    $this->hookManager()->run('model:on-before-create', [
+      'model' => $this,
+      'record' => $record
+    ]);
     return $record;
   }
 
   /**
-   * [Description for onBeforeUpdate]
-   *
-   * @param array $record
-   * 
-   * @return array
-   * 
+   * onBeforeUpdate
+   * @param array<string, mixed> $record
+   * @return array<string, mixed>
    */
   public function onBeforeUpdate(array $record): array
   {
-    $this->hookManager()->run('model:on-before-update', [$this, $record]);
+    $this->hookManager()->run('model:on-before-update', [
+      'model' => $this,
+      'record' => $record
+    ]);
     return $record;
   }
 
   /**
-   * [Description for onAfterCreate]
-   *
-   * @param array $savedRecord
-   * 
-   * @return array
-   * 
-   */
-  public function onAfterCreate(array $savedRecord): array
-  {
-    $this->hookManager()->run('model:on-after-create', [$this, $savedRecord]);
-    return $savedRecord;
-  }
-
-  /**
-   * [Description for onAfterUpdate]
-   *
-   * @param array $originalRecord
-   * @param array $savedRecord
-   * 
-   * @return array
-   * 
-   */
-  public function onAfterUpdate(array $originalRecord, array $savedRecord): array
-  {
-    $this->hookManager()->run('model:on-after-update', [$this, $originalRecord, $savedRecord]);
-    return $savedRecord;
-  }
-
-  /**
-   * [Description for onBeforeDelete]
-   *
+   * onBeforeDelete
    * @param int $id
-   * 
    * @return int
-   * 
    */
   public function onBeforeDelete(int $id): int
   {
-    $this->hookManager()->run('model:on-before-delete', [$this, $id]);
+    $this->hookManager()->run('model:on-before-delete', [
+      'model' => $this,
+      'id' => $id
+    ]);
     return $id;
   }
 
   /**
-   * [Description for onAfterDelete]
-   *
+   * onAfterCreate
+   * @param array<string, mixed> $originalRecord
+   * @param array<string, mixed> $savedRecord
+   * @return array<string, mixed>
+   */
+  public function onAfterCreate(array $savedRecord): array
+  {
+    $this->hookManager()->run('model:on-after-create', [
+      'model' => $this,
+      'savedRecord' => $savedRecord
+    ]);
+    return $savedRecord;
+  }
+
+  /**
+   * onAfterUpdate
+   * @param array<string, mixed> $originalRecord
+   * @param array<string, mixed> $savedRecord
+   * @return array<string, mixed>
+   */
+  public function onAfterUpdate(array $originalRecord, array $savedRecord): array
+  {
+    $this->hookManager()->run('model:on-after-update', [
+      'model' => $this,
+      'originalRecord' => $originalRecord,
+      'savedRecord' => $savedRecord
+    ]);
+    return $savedRecord;
+  }
+
+  /**
+   * onAfterDelete
    * @param int $id
-   * 
    * @return int
-   * 
    */
   public function onAfterDelete(int $id): int
   {
-    $this->hookManager()->run('model:on-after-delete', [$this, $id]);
+    $this->hookManager()->run('model:on-after-delete', [
+      'model' => $this,
+      'id' => $id
+    ]);
     return $id;
   }
 
@@ -978,7 +981,10 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function onAfterLoadRecord(array $record): array
   {
-    $this->hookManager()->run('model:on-after-load-records', [$this, $record]);
+    $this->hookManager()->run('model:on-after-load-record', [
+      'model' => $this,
+      'record' => $record
+    ]);
     return $record;
   }
 
@@ -992,7 +998,10 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function onAfterLoadRecords(array $records): array
   {
-    $this->hookManager()->run('model:on-after-load-record', [$this, $records]);
+    $this->hookManager()->run('model:on-after-load-records', [
+      'model' => $this,
+      'records' => $records
+    ]);
     return $records;
   }
 

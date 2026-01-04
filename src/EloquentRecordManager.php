@@ -2,6 +2,8 @@
 
 namespace Hubleto\Framework;
 
+use Hubleto\Framework\Exceptions\NotEnoughPermissionsException;
+
 /**
  * Record manager based on Laravel's Eloquent.
  */
@@ -439,13 +441,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     )->toArray();
 
     foreach ($data['data'] as $key => $record) {
-      $permissions = $this->getPermissions($record);
-      if (!$permissions[1]) {
-        // cannot read
-        unset($data['data'][$key]);
-      } else {
-        $data['data'][$key]['_PERMISSIONS'] = $permissions;
-      }
+      $data['data'][$key]['_PERMISSIONS'] = $this->getPermissions($record);
     }
 
     // Laravel pagination
@@ -470,7 +466,8 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     $permissions = $this->getPermissions($record);
     if (!$permissions[1]) {
       // cannot read
-      $record = [];
+      // $record = [];
+      throw new NotEnoughPermissionsException("Cannot read record. Not enough permissions.");
     };
 
     if ($record != []) {
@@ -577,7 +574,6 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    */
   public function recordUpdate(array $record, array $originalRecord = []): array
   {
-    // $originalRecord = $record;
     $record = $this->model->onBeforeUpdate($record);
     $normalizedRecord = $this->recordNormalize($record);
     $this->find((int) ($record['id'] ?? 0))->update($normalizedRecord);

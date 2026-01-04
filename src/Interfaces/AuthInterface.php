@@ -6,6 +6,7 @@ interface AuthInterface {
   public array $user { get; set; }
 
   public function init(): void;
+  public function normalizeUserProfile(array $user): array;
   public function getUserFromSession(): array;
   public function updateUserInSession(array $user): void;
   public function isUserInSession(): bool;
@@ -17,6 +18,7 @@ interface AuthInterface {
   public function forgotPassword(): void;
   public function resetPassword(): void;
   public function getUser(): array;
+  public function getUserFromDatabase(): array;
   public function getUserType(): int;
   public function getUserRoles(): array;
   public function userHasRole(int $idRole): bool;

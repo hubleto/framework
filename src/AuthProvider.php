@@ -24,29 +24,67 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
     $this->config()->set('language', $userLanguage);
   }
 
-  public function getUserFromSession(): array
+  /**
+   * [Description for normalizeUserProfile]
+   *
+   * @param array $user
+   * 
+   * @return array
+   * 
+   */
+  public function normalizeUserProfile(array $user): array
   {
-    $tmp = $this->sessionManager()->get('userProfile') ?? [];
     return [
-      'id' => (int) ($tmp['id'] ?? 0),
-      'email' => (string) ($tmp['email'] ?? ''),
-      'login' => (string) ($tmp['login'] ?? ''),
-      'is_active' => (bool) ($tmp['is_active'] ?? false),
+      'id' => (int) ($user['id'] ?? 0),
+      'email' => (string) ($user['email'] ?? ''),
+      'login' => (string) ($user['login'] ?? ''),
+      'is_active' => (bool) ($user['is_active'] ?? false),
     ];
   }
 
+  /**
+   * Get user information from the session.
+   *
+   * @return array
+   * 
+   */
+  public function getUserFromSession(): array
+  {
+    $tmp = $this->sessionManager()->get('userProfile') ?? [];
+    return $this->normalizeUserProfile($tmp);
+  }
+
+  /**
+   * [Description for updateUserInSession]
+   *
+   * @param array $user
+   * 
+   * @return void
+   * 
+   */
   public function updateUserInSession(array $user): void
   {
     $this->sessionManager()->set('userProfile', $user);
-    if ($this->logInfo) $this->logger()->info('Auth: updateUserInSession' . var_dump($user));
   }
 
+  /**
+   * [Description for isUserInSession]
+   *
+   * @return bool
+   * 
+   */
   public function isUserInSession(): bool
   {
     $user = $this->getUserFromSession();
     return isset($user['id']) && $user['id'] > 0;
   }
 
+  /**
+   * [Description for deleteSession]
+   *
+   * @return [type]
+   * 
+   */
   function deleteSession()
   {
     $this->sessionManager()->clear();
@@ -56,12 +94,26 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
     setcookie($this->sessionManager()->getSalt() . '-language', '', 0);
   }
 
+  /**
+   * [Description for signIn]
+   *
+   * @param array $user
+   * 
+   * @return [type]
+   * 
+   */
   public function signIn(array $user)
   {
     $this->user = $user;
     $this->updateUserInSession($user);
   }
 
+  /**
+   * [Description for signOut]
+   *
+   * @return [type]
+   * 
+   */
   public function signOut()
   {
     $this->deleteSession();
@@ -69,11 +121,25 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
     exit;
   }
 
+  /**
+   * [Description for createUserModel]
+   *
+   * @return Model
+   * 
+   */
   public function createUserModel(): Model
   {
     return $this->getModel(Models\User::class);
   }
 
+  /**
+   * [Description for findUsersByLogin]
+   *
+   * @param string $login
+   * 
+   * @return array
+   * 
+   */
   public function findUsersByLogin(string $login): array
   {
     return $this->createUserModel()->record
@@ -85,6 +151,15 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
     ;
   }
 
+  /**
+   * [Description for verifyPassword]
+   *
+   * @param mixed $password1
+   * @param mixed $password2
+   * 
+   * @return bool
+   * 
+   */
   public function verifyPassword($password1, $password2): bool
   {
     return password_verify($password1, $password2);
@@ -139,9 +214,33 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
 
   }
 
+  /**
+   * [Description for getUser]
+   *
+   * @return array
+   * 
+   */
   public function getUser(): array
   {
     return $this->getUserFromSession();
+  }
+
+  /**
+   * [Description for getUserFromDatabase]
+   *
+   * @return array
+   * 
+   */
+  public function getUserFromDatabase(): array
+  {
+    $mUser = $this->createUserModel();
+
+    return $this->normalizeUserProfile(
+      $mUser->record
+        ->where($mUser->table . '.id', $this->getUserId())
+        ->first()
+        ->toArray()
+    );
   }
 
   public function getUserType(): int
@@ -181,6 +280,12 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
   {
   }
 
+  /**
+   * [Description for getUserLanguage]
+   *
+   * @return string
+   * 
+   */
   public function getUserLanguage(): string
   {
     $user = $this->getUserFromSession() ?? [];
@@ -194,7 +299,16 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
       return $language;
     }
   }
-    public function setUserLanguage(string $language): void {
+
+  /**
+   * [Description for setUserLanguage]
+   *
+   * @param string $language
+   * 
+   * @return void
+   * 
+   */
+  public function setUserLanguage(string $language): void {
     $user = $this->getUser();
     $user['language'] = $language;
     $this->updateUserInSession($user);
