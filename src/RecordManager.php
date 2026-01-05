@@ -10,7 +10,8 @@ class RecordManager extends EloquentRecordManager
 
   public function getPermissions(array $record): array
   {
-    // by default, restrict all CRUD operations
+    // By default, restrict all CRUD operations
+    // You must implement your own logic to enable CRUD operations.
     return [false, false, false, false];
   }
 
