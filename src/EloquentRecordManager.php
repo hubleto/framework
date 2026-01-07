@@ -248,7 +248,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   /**
    * [Description for prepareLookupData]
    *
-   * @param array $dataRaw
+   * @param array $dataRaw List of raw records loaded from the database.
    *
    * @return array
    *
@@ -259,6 +259,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
 
     foreach ($dataRaw as $key => $value) {
       $data[$key]['_LOOKUP'] = $this->model->getLookupValue($value);
+      $data[$key]['_LOOKUP_DETAILS'] = $this->model->getLookupDetails($value);
       if (!empty($value['_LOOKUP_CLASS'])) $data[$key]['_LOOKUP_CLASS'] = $value['_LOOKUP_CLASS'];
       if (!empty($value['_LOOKUP_COLOR'])) $data[$key]['_LOOKUP_COLOR'] = $value['_LOOKUP_COLOR'];
       if (isset($value['id'])) {

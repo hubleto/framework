@@ -820,7 +820,20 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function getLookupValue(array $dataRaw): string
   {
-    return trim($dataRaw['_LOOKUP']) ?? '[empty]';
+    return trim($dataRaw['_LOOKUP'] ?? '') ?? '[empty]';
+  }
+
+  /**
+   * [Description for getLookupDetailValue]
+   *
+   * @param array $dataRaw
+   * 
+   * @return string
+   * 
+   */
+  public function getLookupDetails(array $dataRaw): string
+  {
+    return '';
   }
 
   /**
