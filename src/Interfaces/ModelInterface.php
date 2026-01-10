@@ -37,6 +37,7 @@ interface ModelInterface
   public function indexes(array $indexes = []): array;
   public function indexNames(): array;
   public function upgrades(): array;
+  public function getPermissions(array $record): array;
 
   //////////////////////////////////////////////////////////////////
   // Description API

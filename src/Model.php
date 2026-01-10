@@ -496,6 +496,19 @@ class Model extends Core implements Interfaces\ModelInterface
     return array_keys($this->indexNames());
   }
 
+  /**
+   * Gets permissions for the given record.
+   *
+   * @param array $record Record to check permissions for.
+   *
+   * @return array
+   *
+   */
+  public function getPermissions(array $record): array
+  {
+    return [true, true, true, true];
+  }
+
   //////////////////////////////////////////////////////////////////
   // Description API
 
@@ -561,23 +574,23 @@ class Model extends Core implements Interfaces\ModelInterface
       }
     }
 
-    $description->permissions = [
-      'canRead' => $this->permissionsManager()->granted($this->fullName . ':Read'),
-      'canCreate' => $this->permissionsManager()->granted($this->fullName . ':Create'),
-      'canUpdate' => $this->permissionsManager()->granted($this->fullName . ':Update'),
-      'canDelete' => $this->permissionsManager()->granted($this->fullName . ':Delete'),
-    ];
+    // $description->permissions = [
+    //   'canRead' => $this->permissionsManager()->granted($this->fullName . ':Read'),
+    //   'canCreate' => $this->permissionsManager()->granted($this->fullName . ':Create'),
+    //   'canUpdate' => $this->permissionsManager()->granted($this->fullName . ':Update'),
+    //   'canDelete' => $this->permissionsManager()->granted($this->fullName . ':Delete'),
+    // ];
 
     $description->includeRelations = array_keys($this->relations);
 
-    // model-based permissions sa uz nepouzivaju
-    // pouzivaju sa record-based permissions, vid recordManager->getPermissions()
-    $description->permissions = [
-      'canRead' => true,
-      'canCreate' => true,
-      'canUpdate' => true,
-      'canDelete' => true,
-    ];
+    // // model-based permissions sa uz nepouzivaju
+    // // pouzivaju sa record-based permissions, vid getPermissions()
+    // $description->permissions = [
+    //   'canRead' => true,
+    //   'canCreate' => true,
+    //   'canUpdate' => true,
+    //   'canDelete' => true,
+    // ];
 
     return $description;
   }
@@ -608,24 +621,24 @@ class Model extends Core implements Interfaces\ModelInterface
       $description->inputs[$columnName] = $this->describeInput($columnName);
     }
 
-    $description->permissions = [
-      'canRead' => $this->permissionsManager()->granted($this->fullName . ':Read'),
-      'canCreate' => $this->permissionsManager()->granted($this->fullName . ':Create'),
-      'canUpdate' => $this->permissionsManager()->granted($this->fullName . ':Update'),
-      'canDelete' => $this->permissionsManager()->granted($this->fullName . ':Delete'),
-    ];
+    // $description->permissions = [
+    //   'canRead' => $this->permissionsManager()->granted($this->fullName . ':Read'),
+    //   'canCreate' => $this->permissionsManager()->granted($this->fullName . ':Create'),
+    //   'canUpdate' => $this->permissionsManager()->granted($this->fullName . ':Update'),
+    //   'canDelete' => $this->permissionsManager()->granted($this->fullName . ':Delete'),
+    // ];
 
 
     $tag = $this->router()->urlParamAsString('tag');
 
-    // model-based permissions sa uz nepouzivaju
-    // pouzivaju sa record-based permissions, vid recordManager->getPermissions()
-    $description->permissions = [
-      'canRead' => true,
-      'canCreate' => true,
-      'canUpdate' => true,
-      'canDelete' => true,
-    ];
+    // // model-based permissions sa uz nepouzivaju
+    // // pouzivaju sa record-based permissions, vid getPermissions()
+    // $description->permissions = [
+    //   'canRead' => true,
+    //   'canCreate' => true,
+    //   'canUpdate' => true,
+    //   'canDelete' => true,
+    // ];
 
     $description->ui['moreActions'] = [
       [ 'title' => $this->translate('Export to CSV', [], 'hubleto-erp-loader:Model'), 'type' => 'stateChange', 'state' => 'showExportCsvScreen', 'value' => true ],

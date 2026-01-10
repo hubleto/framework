@@ -3,7 +3,8 @@
 namespace Hubleto\Framework;
 
 /**
- * Default manager for permissions and user access for Hubleto project.
+ * Default manager for permissions before executing any controller.
+ * *Note: Do not confuse with CRUD permissions implemented in model's getPermissions() method.*
  */
 class PermissionsManager extends Core implements Interfaces\PermissionsManagerInterface
 {

@@ -24,19 +24,6 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   }
 
   /**
-   * Gets permissions for the given record.
-   *
-   * @param array $record Record to check permissions for.
-   *
-   * @return array
-   *
-   */
-  public function getPermissions(array $record): array
-  {
-    return [true, true, true, true];
-  }
-
-  /**
    * [Description for prepareSelectsForReadQuery]
    *
    * @param mixed|null $query
@@ -442,7 +429,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     )->toArray();
 
     foreach ($data['data'] as $key => $record) {
-      $permissions = $this->getPermissions($record);
+      $permissions = $this->model->getPermissions($record);
       if (!$permissions[1]) {
         $data['data'][$key] = [ '_PERMISSIONS' => $permissions ];
       } else {
@@ -469,7 +456,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     $record = $query->first()?->toArray();
     if (!is_array($record)) $record = [];
 
-    $permissions = $this->getPermissions($record);
+    $permissions = $this->model->getPermissions($record);
     if (!$permissions[1]) {
       // cannot read
       // $record = [];
@@ -600,7 +587,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     $this->model->onBeforeDelete((int) $id);
 
     $record = $this->recordRead($this->where('id', $id));
-    $permissions = $this->getPermissions($record);
+    $permissions = $this->model->getPermissions($record);
     if (!$permissions[3]) { // cannot delete
       throw new Exceptions\NotEnoughPermissionsException("Cannot delete. Not enough permissions.");
     }
@@ -630,10 +617,10 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     $isCreate = ($id <= 0);
 
     if ($id <= 0) {
-      $permissions = $this->getPermissions($record);
+      $permissions = $this->model->getPermissions($record);
     } else {
       $originalRecord = $this->where($this->table . '.id', $id)->first()?->toArray();
-      $permissions = $this->getPermissions($originalRecord);
+      $permissions = $this->model->getPermissions($originalRecord);
     }
 
     if (
