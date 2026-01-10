@@ -21,12 +21,14 @@ class Save extends \Hubleto\Framework\Controllers\ApiController {
     $saveRelations = $this->router()->urlParamAsArray('saveRelations');
     $originalRecord = [];
 
+    $idRecord = (int) ($record['id'] ?? 0);
+
     if (empty($modelClass)) throw new \Exception("Master model is not specified.");
 
     $model = $this->getModel($modelClass);
 
-    if ($record["id"] > 0) {
-      $originalRecord = $model->record->find($record["id"])->toArray();
+    if ($idRecord > 0) {
+      $originalRecord = $model->record->find($idRecord)->toArray();
     } else {
       $originalRecord = $record;
     }

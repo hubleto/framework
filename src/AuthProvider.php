@@ -256,7 +256,8 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
     $roles = [];
 
     foreach ($user['ROLES'] ?? [] as $tmpRole) {
-      $roles[] = $tmpRole['id'];
+      if (is_array($tmpRole)) $roles[] = (int) $tmpRole['id'];
+      else $roles[] = (int) $tmpRole;
     }
 
     return $roles;

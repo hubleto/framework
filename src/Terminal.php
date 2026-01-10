@@ -19,6 +19,7 @@ class Terminal implements Interfaces\TerminalInterface
 
   public function echo(string $string): void
   {
+    if (!$this->output) return;
     if ($this->isLaunchedFromTerminal()) fwrite($this->output ?? STDOUT, $string);
     else echo $string;
   }
