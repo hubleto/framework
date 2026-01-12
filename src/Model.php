@@ -583,14 +583,12 @@ class Model extends Core implements Interfaces\ModelInterface
 
     $description->includeRelations = array_keys($this->relations);
 
-    // // model-based permissions sa uz nepouzivaju
-    // // pouzivaju sa record-based permissions, vid getPermissions()
-    // $description->permissions = [
-    //   'canRead' => true,
-    //   'canCreate' => true,
-    //   'canUpdate' => true,
-    //   'canDelete' => true,
-    // ];
+    $description->permissions = [
+      'canRead' => true,
+      'canCreate' => true,
+      'canUpdate' => true,
+      'canDelete' => true,
+    ];
 
     return $description;
   }
