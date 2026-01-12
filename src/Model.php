@@ -631,14 +631,12 @@ class Model extends Core implements Interfaces\ModelInterface
 
     $tag = $this->router()->urlParamAsString('tag');
 
-    // // model-based permissions sa uz nepouzivaju
-    // // pouzivaju sa record-based permissions, vid getPermissions()
-    // $description->permissions = [
-    //   'canRead' => true,
-    //   'canCreate' => true,
-    //   'canUpdate' => true,
-    //   'canDelete' => true,
-    // ];
+    $description->permissions = [
+      'canRead' => true,
+      'canCreate' => true,
+      'canUpdate' => true,
+      'canDelete' => true,
+    ];
 
     $description->ui['moreActions'] = [
       [ 'title' => $this->translate('Export to CSV', [], 'hubleto-erp-loader:Model'), 'type' => 'stateChange', 'state' => 'showExportCsvScreen', 'value' => true ],

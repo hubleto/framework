@@ -5,7 +5,7 @@ namespace Hubleto\Framework;
 class Terminal implements Interfaces\TerminalInterface
 {
 
-  public mixed $output = null;
+  public mixed $output = STDOUT;
 
   public function setOutput(mixed $output): void
   {
