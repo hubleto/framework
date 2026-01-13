@@ -127,7 +127,7 @@ class ConfigManager extends Core implements Interfaces\ConfigManagerInterface
   {
     try {
       if (!empty($path)) {
-        $this->db()->execute("delete from `config` where `path` like ?", [$path . '%']);
+        $this->db()->execute("delete from `config` where `path` = :path", ['path' => $path]);
       }
     } catch (\Exception $e) {
       if ($e->getCode() == '42S02') { // Base table not found
