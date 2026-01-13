@@ -334,7 +334,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
                     $q = $q->having('_LOOKUP[' . $columnName . ']', 'like', "%{$searchValue}%");
                   break;
                 }
-              } else if (in_array($column->getType(), ['int', 'decimal', 'float'])) {
+              } else if (in_array($column->getType(), ['int', 'decimal', 'decimal'])) {
                 $tmpSearchValue = trim(str_replace(' ', '', str_replace(',', '.', $searchValue)));
                 preg_match('/(.*?)([\\d\\.]+)/', $tmpSearchValue, $m);
 
