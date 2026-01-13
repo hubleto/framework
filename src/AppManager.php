@@ -137,6 +137,34 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
   }
 
   /**
+   * [Description for loadAppInfoFromPath]
+   *
+   * @param string $path
+   * 
+   * @return array|bool
+   * 
+   */
+  public function loadAppManifestFromPath(string $path): array|bool
+  {
+    $manifestFile = $path . '/manifest.yaml';
+    $loaderFile = $path . '/Loader.php';
+    if (@is_file($manifestFile) && @is_file($loaderFile)) {
+      $manifestFileContent = file_get_contents($manifestFile);
+      $manifest = (array) \Symfony\Component\Yaml\Yaml::parse((string) $manifestFileContent);
+      if (
+        str_starts_with($manifest['namespace'], 'Hubleto\\App\\')
+        && class_exists($manifest['namespace'] . '\\Loader')
+      ) {
+        return $manifest;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  /**
    * [Description for getAvailableApps]
    *
    * @return array
@@ -146,46 +174,67 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
   {
     $appNamespaces = [];
 
-    // community apps
-    $communityRepoFolder = $this->env()->srcFolder . '/../apps';
-    if (is_dir($communityRepoFolder)) {
-      foreach (scandir($communityRepoFolder) as $folder) {
-        $manifestFile = $communityRepoFolder . '/' . $folder . '/manifest.yaml';
-        if (@is_file($manifestFile)) {
-          $manifestFileContent = file_get_contents($manifestFile);
-          $manifest = (array) \Symfony\Component\Yaml\Yaml::parse((string) $manifestFileContent);
-          $appNamespaces['Hubleto\\App\\Community\\' . $folder] = $manifest;
+
+    $packages = \Composer\InstalledVersions::getInstalledPackages();
+    foreach ($packages as $package) {
+      $path = \Composer\InstalledVersions::getInstallPath($package);
+
+      if (is_dir($path . '/src')) {
+        // this package is a single app
+        $manifest = $this->loadAppManifestFromPath($path . '/src');
+        if (is_array($manifest)) {
+          $appNamespaces[$manifest['namespace']] = $manifest;
         }
       }
-    }
 
-    // appRepositories are supposed to be composer's 'vendor' folders
-    // Each repository is scanned, first for the vendor name ($vendorFolder), then for
-    // the app name ($appFolder).
-    // The $appFolder represents the Hubleto\App only if there is src/manifest.yaml file.
-    $appRepositories = $this->config()->getAsArray('appRepositories');
-    if (count($appRepositories) == 0) {
-      $appRepositories = [
-        $this->env()->projectFolder . '/vendor'
-      ];
-    }
-
-    foreach ($appRepositories as $repoFolder) {
-      if (!empty($repoFolder) && is_dir($repoFolder)) {
-        foreach (scandir($repoFolder) as $vendorFolder) {
-          if (in_array($vendorFolder, ['.', '..', 'hubleto'])) continue;
-          if (!is_dir($repoFolder . '/' . $vendorFolder)) continue;
-          foreach (scandir($repoFolder . '/' . $vendorFolder) as $appFolder) {
-            $manifestFile = $repoFolder . '/' . $vendorFolder . '/' . $appFolder . '/src/manifest.yaml';
-            if (@is_file($manifestFile)) {
-              $manifestFileContent = file_get_contents($manifestFile);
-              $manifest = (array) \Symfony\Component\Yaml\Yaml::parse((string) $manifestFileContent);
-              $appNamespaces[$manifest['namespace']] = $manifest;
-            }
+      if (is_dir($path . '/apps')) {
+        // this package is a repository of multiple app
+        foreach (scandir($path . '/apps') as $app) {
+          $manifest = $this->loadAppManifestFromPath($path . '/apps/' . $app);
+          if (is_array($manifest)) {
+            $appNamespaces[$manifest['namespace']] = $manifest;
           }
         }
       }
     }
+
+    // // community apps
+    // $communityRepoFolder = $this->env()->srcFolder . '/../apps';
+    // if (is_dir($communityRepoFolder)) {
+    //   foreach (scandir($communityRepoFolder) as $folder) {
+    //     $manifestFile = $communityRepoFolder . '/' . $folder . '/manifest.yaml';
+    //     if (@is_file($manifestFile)) {
+    //       $manifestFileContent = file_get_contents($manifestFile);
+    //       $manifest = (array) \Symfony\Component\Yaml\Yaml::parse((string) $manifestFileContent);
+    //       $appNamespaces['Hubleto\\App\\Community\\' . $folder] = $manifest;
+    //     }
+    //   }
+    // }
+
+    // // appRepositories are supposed to be composer's 'vendor' folders
+    // // Each repository is scanned, first for the vendor name ($vendorFolder), then for
+    // // the app name ($appFolder).
+    // // The $appFolder represents the Hubleto\App only if there is src/manifest.yaml and src/Loader.php file.
+    // $appRepositories = $this->config()->getAsArray('appRepositories');
+    // $appRepositories[] = $this->env()->projectFolder . '/vendor';
+
+    // foreach ($appRepositories as $repoFolder) {
+    //   if (!empty($repoFolder) && is_dir($repoFolder)) {
+    //     foreach (scandir($repoFolder) as $vendorFolder) {
+    //       if (in_array($vendorFolder, ['.', '..', 'hubleto'])) continue;
+    //       if (!is_dir($repoFolder . '/' . $vendorFolder)) continue;
+    //       foreach (scandir($repoFolder . '/' . $vendorFolder) as $appFolder) {
+    //         $manifestFile = $repoFolder . '/' . $vendorFolder . '/' . $appFolder . '/src/manifest.yaml';
+    //         $loaderFile = $repoFolder . '/' . $vendorFolder . '/' . $appFolder . '/src/Loader.php';
+    //         if (@is_file($manifestFile)) {
+    //           $manifestFileContent = file_get_contents($manifestFile);
+    //           $manifest = (array) \Symfony\Component\Yaml\Yaml::parse((string) $manifestFileContent);
+    //           $appNamespaces[$manifest['namespace']] = $manifest;
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
 
     return $appNamespaces;
   }
@@ -219,7 +268,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
    */
   public function createAppInstance(string $appNamespace): Interfaces\AppInterface
   {
-     if (!str_ends_with($appNamespace, '\Loader')) $appNamespace = $appNamespace . '\Loader';
+    if (!str_ends_with($appNamespace, '\Loader')) $appNamespace = $appNamespace . '\Loader';
     return $this->getService($appNamespace);
   }
 

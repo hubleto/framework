@@ -4,13 +4,13 @@ namespace Hubleto\Framework\Interfaces;
 
 interface AppInterface
 {
-  // public const DEFAULT_INSTALLATION_CONFIG = [
-  //   'sidebarOrder' => 500,
-  // ];
+  public const DEFAULT_INSTALLATION_CONFIG = [
+    'sidebarOrder' => 500,
+  ];
 
-  // public const APP_TYPE_COMMUNITY = 'community';
-  // public const APP_TYPE_PREMIUM = 'premium';
-  // public const APP_TYPE_EXTERNAL = 'external';
+  public const APP_TYPE_COMMUNITY = 'community';
+  public const APP_TYPE_ENTERPRISE = 'enterprise';
+  public const APP_TYPE_EXTERNAL = 'external';
 
   // public array $manifest { get; set; }
 
