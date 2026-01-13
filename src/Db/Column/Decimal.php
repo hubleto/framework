@@ -5,7 +5,7 @@ namespace Hubleto\Framework\Db\Column;
 class Decimal extends \Hubleto\Framework\Column
 {
 
-  protected string $type = 'float';
+  protected string $type = 'decimal';
   protected string $sqlDataType = 'decimal';
 
   public function normalize(mixed $value): mixed
