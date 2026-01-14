@@ -36,7 +36,7 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\AuthProvider
       'login' => (string) ($tmp['login'] ?? ''),
       'is_active' => (bool) ($tmp['is_active'] ?? false),
     ];
-    if ($this->logInfo) $this->logger()->info('Auth: getUserFromSession' . var_dump($userInSession));
+    if ($this->logInfo) $this->logger()->info('Auth: getUserFromSession' . print_r($userInSession, true));
     return $userInSession;
   }
 
@@ -164,7 +164,7 @@ class KeycloakOAuth2Provider extends \Hubleto\Framework\AuthProvider
 
           $authResult = $resourceOwner->toArray();
 
-          if ($this->logInfo) $this->logger()->info('Keycloak: authResult' . var_dump($authResult));
+          if ($this->logInfo) $this->logger()->info('Keycloak: authResult' . print_r($authResult, true));
 
         } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
 
