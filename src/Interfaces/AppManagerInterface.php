@@ -18,6 +18,7 @@ interface AppManagerInterface
   public function getInstalledApps(): array;
   public function getActivatedApp(): null|AppInterface;
   public function getApp(string $appNamespace): null|AppInterface;
+  public function getCommunityApp(string $appShortName): null|AppInterface;
   public function isAppInstalled(string $appNamespace): bool;
   public function isAppEnabled(string $appNamespace): bool;
   public function installApp(int $round, string $appNamespace, array $appConfig = [], bool $forceInstall = false): bool;

@@ -5,7 +5,12 @@ namespace Hubleto\Framework;
 class Terminal implements Interfaces\TerminalInterface
 {
 
-  public mixed $output = STDOUT;
+  public mixed $output = null;
+
+  public function __construct()
+  {
+    if (defined('STDOUT')) $this->output = STDOUT;
+  }
 
   public function setOutput(mixed $output): void
   {
