@@ -174,6 +174,20 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
   {
     $appNamespaces = [];
 
+    // Custom project apps are always is PROJECT_ROOT/src/apps
+
+    $customAppsFolder = $this->env()->projectFolder . '/src/apps';
+    if (is_dir($customAppsFolder)) {
+      foreach (scandir($customAppsFolder) as $app) {
+        $manifest = $this->loadAppManifestFromPath($customAppsFolder . '/' . $app);
+        if (is_array($manifest)) {
+          $appNamespaces[$manifest['namespace']] = $manifest;
+        }
+      }
+    }
+
+    // External or Enterprise apps are installed as
+    // composer packages
 
     $packages = \Composer\InstalledVersions::getInstalledPackages();
     foreach ($packages as $package) {
