@@ -792,7 +792,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
           unset($record[$colName]);
         } else {
           $record[$colName] = $columns[$colName]->normalize($record[$colName]);
-          if ($record[$colName] === null) unset($record[$colName]);
+          // if ($record[$colName] === null) unset($record[$colName]);
         }
       }
     }
