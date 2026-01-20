@@ -13,14 +13,19 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   public $timestamps = false;
   public static $snakeAttributes = false;
 
-  public Loader $main;
   public Model $model;
 
   public int $maxReadLevel = 2;
 
-  public function __construct(array $attributes = [])
+  /**
+   * Shortcut for the loader service.
+   *
+   * @return Loader
+   * 
+   */
+  public function loader(): Interfaces\CoreInterface
   {
-    parent::__construct($attributes);
+    return \Hubleto\Framework\Loader::getGlobalApp();
   }
 
   /**
@@ -182,17 +187,78 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   }
 
   /**
-   * [Description for recordGet]
+   * Calls recordRead() method filtered by provided record ID.
+   *
+   * @param int $id
+   * 
+   * @return [type]
+   * 
+   */
+  public function recordReadById(int $id)
+  {
+    $item = $this->recordRead(function($q) use ($id) { $q->where($this->table . '.id', $id); });
+    return $item;
+  }
+
+  /**
+   * Calls recordReadMany() to loads records to be displayed in table.
+   *
+   * @param string $fulltextSearch
+   * @param array $columnSearch
+   * @param array $orderBy
+   * @param int $itemsPerPage
+   * @param int $page
+   * @param string $dataView
+   * @param mixed 
+   * 
+   * @return array
+   * 
+   */
+  public function loadTableData(
+    string $fulltextSearch = '',
+    array $columnSearch = [],
+    array $orderBy = [],
+    int $itemsPerPage = 15,
+    int $page = 0,
+    string $dataView = ''
+  ): array
+  {
+    $this->maxReadLevel = $this->model->getMaxReadLevelForLoadTableData();
+    $includeRelations = $this->model->getRelationsIncludedInLoadTableData();
+
+    $query = $this->prepareReadQuery(null, 0, $includeRelations);
+    $query = $this->addFulltextSearchToQuery($query, $fulltextSearch);
+    $query = $this->addColumnSearchToQuery($query, $columnSearch);
+    $query = $this->addOrderByToQuery($query, $orderBy);
+    $tableData = $this->recordReadMany($query, $itemsPerPage, $page);
+
+    foreach ($tableData['data'] as $key => $record) {
+      $tableData['data'][$key] = $this->model->onAfterLoadRecord($record);
+    }
+
+    $tableData['data'] = $this->model->onAfterLoadRecords($tableData['data']);
+
+    if ($dataView == 'tree') {
+      $query = $this->prepareReadQuery();
+      $allRecords = $query->get()->toArray();
+      $tableData['tree'] = $this->model->convertRecordsToTree($allRecords);
+      
+    }
+
+    return $tableData;
+  }
+
+  /**
+   * Calls recordRead() to load data for the form
    *
    * @param callable|null|null $queryModifierCallback
    *
    * @return array
    *
    */
-  public function recordGet(callable|null $queryModifierCallback = null): array
+  public function loadFormData(int $id): array
   {
-    $query = $this->prepareReadQuery();
-    if ($queryModifierCallback !== null) $queryModifierCallback($query);
+    $query = $this->prepareReadQuery()->where($this->table . '.id', $id);
     $record = $this->recordRead($query);
     $record = $this->model->onAfterLoadRecord($record);
     return $record;
@@ -410,7 +476,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   }
 
   /**
-   * [Description for recordReadMany]
+   * Loads many records from the database and applies pagination and permissions.
    *
    * @param mixed $query
    * @param int $itemsPerPage
@@ -445,7 +511,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   }
 
   /**
-   * [Description for recordRead]
+   * Performs reading from the database and applise permissions.
    *
    * @param mixed $query
    *
@@ -459,7 +525,6 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     $permissions = $this->model->getPermissions($record);
     if (!$permissions[1]) {
       // cannot read
-      // $record = [];
       throw new NotEnoughPermissionsException("Cannot read record. Not enough permissions.");
     };
 
@@ -468,8 +533,6 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       $record['_PERMISSIONS'] = $permissions;
       $record['_RELATIONS'] = array_keys($this->model->relations);
     }
-    // if (count($this->relationsToRead) > 0) {
-    //   $record['_RELATIONS'] = array_values(array_intersect($record['_RELATIONS'], $this->relationsToRead));
     // }
 
     return $record;

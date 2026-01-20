@@ -19,7 +19,7 @@ class LoadTableData extends \Hubleto\Framework\Controllers\ApiController {
   public function response(): array
   {
     try {
-      return $this->model->loadTableData(
+      return $this->model->record->loadTableData(
         $this->router()->urlParamAsString('fulltextSearch'),
         $this->router()->urlParamAsArray('columnSearch'),
         $this->router()->urlParamAsArray('orderBy'),

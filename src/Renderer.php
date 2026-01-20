@@ -74,7 +74,7 @@ class Renderer extends Core implements Interfaces\RendererInterface
 
     $this->twig->addFunction(new \Twig\TwigFunction(
       'number',
-      function (string $amount) {
+      function (mixed $amount) {
         return number_format((float) $amount, 2, ",", " ");
       }
     ));

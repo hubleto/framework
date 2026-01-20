@@ -51,9 +51,7 @@ interface ModelInterface
   // Record-related methods
 
   // public function recordGet(callable|null $queryModifierCallback = null): array;
-  public function loadTableData(string $fulltextSearch = '', array $columnSearch = [], array $orderBy = [], int $itemsPerPage = 15, int $page = 0, string $dataView = ''): array;
   public function diffRecords(array $record1, array $record2): array;
-  public function getById(int $id);
   public function getLookupSqlValue(string $tableAlias = ''): string;
   public function getItemDetailUrl(int $id): string;
   public function encryptPassword(string $original): string;

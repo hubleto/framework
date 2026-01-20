@@ -22,9 +22,7 @@ class Get extends \Hubleto\Framework\Controllers\ApiController {
     $id = (int) \Hubleto\Framework\Helper::decrypt($idEncrypted);
 
     if ($id > 0) {
-      $record = $this->model->record->recordGet(
-        function($q) use ($id) { $q->where($this->model->table . '.id', $id); }
-      );
+      $record = $this->model->record->loadFormData($id);
     }
 
     return $record;

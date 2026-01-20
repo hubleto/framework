@@ -716,54 +716,6 @@ class Model extends Core implements Interfaces\ModelInterface
   }
 
   /**
-   * Loads records to be displayed in table.
-   *
-   * @param string $fulltextSearch
-   * @param array $columnSearch
-   * @param array $orderBy
-   * @param int $itemsPerPage
-   * @param int $page
-   * @param string $dataView
-   * @param mixed 
-   * 
-   * @return array
-   * 
-   */
-  public function loadTableData(
-    string $fulltextSearch = '',
-    array $columnSearch = [],
-    array $orderBy = [],
-    int $itemsPerPage = 15,
-    int $page = 0,
-    string $dataView = ''
-  ): array
-  {
-    $this->record->maxReadLevel = $this->getMaxReadLevelForLoadTableData();
-    $includeRelations = $this->getRelationsIncludedInLoadTableData();
-
-    $query = $this->record->prepareReadQuery(null, 0, $includeRelations);
-    $query = $this->record->addFulltextSearchToQuery($query, $fulltextSearch);
-    $query = $this->record->addColumnSearchToQuery($query, $columnSearch);
-    $query = $this->record->addOrderByToQuery($query, $orderBy);
-    $tableData = $this->record->recordReadMany($query, $itemsPerPage, $page);
-
-    foreach ($tableData['data'] as $key => $record) {
-      $tableData['data'][$key] = $this->onAfterLoadRecord($record);
-    }
-
-    if ($dataView == 'tree') {
-      $query = $this->record->prepareReadQuery();
-      $allRecords = $query->get()->toArray();
-      $tableData['tree'] = $this->convertRecordsToTree($allRecords);
-      
-    }
-
-    $tableData = $this->onAfterLoadRecords($tableData);
-
-    return $tableData;
-  }
-
-  /**
    * [Description for diffRecords]
    *
    * @param array $record1
@@ -785,20 +737,6 @@ class Model extends Core implements Interfaces\ModelInterface
 
     return $diff;
 
-  }
-
-  /**
-   * [Description for getById]
-   *
-   * @param int $id
-   * 
-   * @return [type]
-   * 
-   */
-  public function getById(int $id)
-  {
-    $item = $this->record->recordRead(function($q) use ($id) { $q->where($this->table . '.id', $id); });
-    return $item;
   }
 
   /**

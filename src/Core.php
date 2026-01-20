@@ -74,6 +74,17 @@ class Core implements Interfaces\CoreInterface
   }
 
   /**
+   * Shortcut for the loader service.
+   *
+   * @return Loader
+   * 
+   */
+  public function loader(): Interfaces\CoreInterface
+  {
+    return \Hubleto\Framework\Loader::getGlobalApp();
+  }
+
+  /**
    * Shortcut for the env service.
    *
    * @return Env
