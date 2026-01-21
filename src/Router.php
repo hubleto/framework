@@ -199,7 +199,7 @@ class Router extends Core implements Interfaces\RouterInterface {
   public function redirectTo(string $url, int $code = 302): void
   {
     header("Location: " . $this->env()->projectUrl . "/" . trim($url, "/"), true, $code);
-    exit;
+    // exit;
   }
 
   public function getUrlParams(): array

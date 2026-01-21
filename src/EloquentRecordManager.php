@@ -196,7 +196,8 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    */
   public function recordReadById(int $id)
   {
-    $item = $this->recordRead(function($q) use ($id) { $q->where($this->table . '.id', $id); });
+    $query = $this->where($this->table . '.id', $id);
+    $item = $this->recordRead($query);
     return $item;
   }
 
@@ -260,7 +261,6 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   {
     $query = $this->prepareReadQuery()->where($this->table . '.id', $id);
     $record = $this->recordRead($query);
-    $record = $this->model->onAfterLoadRecord($record);
     return $record;
   }
 
@@ -533,7 +533,8 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       $record['_PERMISSIONS'] = $permissions;
       $record['_RELATIONS'] = array_keys($this->model->relations);
     }
-    // }
+
+    $record = $this->model->onAfterLoadRecord($record);
 
     return $record;
   }

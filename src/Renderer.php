@@ -14,6 +14,9 @@ class Renderer extends Core implements Interfaces\RendererInterface
   public \Twig\Loader\FilesystemLoader $twigLoader;
   public \Twig\Environment $twig;
 
+  public array $lastRenderedContentParams;
+  public string $lastRenderedView;
+
   public function init(): void
   {
     $this->twigLoader = new \Twig\Loader\FilesystemLoader();
@@ -119,6 +122,9 @@ class Renderer extends Core implements Interfaces\RendererInterface
    */
   public function render(string $route = '', array $params = []): string
   {
+
+    $this->lastRenderedView = '';
+    $this->lastRenderedContentParams = [];
 
     try {
 
@@ -242,9 +248,9 @@ class Renderer extends Core implements Interfaces\RendererInterface
       } else {
         $controllerObject->prepareView();
 
-        $view = $controllerObject->getView();
+        $this->lastRenderedView = $controllerObject->getView();
         
-        $contentParams = [
+        $this->lastRenderedContentParams = [
           'hubleto' => $this,
           'user' => $authProvider->getUser(),
           'config' => $this->config()->get(),
@@ -256,10 +262,10 @@ class Renderer extends Core implements Interfaces\RendererInterface
           'viewParams' => $controllerObject->getViewParams(),
         ];
 
-        if (empty($view)) {
+        if (empty($this->lastRenderedView)) {
           $contentHtml = $controllerObject->render();
         } else {
-          $contentHtml = $this->renderView($view, $contentParams);
+          $contentHtml = $this->renderView($this->lastRenderedView, $this->lastRenderedContentParams);
         }
 
         // In some cases the result of the view will be used as-is ...
@@ -272,8 +278,8 @@ class Renderer extends Core implements Interfaces\RendererInterface
           $desktopControllerObject->prepareView();
 
           if (!empty($desktopControllerObject->getView())) {
-            $desktopParams = $contentParams;
-            $desktopParams['viewParams'] = array_merge($desktopControllerObject->getViewParams(), $contentParams['viewParams']);
+            $desktopParams = $this->lastRenderedContentParams;
+            $desktopParams['viewParams'] = array_merge($desktopControllerObject->getViewParams(), $this->lastRenderedContentParams['viewParams']);
             $desktopParams['contentHtml'] = $contentHtml;
 
             $html = $this->renderView(

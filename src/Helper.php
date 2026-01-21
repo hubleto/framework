@@ -301,7 +301,7 @@ class Helper
     $__APP__ = \Hubleto\Framework\Loader::getGlobalApp();
     if ($force || ($__APP__->config()->getAsBool('encryptRecordIds'))) {
       if (empty($seed)) $seed = $__APP__->sessionManager()->getSalt();
-      return base64_encode(@openssl_encrypt($value, 'AES-256-CBC', $seed, 0, $seed));
+      return base64_encode(@openssl_encrypt($value, 'AES-256-CBC', $seed, 0, substr($seed, 0, 16)));
     } else {
       return $value;
     }
@@ -311,7 +311,7 @@ class Helper
     $__APP__ = \Hubleto\Framework\Loader::getGlobalApp();
     if ($force || ($__APP__->config()->getAsBool('encryptRecordIds'))) {
       if (empty($seed)) $seed = $__APP__->sessionManager()->getSalt();
-      return @openssl_decrypt(base64_decode($value), 'AES-256-CBC', $seed, 0, $seed);
+      return @openssl_decrypt(base64_decode($value), 'AES-256-CBC', $seed, 0, substr($seed, 0, 16));
     } else {
       return $value;
     }
