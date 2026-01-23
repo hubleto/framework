@@ -12,30 +12,10 @@ interface AppInterface
   public const APP_TYPE_ENTERPRISE = 'enterprise';
   public const APP_TYPE_EXTERNAL = 'external';
 
-  // public array $manifest { get; set; }
-
-  // public bool $enabled { get; set; }
-  // public bool $canBeDisabled { get; set; }
-
-  // public bool $permittedForAllUsers { get; set; }
-
-  // public string $srcFolder { get; set; }
-  // public string $viewNamespace { get; set; }
-  // public string $namespace { get; set; }
-  // public string $fullName { get; set; }
-
-  // public bool $isActivated { get; set; }
-
-  // /** @var array<int, array<\Hubleto\Framework\App, array>> */
-  // public array $settings { get; set; }
-
   public function validateManifest();
   public function init(): void;
   public function onBeforeRender(): void;
-  public function hook(string $hook): void;
   public function getRootUrlSlug(): string;
-  // public function getNotificationsCount(): int;
-  // public function translate(string $string, array $vars = [], string $context = 'root'): string;
   public function installTables(int $round): void;
   public function getAvailableControllerClasses(): array;
   public function getAvailableModelClasses(): array;

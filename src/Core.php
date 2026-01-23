@@ -140,14 +140,14 @@ class Core implements Interfaces\CoreInterface
   }
 
   /**
-   * Shortcut for the hook manager service.
+   * Shortcut for the event manager service.
    *
-   * @return HookManager
+   * @return EventManagerInterface
    * 
    */
-  public function hookManager(): Interfaces\HookManagerInterface
+  public function eventManager(): Interfaces\EventManagerInterface
   {
-    return $this->getService(HookManager::class);
+    return $this->getService(EventManager::class);
   }
 
   /**

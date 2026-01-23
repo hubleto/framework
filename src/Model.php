@@ -851,10 +851,7 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function onBeforeCreate(array $record): array
   {
-    $this->hookManager()->run('model:on-before-create', [
-      'model' => $this,
-      'record' => $record
-    ]);
+    $this->eventManager()->fire('onModelBeforeCreate', [ $this, $record ]);
     return $record;
   }
 
@@ -865,10 +862,7 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function onBeforeUpdate(array $record): array
   {
-    $this->hookManager()->run('model:on-before-update', [
-      'model' => $this,
-      'record' => $record
-    ]);
+    $this->eventManager()->fire('onModelBeforeUpdate', [ $this, $record ]);
     return $record;
   }
 
@@ -879,10 +873,7 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function onBeforeDelete(int $id): int
   {
-    $this->hookManager()->run('model:on-before-delete', [
-      'model' => $this,
-      'id' => $id
-    ]);
+    $this->eventManager()->fire('onModelBeforeDelete', [ $this, $id ]);
     return $id;
   }
 
@@ -894,10 +885,7 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function onAfterCreate(array $savedRecord): array
   {
-    $this->hookManager()->run('model:on-after-create', [
-      'model' => $this,
-      'savedRecord' => $savedRecord
-    ]);
+    $this->eventManager()->fire('onModelAfterCreate', [ $this, $savedRecord ]);
     return $savedRecord;
   }
 
@@ -909,11 +897,7 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function onAfterUpdate(array $originalRecord, array $savedRecord): array
   {
-    $this->hookManager()->run('model:on-after-update', [
-      'model' => $this,
-      'originalRecord' => $originalRecord,
-      'savedRecord' => $savedRecord
-    ]);
+    $this->eventManager()->fire('onModelAfterUpdate', [ $this, $originalRecord, $savedRecord ]);
     return $savedRecord;
   }
 
@@ -924,10 +908,7 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function onAfterDelete(int $id): int
   {
-    $this->hookManager()->run('model:on-after-delete', [
-      'model' => $this,
-      'id' => $id
-    ]);
+    $this->eventManager()->fire('onModelAfterDelete', [ $this, $id ]);
     return $id;
   }
 
@@ -941,7 +922,7 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function onAfterLoadRecord(array $record): array
   {
-    $this->hookManager()->run('model:on-after-load-record', [
+    $this->eventManager()->fire('onModelAfterLoadRecord', [
       'model' => $this,
       'record' => $record
     ]);
@@ -958,10 +939,7 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function onAfterLoadRecords(array $records): array
   {
-    $this->hookManager()->run('model:on-after-load-records', [
-      'model' => $this,
-      'records' => $records
-    ]);
+    $this->eventManager()->fire('onModelAfterLoadRecords', [ $this, $records ]);
     return $records;
   }
 

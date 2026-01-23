@@ -203,18 +203,6 @@ class App extends Core implements Interfaces\AppInterface
   }
 
   /**
-   * [Description for hook]
-   *
-   * @param string $hook
-   * 
-   * @return void
-   * 
-   */
-  public function hook(string $hook): void
-  {
-  }
-
-  /**
    * [Description for getRootUrlSlug]
    *
    * @return string

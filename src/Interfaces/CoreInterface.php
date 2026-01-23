@@ -15,7 +15,7 @@ interface CoreInterface
   public function db(): DbInterface;
   public function appManager(): AppManagerInterface;
   public function router(): RouterInterface;
-  public function hookManager(): HookManagerInterface;
+  public function eventManager(): EventManagerInterface;
   public function sessionManager(): SessionManagerInterface;
   public function permissionsManager(): PermissionsManagerInterface;
   public function cronManager(): CronManagerInterface;

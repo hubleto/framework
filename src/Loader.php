@@ -63,7 +63,7 @@ class Loader extends Core
       $this->permissionsManager()->init();
       $this->renderer()->init();
       $this->appManager()->init();
-      $this->hookManager()->init();
+      $this->eventManager()->init();
       $this->emailProvider()->init();
 
     } catch (\Exception $e) {
