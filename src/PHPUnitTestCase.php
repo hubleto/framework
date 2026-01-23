@@ -54,7 +54,12 @@ class PHPUnitTestCase extends \PHPUnit\Framework\TestCase
   protected function _replaceVarsInRoute(string $route, array $vars = []): string
   {
     foreach ($vars as $varName => $varValue) {
-      $route = str_replace('{{ ' . $varName . ' }}', (string) $varValue, $route);
+      if (
+        strpos($route, '{{ ' . $varName . ' }}') !== false
+        && !is_array($varValue)
+      ) {
+        $route = str_replace('{{ ' . $varName . ' }}', (string) $varValue, $route);
+      }
     }
 
     return $route;
