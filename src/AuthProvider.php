@@ -38,6 +38,7 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
       'id' => (int) ($user['id'] ?? 0),
       'email' => (string) ($user['email'] ?? ''),
       'login' => (string) ($user['login'] ?? ''),
+      'type' => (int) ($user['type'] ?? 0),
       'is_active' => (bool) ($user['is_active'] ?? false),
     ];
   }

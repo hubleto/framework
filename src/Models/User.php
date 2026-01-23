@@ -45,8 +45,10 @@ class User extends Model {
   public function describeColumns(): array
   {
     return array_merge(parent::describeColumns(), [
+      'email' => new \Hubleto\Framework\Db\Column\Varchar($this, 'Email'),
       'login' => new \Hubleto\Framework\Db\Column\Varchar($this, 'Login'),
       'password' => new \Hubleto\Framework\Db\Column\Password($this, 'Password'),
+      'type' => new \Hubleto\Framework\Db\Column\Integer($this, 'Type'),
       'is_active' => new \Hubleto\Framework\Db\Column\Boolean($this, 'Active'),
       'last_login_time' => new \Hubleto\Framework\Db\Column\DateTime($this, 'Time of last login'),
       'last_login_ip' => new \Hubleto\Framework\Db\Column\Varchar($this, 'Last login IP'),
