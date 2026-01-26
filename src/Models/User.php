@@ -45,7 +45,7 @@ class User extends Model {
   public function describeColumns(): array
   {
     return array_merge(parent::describeColumns(), [
-      'email' => new \Hubleto\Framework\Db\Column\Varchar($this, 'Email'),
+      'email' => new \Hubleto\Framework\Db\Column\Email($this, 'Email'),
       'login' => new \Hubleto\Framework\Db\Column\Varchar($this, 'Login'),
       'password' => new \Hubleto\Framework\Db\Column\Password($this, 'Password'),
       'type' => new \Hubleto\Framework\Db\Column\Integer($this, 'Type'),
