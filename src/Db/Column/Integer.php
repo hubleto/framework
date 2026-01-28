@@ -38,6 +38,7 @@ class Integer extends \Hubleto\Framework\Column
   
   public function normalize(mixed $value): mixed
   {
+    if ($value === null) return null;
     return (int) $value;
   }
 
