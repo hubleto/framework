@@ -24,7 +24,7 @@ interface RecordManagerInterface {
   public function addOrderByToQuery(mixed $query, array $orderBy): mixed;
   public function recordReadMany(mixed $query, int $itemsPerPage, int $page): array;
   public function recordRead(mixed $query): array;
-  public function recordReadById(int $id);
+  public function recordReadByUid(mixed $uid): array;
 
   public function recordEncryptIds(array $record): array;
   public function recordDecryptIds(array $record): array;
@@ -33,7 +33,7 @@ interface RecordManagerInterface {
   public function recordDelete(int|string $id): int;
   public function recordSave(array $record, int $idMasterRecord = 0): array;
 
-  public function loadFormData(int $id): array;
+  public function loadFormData(mixed $uid): array;
   public function loadTableData(string $fulltextSearch = '', array $columnSearch = [], array $orderBy = [], int $itemsPerPage = 15, int $page = 0, string $dataView = ''): array;
 
   /**

@@ -50,7 +50,6 @@ interface ModelInterface
   //////////////////////////////////////////////////////////////////
   // Record-related methods
 
-  // public function recordGet(callable|null $queryModifierCallback = null): array;
   public function diffRecords(array $record1, array $record2): array;
   public function getLookupSqlValue(string $tableAlias = ''): string;
   public function getItemDetailUrl(int $id): string;

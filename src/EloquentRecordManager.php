@@ -187,15 +187,17 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   }
 
   /**
-   * Calls recordRead() method filtered by provided record ID.
+   * Calls recordRead() method filtered by provided record UID.
+   * In most cases, record UID equals to record ID.
    *
-   * @param int $id
+   * @param mixed $uid
    * 
    * @return [type]
    * 
    */
-  public function recordReadById(int $id)
+  public function recordReadByUid(mixed $uid): array
   {
+    $id = (int) $uid;
     $query = $this->where($this->table . '.id', $id);
     $item = $this->recordRead($query);
     return $item;
@@ -252,13 +254,14 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   /**
    * Calls recordRead() to load data for the form
    *
-   * @param callable|null|null $queryModifierCallback
+   * @param mixed $uid
    *
    * @return array
    *
    */
-  public function loadFormData(int $id): array
+  public function loadFormData(mixed $uid): array
   {
+    $id = (int) $uid;
     $query = $this->prepareReadQuery()->where($this->table . '.id', $id);
     $record = $this->recordRead($query);
     return $record;
@@ -631,9 +634,12 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    */
   public function recordUpdate(array $record, array $originalRecord = []): array
   {
+    $recordId = (int) ($record['id'] ?? 0);
+    if ($recordId <= 0) return [];
+
     $record = $this->model->onBeforeUpdate($record);
     $normalizedRecord = $this->recordNormalize($record);
-    $this->find((int) ($record['id'] ?? 0))->update($normalizedRecord);
+    $this->find($recordId)->update($normalizedRecord);
     $record = $this->model->onAfterUpdate($originalRecord, $record);
     return $record;
   }
