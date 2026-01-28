@@ -10,6 +10,7 @@ class Decimal extends \Hubleto\Framework\Column
 
   public function normalize(mixed $value): mixed
   {
+    if ($value === null) return null;
     return (float) $value;
   }
 
