@@ -14,4 +14,11 @@ class Email extends Varchar
     }
   }
 
+  public function normalize(mixed $value): mixed
+  {
+    $value = trim($value);
+    $value = strtolower($value);
+    return parent::normalize($value);
+  }
+
 }
