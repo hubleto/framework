@@ -5,7 +5,7 @@ namespace Hubleto\Framework;
 /**
  * Default implementation of authentication provider.
  */
-class AuthProvider extends Core implements Interfaces\AuthInterface
+class AuthProvider extends Core implements Interfaces\AuthProviderInterface
 {
 
   public $loginAttribute = 'login';
@@ -134,38 +134,11 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
   }
 
   /**
-   * [Description for findUsersByLogin]
+   * [Description for getActiveUsers]
    *
-   * @param string $login
-   * 
    * @return array
    * 
    */
-  public function findUsersByLogin(string $login): array
-  {
-    return $this->createUserModel()->record
-      ->orWhere($this->loginAttribute, $login)
-      ->where($this->activeAttribute, '<>', 0)
-      ->get()
-      ->makeVisible([$this->passwordAttribute])
-      ->toArray()
-    ;
-  }
-
-  /**
-   * [Description for verifyPassword]
-   *
-   * @param mixed $password1
-   * @param mixed $password2
-   * 
-   * @return bool
-   * 
-   */
-  public function verifyPassword($password1, $password2): bool
-  {
-    return password_verify($password1, $password2);
-  }
-
   public function getActiveUsers(): array
   {
     return (array) $this->createUserModel()->record
@@ -193,10 +166,10 @@ class AuthProvider extends Core implements Interfaces\AuthInterface
       }
 
       if (!empty($login) && !empty($password)) {
-        $users = $this->findUsersByLogin($login);
+        $users = $userModel->findUsersByLogin($login);
 
         foreach ($users as $user) {
-          $passwordMatch = $this->verifyPassword($password, $user[$this->passwordAttribute]);
+          $passwordMatch = $userModel->verifyPassword($user, $password);
 
           if ($passwordMatch) {
             $authResult = $userModel->loadUser($user['id']);

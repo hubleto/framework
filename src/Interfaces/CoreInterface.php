@@ -11,7 +11,7 @@ interface CoreInterface
   public function getDebugLevel(): int;
   public function getService(string $service): mixed;
   public function env(): EnvInterface;
-  public function authProvider(): AuthInterface;
+  public function authProvider(): AuthProviderInterface;
   public function db(): DbInterface;
   public function appManager(): AppManagerInterface;
   public function router(): RouterInterface;

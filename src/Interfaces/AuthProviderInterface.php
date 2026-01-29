@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Interfaces;
 
-interface AuthInterface {
+interface AuthProviderInterface {
   public array $user { get; set; }
 
   public function init(): void;

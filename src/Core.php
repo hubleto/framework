@@ -98,10 +98,10 @@ class Core implements Interfaces\CoreInterface
   /**
    * Shortcut for the authentication service.
    *
-   * @return Interfaces\AuthInterface
+   * @return Interfaces\AuthProviderInterface
    * 
    */
-  public function authProvider(): Interfaces\AuthInterface
+  public function authProvider(): Interfaces\AuthProviderInterface
   {
     return $this->getService(AuthProvider::class);
   }
