@@ -198,8 +198,10 @@ class Router extends Core implements Interfaces\RouterInterface {
 
   public function redirectTo(string $url, int $code = 302): void
   {
+    if (php_sapi_name() === 'cli') return;
+
     header("Location: " . $this->env()->projectUrl . "/" . trim($url, "/"), true, $code);
-    // exit;
+    exit;
   }
 
   public function getUrlParams(): array
