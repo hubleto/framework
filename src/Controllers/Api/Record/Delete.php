@@ -39,6 +39,7 @@ class Delete extends \Hubleto\Framework\Controllers\ApiController {
       } catch (\Throwable $e) {
         $error = $e->getMessage();
         $errorHtml = $this->renderer()->renderExceptionHtml($e, [$this->model]);
+        throw new \Exception($errorHtml);
       }
 
       $return = [
@@ -46,8 +47,8 @@ class Delete extends \Hubleto\Framework\Controllers\ApiController {
         'status' => ($rowsAffected > 0),
       ];
 
-      if ($error) $return['error'] = $error;
-      if ($errorHtml) $return['errorHtml'] = $errorHtml;
+      // if ($error) $return['error'] = $error;
+      // if ($errorHtml) $return['errorHtml'] = $errorHtml;
 
       return $return;
     } else {
