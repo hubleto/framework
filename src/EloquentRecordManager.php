@@ -382,25 +382,49 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
 
           $query = $query->having(function($q) use ($column, $columnName, $searchValues, $searchGlue) {
             foreach ($searchValues as $searchValue) {
+
+              $searchValue = trim($searchValue);
+              $negate = false;
+              if (substr($searchValue, 0, 1) === "!") {
+                $negate = true;
+                $searchValue = substr($searchValue, 1);
+              }
+
               $enumValues = $column->getEnumValues();
               if (count($enumValues) > 0) {
                 switch ($searchGlue) {
                   case 'OR':
                   default:
-                    $q = $q->orHaving('_ENUM[' . $columnName . ']', 'like', "%{$searchValue}%");
+                    if ($negate) {
+                      $q = $q->orhaving('_ENUM[' . $columnName . ']', 'not like', "%{$searchValue}%");
+                    } else {
+                      $q = $q->orHaving('_ENUM[' . $columnName . ']', 'like', "%{$searchValue}%");
+                    }
                   break;
                   case 'AND':
-                    $q = $q->having('_ENUM[' . $columnName . ']', 'like', "%{$searchValue}%");
+                    if ($negate) {
+                      $q = $q->having('_ENUM[' . $columnName . ']', 'not like', "%{$searchValue}%");
+                    } else {
+                      $q = $q->having('_ENUM[' . $columnName . ']', 'like', "%{$searchValue}%");
+                    }
                   break;
                 }
               } else if ($column->getType() == 'lookup') {
                 switch ($searchGlue) {
                   case 'OR':
                   default:
-                    $q = $q->orHaving('_LOOKUP[' . $columnName . ']', 'like', "%{$searchValue}%");
+                    if ($negate) {
+                      $q = $q->orHaving('_LOOKUP[' . $columnName . ']', 'not like', "%{$searchValue}%");
+                    } else {
+                      $q = $q->orHaving('_LOOKUP[' . $columnName . ']', 'like', "%{$searchValue}%");
+                    }
                   break;
                   case 'AND':
-                    $q = $q->having('_LOOKUP[' . $columnName . ']', 'like', "%{$searchValue}%");
+                    if ($negate) {
+                      $q = $q->having('_LOOKUP[' . $columnName . ']', 'not like', "%{$searchValue}%");
+                    } else {
+                      $q = $q->having('_LOOKUP[' . $columnName . ']', 'like', "%{$searchValue}%");
+                    }
                   break;
                 }
               } else if (in_array($column->getType(), ['int', 'decimal', 'decimal'])) {
@@ -409,6 +433,8 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
 
                 $operation = $m[1];
                 $value = (float) $m[2];
+                
+                if (empty($operation)) $operation = '=';
 
                 switch ($searchGlue) {
                   case 'OR':
@@ -420,15 +446,42 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
                   break;
                 }
               } else if (in_array($column->getType(), ['date', 'datetime', 'time'])) {
-                if (is_array($searchValue)) {
-                  if (count($searchValue) == 1) {
-                    $from = $to = $searchValue[0];
-                  } else if (count($searchValue) == 2) {
-                    list($from, $to) = $searchValue;
-                  }
+                // if (is_array($searchValue)) {
+                //   if (count($searchValue) == 1) {
+                //     $from = $to = $searchValue[0];
+                //   } else if (count($searchValue) == 2) {
+                //     list($from, $to) = $searchValue;
+                //   }
 
-                  $q->having($columnName, '>=', date('Y-m-d 00:00:00', strtotime((string) $from)));
-                  $q->having($columnName, '<=', date('Y-m-d 23:59:59', strtotime((string) $to)));
+                //   $q->having($columnName, '>=', date('Y-m-d 00:00:00', strtotime((string) $from)));
+                //   $q->having($columnName, '<=', date('Y-m-d 23:59:59', strtotime((string) $to)));
+                // }
+
+                $tmpSearchValue = trim(str_replace(' ', '', str_replace(',', '.', $searchValue)));
+                preg_match('/(.*?)([\\d\\.]+)/', $tmpSearchValue, $m);
+
+                $operation = $m[1];
+                $value = $m[2];
+                
+                if (empty($operation)) $operation = '=';
+
+                if ($column->getType() == 'datetime' && strpos($value, ' ') === false) {
+                  if (in_array($operation, ['>', '>='])) $value = date('Y-m-d 00:00:00', strtotime($value));
+                  if (in_array($operation, ['<', '<='])) $value = date('Y-m-d 23:59:59', strtotime($value));
+                }
+
+                if ($column->getType() == 'date') {
+                  $value = date('Y-m-d', strtotime($value));
+                }
+
+                switch ($searchGlue) {
+                  case 'OR':
+                  default:
+                    $q = $q->orHaving($columnName, $operation, $value);
+                  break;
+                  case 'AND':
+                    $q = $q->having($columnName, $operation, $value);
+                  break;
                 }
               } else if (in_array($column->getType(), ['boolean'])) {
                 switch ($searchGlue) {
@@ -441,13 +494,22 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
                   break;
                 }
               } else {
+                $searchValue = trim($searchValue);
                 switch ($searchGlue) {
                   case 'OR':
                   default:
-                    $q = $q->orHaving($columnName, 'like', "%{$searchValue}%");
+                    if ($negate) {
+                      $q = $q->orHaving($columnName, 'not like', "%{$searchValue}%");
+                    } else {
+                      $q = $q->orHaving($columnName, 'like', "%{$searchValue}%");
+                    }
                   break;
                   case 'AND':
-                    $q = $q->having($columnName, 'like', "%{$searchValue}%");
+                    if ($negate) {
+                      $q = $q->having($columnName, 'not like', "%{$searchValue}%");
+                    } else {
+                      $q = $q->having($columnName, 'like', "%{$searchValue}%");
+                    }
                   break;
                 }
               }
