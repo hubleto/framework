@@ -7,5 +7,6 @@ class Color extends \Hubleto\Framework\Column
 
   protected string $type = 'color';
   protected string $sqlDataType = 'char(10)';
+  protected string $searchAlgorithm = 'text';
 
 }

@@ -7,6 +7,7 @@ class DateTime extends \Hubleto\Framework\Column
 
   protected string $type = 'datetime';
   protected string $sqlDataType = 'datetime';
+  protected string $searchAlgorithm = 'datetime';
 
   public function normalize(mixed $value): mixed
   {

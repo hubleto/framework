@@ -9,6 +9,7 @@ class File extends \Hubleto\Framework\Column
   protected string $sqlDataType = 'varchar(255)';
   protected string $folderPath = '';
   protected string $renamePattern = '';
+  protected string $searchAlgorithm = 'text';
 
   public function getFolderPath(): string { return $this->folderPath; }
   public function setFolderPath(string $folderPath): File { $this->folderPath = $folderPath; return $this; }

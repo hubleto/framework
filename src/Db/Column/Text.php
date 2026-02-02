@@ -8,6 +8,7 @@ class Text extends \Hubleto\Framework\Column
   protected string $type = 'text';
   protected string $sqlDataType = 'text';
   protected string $interface = 'plainText';
+  protected string $searchAlgorithm = 'text';
 
   public function __construct(\Hubleto\Framework\Model $model, string $title, string $interface = 'plainText')
   {

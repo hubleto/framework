@@ -7,6 +7,7 @@ class Decimal extends \Hubleto\Framework\Column
 
   protected string $type = 'decimal';
   protected string $sqlDataType = 'decimal';
+  protected string $searchAlgorithm = 'number';
 
   public function normalize(mixed $value): mixed
   {

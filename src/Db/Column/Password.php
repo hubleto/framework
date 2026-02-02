@@ -7,6 +7,7 @@ class Password extends \Hubleto\Framework\Db\Column\Varchar
 
   protected string $type = 'password';
   protected bool $hidden = true;
+  protected string $searchAlgorithm = 'none';
 
   public function normalize(mixed $value): mixed
   {

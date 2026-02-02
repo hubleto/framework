@@ -9,6 +9,7 @@ class Boolean extends \Hubleto\Framework\Column
   protected string $sqlDataType = 'int(1)';
   protected mixed $yesValue = true;
   protected mixed $noValue = false;
+  protected string $searchAlgorithm = 'boolean';
 
   public function getYesValue(): mixed { return $this->yesValue; }
   public function setYesValue(mixed $yesValue): Boolean { $this->yesValue = $yesValue; return $this; }

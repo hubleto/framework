@@ -382,7 +382,6 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
 
           $query = $query->having(function($q) use ($column, $columnName, $searchValues, $searchGlue) {
             foreach ($searchValues as $searchValue) {
-
               $searchValue = trim($searchValue);
               $negate = false;
               if (substr($searchValue, 0, 1) === "!") {
@@ -409,7 +408,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
                     }
                   break;
                 }
-              } else if ($column->getType() == 'lookup') {
+              } else if ($column->getSearchAlgorithm() == 'lookup') {
                 switch ($searchGlue) {
                   case 'OR':
                   default:
@@ -427,7 +426,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
                     }
                   break;
                 }
-              } else if (in_array($column->getType(), ['int', 'decimal', 'decimal'])) {
+              } else if ($column->getSearchAlgorithm() == 'number') {
                 $tmpSearchValue = trim(str_replace(' ', '', str_replace(',', '.', $searchValue)));
                 preg_match('/(.*?)([\\d\\.]+)/', $tmpSearchValue, $m);
 
@@ -445,7 +444,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
                     $q = $q->having($columnName, $operation, $value);
                   break;
                 }
-              } else if (in_array($column->getType(), ['date', 'datetime', 'time'])) {
+              } else if (in_array($column->getSearchAlgorithm(), ['date', 'datetime', 'time'])) {
                 // if (is_array($searchValue)) {
                 //   if (count($searchValue) == 1) {
                 //     $from = $to = $searchValue[0];
@@ -483,7 +482,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
                     $q = $q->having($columnName, $operation, $value);
                   break;
                 }
-              } else if (in_array($column->getType(), ['boolean'])) {
+              } else if ($column->getSearchAlgorithm() == 'boolean') {
                 switch ($searchGlue) {
                   case 'OR':
                   default:
@@ -493,7 +492,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
                     $q = $q->having($columnName, $searchValue === "true");
                   break;
                 }
-              } else {
+              } else if ($column->getSearchAlgorithm() == 'text') {
                 $searchValue = trim($searchValue);
                 switch ($searchGlue) {
                   case 'OR':

@@ -43,6 +43,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   protected array $inputProps = [];
   protected string $endpoint = '';
   protected bool $creatable = false;
+  protected string $searchAlgorithm = '';
 
   protected array $properties = [];
 
@@ -74,6 +75,8 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
 
   public function getType(): string { return $this->type; }
   public function setType(string $type): Column { $this->type = $type; return $this; }
+
+  public function getSearchAlgorithm(): string { return $this->searchAlgorithm; }
 
   public function getSqlDataType(): string { return $this->sqlDataType; }
   public function setSqlDataType(string $sqlDataType): Column { $this->sqlDataType = $sqlDataType; return $this; }

@@ -7,6 +7,7 @@ class Integer extends \Hubleto\Framework\Column
 
   protected string $type = 'int';
   protected int $byteSize = 255;
+  protected string $searchAlgorithm = 'number';
 
   public function __construct(\Hubleto\Framework\Model $model, string $title, int $byteSize = 255)
   {

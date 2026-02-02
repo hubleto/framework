@@ -8,6 +8,7 @@ class Lookup extends \Hubleto\Framework\Column
   protected string $type = 'lookup';
   protected string $sqlDataType = 'int(8)';
   protected string $rawSqlDefinition = 'NULL default NULL';
+  protected string $searchAlgorithm = 'lookup';
 
   protected bool $disableForeignKey = false;
   protected string $foreignKeyColumn = 'id';

@@ -7,6 +7,7 @@ class Year extends \Hubleto\Framework\Column
 
   protected string $type = 'year';
   protected string $sqlDataType = 'year';
+  protected string $searchAlgorithm = 'number';
 
   public function normalize(mixed $value): mixed
   {
