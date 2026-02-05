@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Controllers\Api\Record;
 
-class Get extends \Hubleto\Framework\Controllers\ApiController {
+class Get extends \Hubleto\Erp\Controllers\ApiController {
 
   public \Hubleto\Framework\Interfaces\ModelInterface $model;
 

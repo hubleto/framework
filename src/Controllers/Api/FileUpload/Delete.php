@@ -5,7 +5,8 @@ namespace Hubleto\Framework\Controllers\Components\Inputs\FileUpload;
 /**
  * @package Components\Controllers\FileUpload
  */
-class Delete extends \Hubleto\Framework\Controller {
+class Delete extends \Hubleto\Erp\Controller
+{
   public bool $hideDefaultDesktop = TRUE;
 
   public function renderJson(): array {

@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework;
 
-class EventListener extends \Hubleto\Framework\Core
+class EventListener extends Core
 {
 
   // An event listener shall implement the `onEventName` methods.

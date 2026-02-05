@@ -184,17 +184,6 @@ class Core implements Interfaces\CoreInterface
   }
 
   /**
-   * Shortcut for the email provider service.
-   *
-   * @return EmailProvider
-   * 
-   */
-  public function emailProvider(): Interfaces\EmailProviderInterface
-  {
-    return $this->getService(EmailProvider::class);
-  }
-
-  /**
    * Shortcut for the config service.
    *
    * @return Interfaces\ConfigManagerInterface

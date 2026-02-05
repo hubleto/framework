@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Controllers\Api\Record;
 
-class SaveJunction extends \Hubleto\Framework\Controllers\ApiController
+class SaveJunction extends \Hubleto\Erp\Controllers\ApiController
 {
 
   public function renderJson(): array

@@ -15,8 +15,7 @@
         "monolog/monolog": "^3",
         "php": "^8.2",
         "symfony/yaml": "^7",
-        "twig/twig": "^3",
-        "phpmailer/phpmailer": "^6"
+        "twig/twig": "^3"
     },
     "require-dev": {
         "phpstan/phpstan": "^2",
@@ -28,5 +27,6 @@
         "psr-4": {
             "Hubleto\\Framework\\": "src"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }

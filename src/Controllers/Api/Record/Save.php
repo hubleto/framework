@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Controllers\Api\Record;
 
-class Save extends \Hubleto\Framework\Controllers\ApiController {
+class Save extends \Hubleto\Erp\Controllers\ApiController {
 
   public \Hubleto\Framework\Model $model;
 

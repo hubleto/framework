@@ -4,7 +4,7 @@ namespace Hubleto\Framework\Controllers;
 
 use Hubleto\Framework\Exceptions\RecordSaveException;
 
-class ApiController extends \Hubleto\Framework\Controller
+class ApiController extends \Hubleto\Erp\Controller
 {
   public int $returnType = self::RETURN_TYPE_JSON;
   public bool $permittedForAllUsers = true;

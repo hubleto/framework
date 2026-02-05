@@ -7,7 +7,8 @@ use Illuminate\Database\QueryException;
 /**
  * @package Components\Controllers\Tags
  */
-class Add extends \Hubleto\Framework\Controller {
+class Add extends \Hubleto\Erp\Controller
+{
   public bool $hideDefaultDesktop = true;
 
   public function renderJson(): array { 

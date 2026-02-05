@@ -19,7 +19,7 @@ interface CoreInterface
   public function sessionManager(): SessionManagerInterface;
   public function permissionsManager(): PermissionsManagerInterface;
   public function cronManager(): CronManagerInterface;
-  public function emailProvider(): EmailProviderInterface;
+  // public function emailProvider(): EmailProviderInterface;
   public function config(): ConfigManagerInterface;
   public function logger(): LoggerInterface;
   public function locale(): LocaleInterface;
