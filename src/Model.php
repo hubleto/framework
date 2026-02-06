@@ -784,18 +784,18 @@ class Model extends Core implements Interfaces\ModelInterface
   }
 
   /**
-   * [Description for getItemDetailUrl]
+   * [Description for getRecordDetailUrl]
    *
    * @param int $id
    * 
    * @return string
    * 
    */
-  public function getItemDetailUrl(int $id): string
+  public function getRecordDetailUrl(array $record): string
   {
     $urlDetail = $this->lookupUrlDetail ?? '';
     if (!empty($urlDetail)) {
-      return str_replace('{%ID%}', (string)$id, $urlDetail);
+      return str_replace('{%ID%}', (string) ($record['id'] ?? 0), $urlDetail);
     } else {
       return '';
     }

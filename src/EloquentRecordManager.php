@@ -321,8 +321,10 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       if (isset($value['id'])) {
         $data[$key]['id'] = Helper::encrypt($value['id']);
       }
-      if (!empty($this->model->lookupUrlDetail)) {
-        $data[$key]['_URL_DETAIL'] = str_replace('{%ID%}', $value['id'], $this->model->lookupUrlDetail);
+
+      $lookupUrlDetail = $this->model->getRecordDetailUrl($value);
+      if (!empty($lookupUrlDetail)) {
+        $data[$key]['_URL_DETAIL'] = str_replace('{%ID%}', $value['id'], $lookupUrlDetail);
       }
     }
 
