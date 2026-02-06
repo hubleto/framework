@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Controllers;
 
-class NotFound extends \Hubleto\Erp\Controller
+class NotFound extends \Hubleto\Framework\Controller
 {
   public bool $requiresAuthenticatedUser = false;
   public bool $hideDefaultDesktop = true;

@@ -5,7 +5,7 @@ namespace Hubleto\Framework\Controllers\Components\Inputs\FileUpload;
 /**
  * @package Components\Controllers\FileUpload
  */
-class Upload extends \Hubleto\Erp\Controller
+class Upload extends \Hubleto\Framework\Controller
 {
   public bool $hideDefaultDesktop = TRUE;
 

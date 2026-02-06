@@ -4,7 +4,7 @@ namespace Hubleto\Framework\Controllers\Api\Record;
 
 use Illuminate\Support\Str;
 
-class LoadTableData extends \Hubleto\Erp\Controllers\ApiController {
+class LoadTableData extends \Hubleto\Framework\Controllers\ApiController {
 
   public \Hubleto\Framework\Interfaces\ModelInterface $model;
 

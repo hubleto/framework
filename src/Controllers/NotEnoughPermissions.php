@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Controllers;
 
-class NotEnoughPermissions extends \Hubleto\Erp\Controller
+class NotEnoughPermissions extends \Hubleto\Framework\Controller
 {
   public bool $requiresAuthenticatedUser = false;
   public bool $hideDefaultDesktop = true;

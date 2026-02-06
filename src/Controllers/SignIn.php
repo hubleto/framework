@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Controllers;
 
-class SignIn extends \Hubleto\Erp\Controller
+class SignIn extends \Hubleto\Framework\Controller
 {
   public bool $requiresAuthenticatedUser = false;
   public bool $hideDefaultDesktop = true;

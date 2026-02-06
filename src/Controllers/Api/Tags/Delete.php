@@ -7,7 +7,7 @@ use Illuminate\Database\QueryException;
 /**
  * @package Components\Controllers\Tags
  */
-class Delete extends \Hubleto\Erp\Controller
+class Delete extends \Hubleto\Framework\Controller
 {
   public bool $hideDefaultDesktop = true;
 

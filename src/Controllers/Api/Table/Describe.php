@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Controllers\Api\Table;
 
-class Describe extends \Hubleto\Erp\Controllers\ApiController {
+class Describe extends \Hubleto\Framework\Controllers\ApiController {
   public \Hubleto\Framework\Model $model;
 
   function __construct()

@@ -7,7 +7,7 @@ use Illuminate\Database\QueryException;
 /**
  * @package Components\Controllers\Tags
  */
-class Add extends \Hubleto\Erp\Controller
+class Add extends \Hubleto\Framework\Controller
 {
   public bool $hideDefaultDesktop = true;
 
@@ -35,15 +35,15 @@ class Add extends \Hubleto\Erp\Controller
       $junctionOptionKeyColumn = $junctionModel->getColumns()[$junctionData['optionKeyColumn']]->toArray();
       $junctionOptionKeyModel = $this->getModel($junctionOptionKeyColumn['model']);
 
-      $insertedId = $junctionOptionKeyModel->insertGetId([
+      $insertedId = $junctionOptionKeyModel->record->create([
         $dataKey => $this->router()->urlParamAsString($dataKey)
-      ]);
+      ])->id;
 
       // Junction table insert
       $junctionDataForInsert = [];
       $junctionDataForInsert[$junctionData['optionKeyColumn']] = $insertedId;
       $junctionDataForInsert[$junctionData['masterKeyColumn']] = $id;
-      $junctionModel->insert($junctionDataForInsert);
+      $junctionModel->record->create($junctionDataForInsert);
 
       return [];
     } catch (QueryException $e) {

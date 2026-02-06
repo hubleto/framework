@@ -7,7 +7,7 @@ use Illuminate\Database\QueryException;
 /**
  * @package Components\Controllers\Tags
  */
-class Data extends \Hubleto\Erp\Controller
+class Data extends \Hubleto\Framework\Controller
 {
   public bool $hideDefaultDesktop = true;
 
@@ -43,7 +43,7 @@ class Data extends \Hubleto\Erp\Controller
       $junctionOptionKeyColumn = $junctionModel->getColumns()[$junctionData['optionKeyColumn']]->toArray();
 
       $junctionOptionKeyModel = $this->getModel($junctionOptionKeyColumn['model']);
-      $data = $junctionOptionKeyModel->all();
+      $data = $junctionOptionKeyModel->record->get()?->toArray();
 
       return [
         'data' => $data,
