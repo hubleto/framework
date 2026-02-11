@@ -147,20 +147,12 @@ class User extends Model {
     $idUser = (int) $uidUser;
 
     $user = $this->record
-      ->with('ROLES')
-      ->with('TEAMS')
-      ->with('DEFAULT_COMPANY')
       ->where('id', $idUser)
       ->where('is_active', '<>', 0)
       ->first()
       ?->toArray()
     ;
 
-    $tmpRoles = [];
-    foreach ($user['roles'] ?? [] as $role) {
-      $tmpRoles[] = (int) $role['pivot']['id_role'];
-    }
-    $user['roles'] = $tmpRoles;
 
     return $user;
   }
@@ -209,7 +201,7 @@ class User extends Model {
    */
   public function verifyPassword(array $user, string $password): bool
   {
-    return password_verify($user['password'] ?? '', $password);
+    return password_verify($password, $user['password'] ?? '');
   }
 
 }
