@@ -44,6 +44,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   protected string $endpoint = '';
   protected bool $creatable = false;
   protected string $searchAlgorithm = '';
+  protected string $textAlign = 'left';
 
   protected array $properties = [];
 
@@ -75,6 +76,9 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
 
   public function getType(): string { return $this->type; }
   public function setType(string $type): Column { $this->type = $type; return $this; }
+
+  public function getTextAlign(): string { return $this->textAlign; }
+  public function setTextAlign(string $textAlign): Column { $this->textAlign = $textAlign; return $this; }
 
   public function getSearchAlgorithm(): string { return $this->searchAlgorithm; }
 
@@ -245,6 +249,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
       'byteSize' => $this->byteSize,
       'endpoint' => $this->endpoint,
       'creatable' => $this->creatable,
+      'textAlign' => $this->textAlign,
     ];
 
     if (count($this->enumValues) > 0) $column['enumValues'] = $this->enumValues;

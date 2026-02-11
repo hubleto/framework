@@ -8,6 +8,7 @@ class Time extends \Hubleto\Framework\Column
   protected string $type = 'time';
   protected string $sqlDataType = 'time';
   protected string $searchAlgorithm = 'time';
+  protected string $textAlign = 'right';
 
   public function normalize(mixed $value): mixed
   {
