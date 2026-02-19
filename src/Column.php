@@ -36,7 +36,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   protected string $tableCellRenderer = '';
   protected string $lookupModel = '';
   protected string $reactComponent = '';
-  protected int $decimals = 4;
+  protected int $decimals = 0;
   protected float $step = 1;
   protected string $icon = '';
   protected int $byteSize = 14;

@@ -9,6 +9,7 @@ class Decimal extends \Hubleto\Framework\Column
   protected string $sqlDataType = 'decimal';
   protected string $searchAlgorithm = 'number';
   protected string $textAlign = 'right';
+  protected int $decimals = 4;
 
   public function normalize(mixed $value): mixed
   {
