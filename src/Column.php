@@ -200,7 +200,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
     return $description;
   }
 
-  public function loadFromArray(array $columnConfig): Column
+  public function fromArray(array $columnConfig): Column
   {
     if (isset($columnConfig['title'])) $this->setTitle($columnConfig['title']);
     if (isset($columnConfig['reactComponent'])) $this->setReactComponent($columnConfig['reactComponent']);

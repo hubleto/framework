@@ -92,7 +92,7 @@ interface ColumnInterface
   public function setInputProp(string $pName, mixed $pValue): ColumnInterface;
 
   public function describeInput(): \Hubleto\Framework\Description\Input;
-  public function loadFromArray(array $columnConfig): ColumnInterface;
+  public function fromArray(array $columnConfig): ColumnInterface;
   public function jsonSerialize(): array;
   public function toArray(): array;
   public function getNullValue(): mixed;

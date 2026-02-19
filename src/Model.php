@@ -526,16 +526,6 @@ class Model extends Core implements Interfaces\ModelInterface
       $columns['id'] = new \Hubleto\Framework\Db\Column\PrimaryKey($this, 'ID', 8);
     }
 
-    if ($this->isExtendableByCustomColumns) {
-      $columnsCfg = $this->configAsArray('customColumns') ?? [];
-      foreach ($columnsCfg as $colName => $colCfg) {
-        $colClass = $colCfg['class'] ?? '';
-        if (class_exists($colClass)) {
-          $columns[$colName] = (new $colClass($this, ''))->loadFromArray($colCfg)->setProperty('isCustom', true);
-        }
-      }
-    }
-
     return $columns;
   }
 

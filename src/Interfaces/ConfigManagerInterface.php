@@ -6,6 +6,7 @@ interface ConfigManagerInterface extends CoreInterface
 {
 
   public function forApp(string $appClass);
+  public function forModel(string $modelClass);
   public function setPrefix(string $prefix);
   public function setConfig(array $configData);
   public function empty(string $path): bool;
