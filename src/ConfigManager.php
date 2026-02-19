@@ -10,6 +10,15 @@ class ConfigManager extends Core implements Interfaces\ConfigManagerInterface
   protected array $configData = [];
   private string $prefix = '';
 
+  public function forModel(string $modelClass): ConfigManager
+  {
+    /** @var Interfaces\ConfigManagerInterface */
+    $new = new (get_class($this));
+    $new->setConfig($this->configData);
+    $new->setPrefix('models/' . $modelClass . '/');
+    return $new;
+  }
+
   public function forApp(string $appClass): ConfigManager
   {
     /** @var Interfaces\ConfigManagerInterface */
@@ -82,6 +91,11 @@ class ConfigManager extends Core implements Interfaces\ConfigManagerInterface
   public function getAsArray(string $path, array $defaultValue = []): array
   {
     return (array) $this->get($path, $defaultValue);
+  }
+
+  public function getAsJson(string $path, array $defaultValue = []): array
+  {
+    return @json_decode($this->getAsString($path, ''), true) ?? $defaultValue;
   }
 
 
