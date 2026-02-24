@@ -36,7 +36,8 @@ interface ModelInterface
   public function columnNames(): array;
   public function indexes(array $indexes = []): array;
   public function indexNames(): array;
-  public function upgrades(): array;
+
+  public function migrations(): array;
   public function getPermissions(array $record): array;
 
   //////////////////////////////////////////////////////////////////

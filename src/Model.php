@@ -3,7 +3,6 @@
 namespace Hubleto\Framework;
 
 use Hubleto\Framework\Exceptions\DBException;
-use ReflectionClass;
 
 /**
  * Default implementation of model for Hubleto project.
@@ -264,7 +263,7 @@ class Model extends Core implements Interfaces\ModelInterface
 
       $this->config()->save(
         'models/' . str_replace("/", "-", $this->fullName) . '/installed-upgrade',
-        max(array_keys($this->upgrades()))
+        max(array_keys($this->migrations()))
       );
 
       return TRUE;
@@ -338,81 +337,82 @@ class Model extends Core implements Interfaces\ModelInterface
   }
 
   /**
-   * Returns list of available upgrades. This method must be overriden by each model.
+   * Returns list of available migrations looked up from a folder. This method must be overridden by each model and
+   * must include at least the default migration of a model.
    *
-   * @return array List of available upgrades. Keys of the array are simple numbers starting from 1.
+   * @return array List of available migrations
+   * @throws \Exception
    */
-  public function upgrades(): array
-  {
+  public function migrations(): array {
     return [
-      0 => [], // upgrade to version 0 is the same as installation
+      0 => []
     ];
   }
 
   /**
-   * [Description for getInstalledUpgrade]
+   * Looks for installed migrations in the database
+   *
+   * @return int
+   *
+   */
+  private function getLatestInstalledMigration(): array
+  {
+    return $this->config()->getAsInteger('installed-migration');
+  }
+
+  /**
+   * Looks for the number of latest installed migration in the database
    *
    * @return int
    * 
    */
-  private function getInstalledUpgrade(): int
+  private function getLatestMigration(): array
   {
-    return $this->config()->getAsInteger('installed-upgrade', 0);
+    return $this->migrations()[max(array_keys($this->migrations()))];
   }
 
   /**
-   * [Description for getLatestUpgrade]
-   *
-   * @return int
-   * 
-   */
-  private function getLatestUpgrade(): int
-  {
-    return max(array_keys($this->upgrades()));
-  }
-
-  /**
-   * [Description for hasAvailableUpgrades]
+   * Retrieves migrations that are yet to be executed.
    *
    * @return array
    * 
    */
-  public function getAvailableUpgrades(): array
+  public function getPendingMigrations(): array
   {
     $availableUpgrades = [];
-    $installedUpgrade = $this->getInstalledUpgrade();
-    $latestUpgrade = $this->getLatestUpgrade();
+    $latestInstalledMigration = $this->getLatestInstalledMigration();
+    $latestMigration = $this->getLatestMigration();
 
-    $upgrades = $this->upgrades();
+    $migrations = $this->migrations();
 
-    for ($v = $installedUpgrade + 1; $v <= $latestUpgrade; $v++) {
-      $availableUpgrades[] = $upgrades[$v];
+    for ($v = $latestInstalledMigration + 1; $v <= $latestMigration; $v++) {
+      $availableUpgrades[] = $migrations[$v];
     }
     
     return $availableUpgrades;
   }
 
   /**
-   * Installs all upgrades of the model. Internaly stores current version and
-   * compares it to list of available upgrades.
+   * Installs all pending migrations of the model. Internally stores executed migrations and
+   * compares it to list of available migrations.
    *
    * @return void
-   * @throws DBException When an error occured during the upgrade.
+   * @throws DBException When an error occurred during the upgrade.
    */
-  public function installUpgrades(): void
+  public function installMigrations(): void
   {
-    $availableUpgrades = $this->getAvailableUpgrades();
+    $pendingMigrations = $this->getPendingMigrations();
 
-    if (count($availableUpgrades) > 0) {
+    if (count($pendingMigrations) > 0) {
       try {
         $this->db()->startTransaction();
 
-        foreach ($availableUpgrades as $upgrade) {
-          $this->db()->execute($upgrade);
+        foreach ($pendingMigrations as $migration) {
+          $migrationObject = new $migration();
         }
 
         $this->db()->commit();
-        $this->config()->save('installed-upgrade', $this->getLatestUpgrade());
+        $this->config()->save('installed-migrations', json_encode(array_merge($this->getInstalledMigrations(), $pendingMigrations)));
       } catch (DBException $e) {
         $this->db()->rollback();
         throw new DBException($e->getMessage());
