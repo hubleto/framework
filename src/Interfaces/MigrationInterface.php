@@ -9,8 +9,8 @@ interface MigrationInterface
 
   public function uninstallTables(): void;
 
-  public function installIndexes(): void;
+  public function installForeignKeys(): void;
 
-  public function uninstallIndexes(): void;
+  public function uninstallForeignKeys(): void;
 
 }

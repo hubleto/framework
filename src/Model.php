@@ -2,6 +2,8 @@
 
 namespace Hubleto\Framework;
 
+use Hubleto\Erp\Cli\Agent\App\Install;
+use Hubleto\Framework\Enums\InstalledMigrationEnum;
 use Hubleto\Framework\Exceptions\DBException;
 
 /**
@@ -194,106 +196,67 @@ class Model extends Core implements Interfaces\ModelInterface
   }
 
   /**
-   * [Description for createSqlTable]
+   * Returns SQL commands for index creation
    *
-   * @return [type]
-   * 
-   */
-  public function createSqlTable()
-  {
-
-    $this->db()->startTransaction();
-    foreach ($this->getSqlCreateTableCommands() as $command) {
-      $this->db()->execute($command);
-    }
-    $this->db()->commit();
-  }
-
-  /**
-   * Installs the first version of the model into SQL database. Automatically creates indexes.
+   * @return array
    *
-   * @return void
    */
-  public function install()
+  public function getSqlCreateIndexesCommands(): array
   {
-    if (!empty($this->table)) {
-      $this->createSqlTable();
+    $commands = [];
 
-      foreach ($this->indexes() as $indexOrConstraintName => $indexDef) {
-        if (empty($indexOrConstraintName) || is_numeric($indexOrConstraintName)) {
-          $indexOrConstraintName = md5(json_encode($indexDef) . uniqid());
-        }
-
-        $tmpColumns = "";
-
-        foreach ($indexDef['columns'] as $tmpKey => $tmpValue) {
-          if (!is_numeric($tmpKey)) {
-            // v tomto pripade je nazov stlpca v kluci a vo value mozu byt dalsie nastavenia
-            $tmpColumnName = $tmpKey;
-            $tmpOrder = strtolower($tmpValue['order'] ?? 'asc');
-            if (!in_array($tmpOrder, ['asc', 'desc'])) {
-              $tmpOrder = 'asc';
-            }
-          } else {
-            $tmpColumnName = $tmpValue;
-            $tmpOrder = '';
-          }
-
-          $tmpColumns .=
-            ($tmpColumns == '' ? '' : ', ')
-            . '`' . $tmpColumnName . '`'
-            . (empty($tmpOrder) ? '' : ' ' . $tmpOrder);
-        }
-
-        switch ($indexDef["type"]) {
-          case "index":
-            $this->db()->execute("
-              alter table `" . $this->table . "`
-              add index `{$indexOrConstraintName}` ({$tmpColumns})
-            ");
-            break;
-          case "unique":
-            $this->db()->execute("
-              alter table `" . $this->table . "`
-              add constraint `{$indexOrConstraintName}` unique ({$tmpColumns})
-            ");
-            break;
-        }
+    foreach ($this->indexes() as $indexOrConstraintName => $indexDef) {
+      if (empty($indexOrConstraintName) || is_numeric($indexOrConstraintName)) {
+        $indexOrConstraintName = md5(json_encode($indexDef) . uniqid());
       }
 
-      $this->config()->save(
-        'models/' . str_replace("/", "-", $this->fullName) . '/installed-upgrade',
-        max(array_keys($this->migrations()))
-      );
+      $tmpColumns = "";
 
-      return TRUE;
-    } else {
-      return FALSE;
+      foreach ($indexDef['columns'] as $tmpKey => $tmpValue) {
+        if (!is_numeric($tmpKey)) {
+          // v tomto pripade je nazov stlpca v kluci a vo value mozu byt dalsie nastavenia
+          $tmpColumnName = $tmpKey;
+          $tmpOrder = strtolower($tmpValue['order'] ?? 'asc');
+          if (!in_array($tmpOrder, ['asc', 'desc'])) {
+            $tmpOrder = 'asc';
+          }
+        } else {
+          $tmpColumnName = $tmpValue;
+          $tmpOrder = '';
+        }
+
+        $tmpColumns .=
+          ($tmpColumns == '' ? '' : ', ')
+          . '`' . $tmpColumnName . '`'
+          . (empty($tmpOrder) ? '' : ' ' . $tmpOrder);
+      }
+
+      switch ($indexDef["type"]) {
+        case "index":
+          $commands[] ="
+              alter table `" . $this->table . "`
+              add index `{$indexOrConstraintName}` ({$tmpColumns})
+            ";
+          break;
+        case "unique":
+          $commands[] = "
+              alter table `" . $this->table . "`
+              add constraint `{$indexOrConstraintName}` unique ({$tmpColumns})
+            ";
+          break;
+      }
     }
+
+    return $commands;
   }
 
   /**
-   * [Description for dropTableIfExists]
-   *
-   * @return Model
-   * 
-   */
-  public function dropTableIfExists(): Interfaces\ModelInterface
-  {
-    $this->db()->execute("set foreign_key_checks = 0");
-    $this->db()->execute("drop table if exists `" . $this->table . "`");
-    $this->db()->execute("set foreign_key_checks = 1");
-    return $this;
-  }
-
-  /**
-   * Create foreign keys for the SQL table. Called when all models are installed.
+   * Get SQL commands for foreign key creation.
    *
    * @return void
    */
-  public function createSqlForeignKeys()
+  public function getSqlCreateForeignKeysCommands(): array
   {
-
     $sql = '';
     foreach ($this->getColumns() as $colName => $column) {
       $columnDefinition = $column->toArray();
@@ -318,12 +281,28 @@ class Model extends Core implements Interfaces\ModelInterface
       }
     }
 
+    $commands = [];
     if (!empty($sql)) {
       foreach (explode(';;', $sql) as $query) {
-        $this->db()->execute(trim($query));
+        $commands[] = trim($query);
       }
     }
 
+    return $commands;
+  }
+
+  /**
+   * Drop model's SQL table if it exists
+   *
+   * @return Model
+   *
+   */
+  public function dropTableIfExists(): Interfaces\ModelInterface
+  {
+    $this->db()->execute("set foreign_key_checks = 0");
+    $this->db()->execute("drop table if exists `" . $this->table . "`");
+    $this->db()->execute("set foreign_key_checks = 1");
+    return $this;
   }
 
   /**
@@ -345,7 +324,6 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function migrations(): array {
     return [
-      0 => []
     ];
   }
 
@@ -355,9 +333,9 @@ class Model extends Core implements Interfaces\ModelInterface
    * @return int
    *
    */
-  private function getLatestInstalledMigration(): array
+  private function getLatestInstalledMigration(InstalledMigrationEnum $configKey): int
   {
-    return $this->config()->getAsInteger('installed-migration');
+    return $this->config()->getAsInteger($configKey->toString(), -1);
   }
 
   /**
@@ -366,9 +344,12 @@ class Model extends Core implements Interfaces\ModelInterface
    * @return int
    * 
    */
-  private function getLatestMigration(): array
+  private function getLatestMigration(): int
   {
-    return $this->migrations()[max(array_keys($this->migrations()))];
+    if (count($this->migrations()) == 0) {
+      return -1;
+    }
+    return max(array_keys($this->migrations()));
   }
 
   /**
@@ -377,10 +358,10 @@ class Model extends Core implements Interfaces\ModelInterface
    * @return array
    * 
    */
-  public function getPendingMigrations(): array
+  public function getPendingMigrations(InstalledMigrationEnum $configKey): array
   {
     $availableUpgrades = [];
-    $latestInstalledMigration = $this->getLatestInstalledMigration();
+    $latestInstalledMigration = $this->getLatestInstalledMigration($configKey);
     $latestMigration = $this->getLatestMigration();
 
     $migrations = $this->migrations();
@@ -393,26 +374,56 @@ class Model extends Core implements Interfaces\ModelInterface
   }
 
   /**
-   * Installs all pending migrations of the model. Internally stores executed migrations and
-   * compares it to list of available migrations.
+   * Installs tables of all pending migrations. Internally stores the latest installed migration.
    *
    * @return void
    * @throws DBException When an error occurred during the upgrade.
    */
-  public function installMigrations(): void
+  public function installTables(): void
   {
-    $pendingMigrations = $this->getPendingMigrations();
+    $pendingMigrations = $this->getPendingMigrations(InstalledMigrationEnum::TABLES);
 
     if (count($pendingMigrations) > 0) {
       try {
         $this->db()->startTransaction();
 
         foreach ($pendingMigrations as $migration) {
-          $migrationObject = new $migration();
+          if ($migration instanceof  Migration) {
+            $migration->installTables();
+          }
         }
 
         $this->db()->commit();
-        $this->config()->save('installed-migrations', json_encode(array_merge($this->getInstalledMigrations(), $pendingMigrations)));
+        $this->config()->save(InstalledMigrationEnum::TABLES->toString(), $this->getLatestMigration());
+      } catch (DBException $e) {
+        $this->db()->rollback();
+        throw new DBException($e->getMessage());
+      }
+    }
+  }
+
+  /**
+   * Installs indexes and foreign keys of all pending migrations. Internally stores the latest installed migration.
+   *
+   * @return void
+   * @throws DBException When an error occurred during the upgrade.
+   */
+  public function installForeignKeys(): void
+  {
+    $pendingMigrations = $this->getPendingMigrations(InstalledMigrationEnum::FOREIGN_KEYS);
+
+    if (count($pendingMigrations) > 0) {
+      try {
+        $this->db()->startTransaction();
+
+        foreach ($pendingMigrations as $migration) {
+          if ($migration instanceof  Migration) {
+            $migration->installForeignKeys();
+          }
+        }
+
+        $this->db()->commit();
+        $this->config()->save(InstalledMigrationEnum::FOREIGN_KEYS->toString(), $this->getLatestMigration());
       } catch (DBException $e) {
         $this->db()->rollback();
         throw new DBException($e->getMessage());

@@ -20,10 +20,11 @@ interface ModelInterface
   // SQL table manipulation
 
   public function getSqlCreateTableCommands(): array;
-  public function createSqlTable();
-  public function install();
+  public function getSqlCreateIndexesCommands(): array;
+  public function getSqlCreateForeignKeysCommands(): array;
+  public function installTables();
+  public function installForeignKeys();
   public function dropTableIfExists(): ModelInterface;
-  public function createSqlForeignKeys();
   public function getFullTableSqlName();
 
   //////////////////////////////////////////////////////////////////
