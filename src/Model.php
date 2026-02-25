@@ -5,6 +5,7 @@ namespace Hubleto\Framework;
 use Hubleto\Erp\Cli\Agent\App\Install;
 use Hubleto\Framework\Enums\InstalledMigrationEnum;
 use Hubleto\Framework\Exceptions\DBException;
+use Hubleto\Framework\Models\Migrations\DEPRECATED_25_02_2026_0001;
 
 /**
  * Default implementation of model for Hubleto project.
@@ -324,6 +325,7 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function migrations(): array {
     return [
+      0 => new DEPRECATED_25_02_2026_0001($this->db(), $this)
     ];
   }
 
