@@ -224,6 +224,16 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   private function getLatestInstalledMigration(InstalledMigrationEnum $configKey): int
   {
+    $latestMigration = $this->config()->getAsInteger($configKey->toString(), -1);
+
+    // TODO: temporary backwards compatibility
+    $latestUpgrade = $this->config()->getAsInteger('installed-version', -1);
+    if ($latestMigration == -1 && $latestUpgrade != -1) {
+      $this->config()->save(InstalledMigrationEnum::TABLES->toString(), $latestUpgrade);
+      $this->config()->save(InstalledMigrationEnum::FOREIGN_KEYS->toString(), $latestUpgrade);
+      return $latestUpgrade;
+    }
+
     return $this->config()->getAsInteger($configKey->toString(), -1);
   }
 
