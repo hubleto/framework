@@ -5,6 +5,7 @@ namespace Hubleto\Framework;
 use Hubleto\Erp\Cli\Agent\App\Install;
 use Hubleto\Framework\Enums\InstalledMigrationEnum;
 use Hubleto\Framework\Exceptions\DBException;
+use Hubleto\Framework\Interfaces\ModelInterface;
 use Hubleto\Framework\Models\Migrations\DEPRECATED_25_02_2026_0001;
 
 /**
@@ -160,136 +161,14 @@ class Model extends Core implements Interfaces\ModelInterface
   // SQL table manipulation
 
   /**
-   * [Description for getSqlCreateTableCommands]
-   *
-   * @return array
-   * 
-   */
-  public function getSqlCreateTableCommands(): array
-  {
-
-    $columns = $this->columns;
-
-    $createSql = "create table `{$this->table}` (\n";
-
-    foreach ($columns as $columnName => $column) {
-      $tmp = $column->sqlCreateString($this->table, $columnName);
-      if (!empty($tmp)) $createSql .= " {$tmp},\n";
-
-    }
-
-    // indexy
-    foreach ($columns as $columnName => $column) {
-      $tmp = $column->sqlIndexString($this->table, $columnName);
-      if (!empty($tmp)) $createSql .= " {$tmp},\n";
-    }
-
-    $createSql = substr($createSql, 0, -2) . ") ENGINE = {$this->sqlEngine}";
-
-    $commands = [];
-    $commands[] = "SET foreign_key_checks = 0";
-    $commands[] = "drop table if exists `{$this->table}`";
-    $commands[] = $createSql;
-    $commands[] = "SET foreign_key_checks = 1";
-
-    return $commands;
-
-  }
-
-  /**
-   * Returns SQL commands for index creation
+   * Returns the value of the sqlEngine property, which is used to specify the SQL engine for the model's table.
    *
    * @return array
    *
    */
-  public function getSqlCreateIndexesCommands(): array
+  public function getSqlEngine(): string
   {
-    $commands = [];
-
-    foreach ($this->indexes() as $indexOrConstraintName => $indexDef) {
-      if (empty($indexOrConstraintName) || is_numeric($indexOrConstraintName)) {
-        $indexOrConstraintName = md5(json_encode($indexDef) . uniqid());
-      }
-
-      $tmpColumns = "";
-
-      foreach ($indexDef['columns'] as $tmpKey => $tmpValue) {
-        if (!is_numeric($tmpKey)) {
-          // v tomto pripade je nazov stlpca v kluci a vo value mozu byt dalsie nastavenia
-          $tmpColumnName = $tmpKey;
-          $tmpOrder = strtolower($tmpValue['order'] ?? 'asc');
-          if (!in_array($tmpOrder, ['asc', 'desc'])) {
-            $tmpOrder = 'asc';
-          }
-        } else {
-          $tmpColumnName = $tmpValue;
-          $tmpOrder = '';
-        }
-
-        $tmpColumns .=
-          ($tmpColumns == '' ? '' : ', ')
-          . '`' . $tmpColumnName . '`'
-          . (empty($tmpOrder) ? '' : ' ' . $tmpOrder);
-      }
-
-      switch ($indexDef["type"]) {
-        case "index":
-          $commands[] ="
-              alter table `" . $this->table . "`
-              add index `{$indexOrConstraintName}` ({$tmpColumns})
-            ";
-          break;
-        case "unique":
-          $commands[] = "
-              alter table `" . $this->table . "`
-              add constraint `{$indexOrConstraintName}` unique ({$tmpColumns})
-            ";
-          break;
-      }
-    }
-
-    return $commands;
-  }
-
-  /**
-   * Get SQL commands for foreign key creation.
-   *
-   * @return void
-   */
-  public function getSqlCreateForeignKeysCommands(): array
-  {
-    $sql = '';
-    foreach ($this->getColumns() as $colName => $column) {
-      $columnDefinition = $column->toArray();
-
-      if (
-        !($columnDefinition['disableForeignKey'] ?? false)
-        && 'lookup' == $columnDefinition['type']
-      ) {
-        $lookupModel = $this->getModel($columnDefinition['model']);
-        $foreignKeyColumn = $columnDefinition['foreignKeyColumn'] ?? "id";
-        $foreignKeyOnDelete = $columnDefinition['foreignKeyOnDelete'] ?? "RESTRICT";
-        $foreignKeyOnUpdate = $columnDefinition['foreignKeyOnUpdate'] ?? "RESTRICT";
-
-        $sql .= "
-          ALTER TABLE `{$this->table}`
-          ADD CONSTRAINT `fk_" . md5($this->table . '_' . $colName) . "`
-          FOREIGN KEY (`{$colName}`)
-          REFERENCES `" . $lookupModel->getFullTableSqlName() . "` (`{$foreignKeyColumn}`)
-          ON DELETE {$foreignKeyOnDelete}
-          ON UPDATE {$foreignKeyOnUpdate};;
-        ";
-      }
-    }
-
-    $commands = [];
-    if (!empty($sql)) {
-      foreach (explode(';;', $sql) as $query) {
-        $commands[] = trim($query);
-      }
-    }
-
-    return $commands;
+    return $this->sqlEngine;
   }
 
   /**
@@ -298,11 +177,19 @@ class Model extends Core implements Interfaces\ModelInterface
    * @return Model
    *
    */
-  public function dropTableIfExists(): Interfaces\ModelInterface
+  public function getSqlDropTableIfExists(): array
   {
-    $this->db()->execute("set foreign_key_checks = 0");
-    $this->db()->execute("drop table if exists `" . $this->table . "`");
-    $this->db()->execute("set foreign_key_checks = 1");
+    $commands = [];
+    $commands[] = "set foreign_key_checks = 0";
+    $commands[] = "drop table if exists `" . $this->table . "`";
+    $commands[] = "set foreign_key_checks = 1";
+    return $commands;
+  }
+
+  public function dropTableIfExists(): ModelInterface {
+    foreach ($this->getSqlDropTableIfExists() as $sql) {
+      $this->db()->execute($sql);
+    }
     return $this;
   }
 
