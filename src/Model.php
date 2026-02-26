@@ -236,7 +236,7 @@ class Model extends Core implements Interfaces\ModelInterface
       return $latestUpgrade;
     }
 
-    return $this->config()->getAsInteger($configKey->toString(), -1);
+    return $latestMigration;
   }
 
   /**
