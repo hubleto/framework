@@ -224,13 +224,15 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   private function getLatestInstalledMigration(InstalledMigrationEnum $configKey): int
   {
-    $latestMigration = $this->config()->getAsInteger($configKey->toString(), -1);
+    $latestMigration = $this->config()->getAsInteger('models/' . str_replace("/", "-", $this->fullName) . '/' . $configKey->toString(), -1);
 
     // TODO: temporary backwards compatibility
-    $latestUpgrade = $this->config()->getAsInteger('installed-version', -1);
+    $latestUpgrade = $this->config()->getAsInteger('models/' . str_replace("/", "-", $this->fullName) . '/' .'installed-version', -1);
+    if ($latestUpgrade == -1) $latestUpgrade = $this->config()->getAsInteger('models/' . str_replace("/", "-", $this->fullName) . '/' .'installed-upgrade', -1);
+
     if ($latestMigration == -1 && $latestUpgrade != -1) {
-      $this->config()->save(InstalledMigrationEnum::TABLES->toString(), $latestUpgrade);
-      $this->config()->save(InstalledMigrationEnum::FOREIGN_KEYS->toString(), $latestUpgrade);
+      $this->config()->save('models/' . str_replace("/", "-", $this->fullName) . '/' . InstalledMigrationEnum::TABLES->toString(), $latestUpgrade);
+      $this->config()->save('models/' . str_replace("/", "-", $this->fullName) . '/' . InstalledMigrationEnum::FOREIGN_KEYS->toString(), $latestUpgrade);
       return $latestUpgrade;
     }
 
@@ -293,7 +295,7 @@ class Model extends Core implements Interfaces\ModelInterface
         }
 
         $this->db()->commit();
-        $this->config()->save(InstalledMigrationEnum::TABLES->toString(), $this->getLatestMigration());
+        $this->config()->save('models/' . str_replace("/", "-", $this->fullName) . '/' . InstalledMigrationEnum::TABLES->toString(), $this->getLatestMigration());
       } catch (DBException $e) {
         $this->db()->rollback();
         throw new DBException($e->getMessage());
@@ -322,7 +324,7 @@ class Model extends Core implements Interfaces\ModelInterface
         }
 
         $this->db()->commit();
-        $this->config()->save(InstalledMigrationEnum::FOREIGN_KEYS->toString(), $this->getLatestMigration());
+        $this->config()->save('models/' . str_replace("/", "-", $this->fullName) . '/' . InstalledMigrationEnum::FOREIGN_KEYS->toString(), $this->getLatestMigration());
       } catch (DBException $e) {
         $this->db()->rollback();
         throw new DBException($e->getMessage());
