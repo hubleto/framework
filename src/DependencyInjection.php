@@ -2,10 +2,12 @@
 
 namespace Hubleto\Framework;
 
+use Psr\Container\ContainerInterface;
+
 /**
  * Default implementation of dependency injection.
  */
-class DependencyInjection
+class DependencyInjection implements ContainerInterface
 {
 
   /**
@@ -16,11 +18,17 @@ class DependencyInjection
   private static array $serviceProviders = [];
 
   private static array $services = [];
-  
-  // public static function __construct(public \Hubleto\Framework\Loader $main) {
-  //   self::setServiceProvider('model.user', \Hubleto\Framework\Models\User::class);
-  // }
-  
+
+  public function get($id): mixed
+  {
+    return $this->create($id);
+  }
+
+  public function has($id): bool
+  {
+    return class_exists($id);
+  }
+
   public static function setServiceProvider(string $service, string $provider): void
   {
     self::$serviceProviders[$service] = $provider;
