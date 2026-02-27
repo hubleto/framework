@@ -57,6 +57,8 @@ class Model extends Core implements Interfaces\ModelInterface
 
   public bool $isExtendableByCustomColumns = false;
 
+  public string $namespace = '';
+  public string $srcFolder = '';
   public array $conversionRelations = [];
   public string $permission = '';
   public array $rolePermissions = []; // example: [ [UserRole::ROLE_CHIEF_OFFICER => [true, true, true, true]] ]
@@ -65,6 +67,10 @@ class Model extends Core implements Interfaces\ModelInterface
   {
 
     $reflection = new \ReflectionClass($this);
+
+    $this->srcFolder = pathinfo((string) $reflection->getFilename(), PATHINFO_DIRNAME);
+    $this->namespace = $reflection->getNamespaceName();
+
     preg_match('/^(.*?)\\\Models\\\(.*?)$/', $reflection->getName(), $m);
     if (isset($m[1]) && isset($m[2])) {
       $this->translationContext = str_replace('\\', '-', strtolower($m[1] . '\\Loader'));
@@ -171,27 +177,12 @@ class Model extends Core implements Interfaces\ModelInterface
     return $this->sqlEngine;
   }
 
-  /**
-   * Drop model's SQL table if it exists
-   *
-   * @return Model
-   *
-   */
-  public function getSqlDropTableIfExists(): array
-  {
-    $commands = [];
-    $commands[] = "set foreign_key_checks = 0";
-    $commands[] = "drop table if exists `" . $this->table . "`";
-    $commands[] = "set foreign_key_checks = 1";
-    return $commands;
-  }
-
-  public function dropTableIfExists(): ModelInterface {
-    foreach ($this->getSqlDropTableIfExists() as $sql) {
-      $this->db()->execute($sql);
-    }
-    return $this;
-  }
+  // public function dropTableIfExists(): ModelInterface {
+  //   foreach ($this->getSqlDropTableIfExists() as $sql) {
+  //     $this->db()->execute($sql);
+  //   }
+  //   return $this;
+  // }
 
   /**
    * Returns full name of the model's SQL table
@@ -211,9 +202,22 @@ class Model extends Core implements Interfaces\ModelInterface
    * @throws \Exception
    */
   public function migrations(): array {
-    return [
-      0 => new DEPRECATED_25_02_2026_0001($this->db(), $this)
-    ];
+    $migrations = [];
+
+    if (is_dir($this->srcFolder . '/Migrations')) {
+      $mgrFiles = scandir($this->srcFolder . '/Migrations');
+      foreach ($mgrFiles as $mgrFile) {
+        if (str_starts_with($mgrFile, $this->shortName . '_')) {
+          $mgrClass = $this->namespace . '\\Migrations\\' . str_replace('.php', '', $mgrFile);
+          $migrations[] = new $mgrClass($this->db(), $this);
+        }
+      }
+    }
+    
+    return $migrations;
+    // return [
+    //   0 => new DEPRECATED_25_02_2026_0001($this->db(), $this)
+    // ];
   }
 
   /**

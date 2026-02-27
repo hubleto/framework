@@ -1,6 +1,6 @@
 <?php
 
-namespace Hubleto\Framework\Lib;
+namespace Hubleto\Framework\Db;
 
 use Hubleto\Framework\Core;
 use Hubleto\Framework\Interfaces\ModelInterface;
@@ -36,7 +36,7 @@ class ModelSQLCommandsGenerator extends Core
 
     $commands = [];
     $commands[] = "SET foreign_key_checks = 0";
-    $commands[] = "drop table if exists `{$model->getFullTableSqlName()}`";
+    // $commands[] = "drop table if exists `{$model->getFullTableSqlName()}`";
     $commands[] = $createSql;
     $commands[] = "SET foreign_key_checks = 1";
 
@@ -102,7 +102,7 @@ class ModelSQLCommandsGenerator extends Core
   /**
    * Get SQL commands for foreign key creation.
    *
-   * @return void
+   * @return array
    */
   public function getSqlCreateForeignKeysCommands(ModelInterface $model): array
   {
@@ -173,4 +173,21 @@ class ModelSQLCommandsGenerator extends Core
 
     return $commands;
   }
+
+  /**
+   * Drop model's SQL table if it exists
+   *
+   * @return array
+   *
+   */
+  public function getSqlDropTableIfExists(ModelInterface $model): array
+  {
+    $commands = [];
+    $commands[] = "set foreign_key_checks = 0";
+    $commands[] = "drop table if exists `" . $model->table . "`";
+    $commands[] = "set foreign_key_checks = 1";
+    return $commands;
+  }
+
+
 }

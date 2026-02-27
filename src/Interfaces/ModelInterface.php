@@ -21,8 +21,6 @@ interface ModelInterface
 
   public function installTables();
   public function installForeignKeys();
-  public function getSqlDropTableIfExists(): array;
-  public function dropTableIfExists(): ModelInterface;
   public function getFullTableSqlName();
 
   //////////////////////////////////////////////////////////////////
