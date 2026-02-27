@@ -19,11 +19,10 @@ interface ModelInterface
   //////////////////////////////////////////////////////////////////
   // SQL table manipulation
 
-  public function getSqlCreateTableCommands(): array;
-  public function createSqlTable();
-  public function install();
+  public function installTables();
+  public function installForeignKeys();
+  public function getSqlDropTableIfExists(): array;
   public function dropTableIfExists(): ModelInterface;
-  public function createSqlForeignKeys();
   public function getFullTableSqlName();
 
   //////////////////////////////////////////////////////////////////
@@ -36,8 +35,9 @@ interface ModelInterface
   public function columnNames(): array;
   public function indexes(array $indexes = []): array;
   public function indexNames(): array;
-  public function upgrades(): array;
+  public function migrations(): array;
   public function getPermissions(array $record): array;
+  public function getSqlEngine(): string;
 
   //////////////////////////////////////////////////////////////////
   // Description API
