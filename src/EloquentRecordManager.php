@@ -535,7 +535,13 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   public function addOrderByToQuery(mixed $query, array $orderBy): mixed
   {
     if (isset($orderBy['field']) && isset($orderBy['direction'])) {
-      $query->orderBy($orderBy['field'], $orderBy['direction']);
+      if (is_array($orderBy['field'])) {
+        foreach ($orderBy['field'] as $key => $field) {
+          $query->orderBy($field, $orderBy['direction'][$key] ?? 'asc');
+        }
+      } else {
+        $query->orderBy($orderBy['field'], $orderBy['direction']);
+      }
     }
 
     return $query;
