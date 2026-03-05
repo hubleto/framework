@@ -293,7 +293,7 @@ class Model extends Core implements Interfaces\ModelInterface
         $this->db()->startTransaction();
 
         foreach ($pendingMigrations as $migration) {
-          if ($migration instanceof  Migration) {
+          if ($migration instanceof Migration) {
             $migration->installTables();
           }
         }
