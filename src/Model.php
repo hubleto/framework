@@ -592,6 +592,20 @@ class Model extends Core implements Interfaces\ModelInterface
   }
 
   /**
+   * Returns a tree description of the model.
+   * The descriptions contains configuration for tree UI.
+   *
+   * @return \Hubleto\Framework\Description\Tree
+   * 
+   */
+  public function describeTree(): \Hubleto\Framework\Description\Tree
+  {
+    $description = new \Hubleto\Framework\Description\Tree();
+    $description->ui['title'] = '1';
+    return $description;
+  }
+
+  /**
    * Used to convert flat list of records into tree structure.
    * Suitable for models having parent-child relationship.
    *
@@ -614,7 +628,7 @@ class Model extends Core implements Interfaces\ModelInterface
           'id' => $recordId,
           'idParent' => $recordIdParent,
           'title' => $record['_LOOKUP'],
-          'children' => $this->convertRecordsToTree($records, $recordId, $level + 1),
+          'CHILDREN' => $this->convertRecordsToTree($records, $recordId, $level + 1),
         ];
       }
     }

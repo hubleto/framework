@@ -22,6 +22,7 @@ class Router extends Core implements Interfaces\RouterInterface {
       '/^api\/table\/describe\/?$/' => \Hubleto\Framework\Controllers\Api\Table\Describe::class,
       '/^api\/record\/get\/?$/' => \Hubleto\Framework\Controllers\Api\Record\Get::class,
       '/^api\/record\/load-table-data\/?$/' => \Hubleto\Framework\Controllers\Api\Record\LoadTableData::class,
+      '/^api\/record\/load-tree-data\/?$/' => \Hubleto\Framework\Controllers\Api\Record\LoadTreeData::class,
       '/^api\/record\/lookup\/?$/' => \Hubleto\Framework\Controllers\Api\Record\Lookup::class,
       '/^api\/record\/save\/?$/' => \Hubleto\Framework\Controllers\Api\Record\Save::class,
       '/^api\/record\/save-junction\/?$/' => \Hubleto\Framework\Controllers\Api\Record\SaveJunction::class,

@@ -235,11 +235,11 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     $query = $this->addOrderByToQuery($query, $orderBy);
     $tableData = $this->recordReadMany($query, $itemsPerPage, $page);
 
-    foreach ($tableData['data'] as $key => $record) {
-      $tableData['data'][$key] = $this->model->onAfterLoadRecord($record);
+    foreach ($tableData['records'] as $key => $record) {
+      $tableData['records'][$key] = $this->model->onAfterLoadRecord($record);
     }
 
-    $tableData['data'] = $this->model->onAfterLoadRecords($tableData['data']);
+    $tableData['records'] = $this->model->onAfterLoadRecords($tableData['records']);
 
     if ($dataView == 'tree') {
       $query = $this->prepareReadQuery();
@@ -249,6 +249,39 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     }
 
     return $tableData;
+  }
+
+  /**
+   * Calls recordReadMany() to loads records to be displayed in tree.
+   *
+   * @param string $fulltextSearch
+   * @param array $orderBy
+   * @param mixed 
+   * 
+   * @return array
+   * 
+   */
+  public function loadTreeData(
+    string $fulltextSearch = '',
+    array $orderBy = []
+  ): array
+  {
+    $this->maxReadLevel = $this->model->getMaxReadLevelForLoadTableData();
+    $includeRelations = $this->model->getRelationsIncludedInLoadTableData();
+
+    $query = $this->prepareReadQuery(null, 0, $includeRelations);
+    $query = $this->addFulltextSearchToQuery($query, $fulltextSearch);
+    $query = $this->addOrderByToQuery($query, $orderBy);
+    $data = $this->recordReadMany($query, 0, 0);
+
+    foreach ($data['records'] as $key => $record) {
+      $data['records'][$key] = $this->model->onAfterLoadRecord($record);
+    }
+
+    $data['records'] = $this->model->onAfterLoadRecords($data['records']);
+    $data['nodes'] = $this->model->convertRecordsToTree($data['records']);
+
+    return $data;
   }
 
   /**
@@ -559,25 +592,32 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    */
   public function recordReadMany(mixed $query, int $itemsPerPage, int $page): array
   {
-    $data = $query->paginate(
-      $itemsPerPage,
-      ['*'],
-      'page',
-      $page
-    )->toArray();
+    if ($itemsPerPage > 0) {
+      $data = $query->paginate(
+        $itemsPerPage,
+        ['*'],
+        'page',
+        $page
+      )->toArray();
 
-    foreach ($data['data'] as $key => $record) {
+      $data['records'] = $data['data'];
+      unset($data['data']);
+    } else {
+      $data = [ 'records' => $query->get()?->toArray() ];
+    }
+
+    foreach ($data['records'] as $key => $record) {
       $permissions = $this->model->getPermissions($record);
       if (!$permissions[1]) {
-        $data['data'][$key] = [ '_PERMISSIONS' => $permissions ];
+        $data['records'][$key] = [ '_PERMISSIONS' => $permissions ];
       } else {
-        $data['data'][$key]['_PERMISSIONS'] = $permissions;
+        $data['records'][$key]['_PERMISSIONS'] = $permissions;
       }
     }
 
     // Laravel pagination
     if (!is_array($data)) $data = [];
-    if (!is_array($data['data'])) $data['data'] = [];
+    if (!is_array($data['records'])) $data['records'] = [];
 
     return $data;
   }
