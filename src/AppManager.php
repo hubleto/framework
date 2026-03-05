@@ -192,7 +192,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
     $packages = \Composer\InstalledVersions::getInstalledPackages();
     foreach ($packages as $package) {
       $path = \Composer\InstalledVersions::getInstallPath($package);
-
+echo "<!-- ";var_dump($package, $path);echo " -->";
       if (is_dir($path . '/src')) {
         // this package is a single app
         $manifest = $this->loadAppManifestFromPath($path . '/src');
@@ -211,44 +211,6 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
         }
       }
     }
-
-    // // community apps
-    // $communityRepoFolder = $this->env()->srcFolder . '/../apps';
-    // if (is_dir($communityRepoFolder)) {
-    //   foreach (scandir($communityRepoFolder) as $folder) {
-    //     $manifestFile = $communityRepoFolder . '/' . $folder . '/manifest.yaml';
-    //     if (@is_file($manifestFile)) {
-    //       $manifestFileContent = file_get_contents($manifestFile);
-    //       $manifest = (array) \Symfony\Component\Yaml\Yaml::parse((string) $manifestFileContent);
-    //       $appNamespaces['Hubleto\\App\\Community\\' . $folder] = $manifest;
-    //     }
-    //   }
-    // }
-
-    // // appRepositories are supposed to be composer's 'vendor' folders
-    // // Each repository is scanned, first for the vendor name ($vendorFolder), then for
-    // // the app name ($appFolder).
-    // // The $appFolder represents the Hubleto\App only if there is src/manifest.yaml and src/Loader.php file.
-    // $appRepositories = $this->config()->getAsArray('appRepositories');
-    // $appRepositories[] = $this->env()->projectFolder . '/vendor';
-
-    // foreach ($appRepositories as $repoFolder) {
-    //   if (!empty($repoFolder) && is_dir($repoFolder)) {
-    //     foreach (scandir($repoFolder) as $vendorFolder) {
-    //       if (in_array($vendorFolder, ['.', '..', 'hubleto'])) continue;
-    //       if (!is_dir($repoFolder . '/' . $vendorFolder)) continue;
-    //       foreach (scandir($repoFolder . '/' . $vendorFolder) as $appFolder) {
-    //         $manifestFile = $repoFolder . '/' . $vendorFolder . '/' . $appFolder . '/src/manifest.yaml';
-    //         $loaderFile = $repoFolder . '/' . $vendorFolder . '/' . $appFolder . '/src/Loader.php';
-    //         if (@is_file($manifestFile)) {
-    //           $manifestFileContent = file_get_contents($manifestFile);
-    //           $manifest = (array) \Symfony\Component\Yaml\Yaml::parse((string) $manifestFileContent);
-    //           $appNamespaces[$manifest['namespace']] = $manifest;
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
 
     return $appNamespaces;
   }
