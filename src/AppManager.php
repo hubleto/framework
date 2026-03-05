@@ -192,6 +192,8 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
     $packages = \Composer\InstalledVersions::getInstalledPackages();
     foreach ($packages as $package) {
       $path = \Composer\InstalledVersions::getInstallPath($package);
+
+      if ($path === null) continue;
 echo "<!-- ";var_dump($package, $path);echo " -->";
       if (is_dir($path . '/src')) {
         // this package is a single app
