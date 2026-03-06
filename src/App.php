@@ -18,7 +18,7 @@ class App extends Core implements Interfaces\AppInterface
   public const APP_TYPE_EXTERNAL = 'external';
 
   /**
-   * Basic identification of the app. More details at https://developer.hubleto.com/docs/apps/manifest
+   * Basic identification of the app. More details at https://developer.hubleto.eu/docs/apps/manifest
    *
    * @var array
    */
