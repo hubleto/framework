@@ -65,6 +65,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     }
 
     $selects[] = $level . ' as _LEVEL';
+    $selects[] = $this->maxReadLevel . ' as _LEVEL_MAX';
     $selects[] = '(' . str_replace('{%TABLE%}', $this->model->table, $this->model->getLookupSqlValue()) . ') as _LOOKUP';
 
     // LOOKUPS and RELATIONSHIPS
@@ -146,6 +147,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       if (is_array($includeRelations) && !in_array($relName, $includeRelations)) continue;
 
       $relModel = new $relDefinition[1]();
+      $relModel->record->maxReadLevel = $this->maxReadLevel;
 
       if ($level < $this->maxReadLevel) {
         $query->with([$relName => function($q) use($relModel, $level) {
@@ -295,8 +297,14 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
   public function loadFormData(mixed $uid): array
   {
     $id = (int) $uid;
-    $query = $this->prepareReadQuery()->where($this->table . '.id', $id);
+    $this->maxReadLevel = $this->model->getMaxReadLevelForLoadFormData();
+    $includeRelations = $this->model->getRelationsIncludedInLoadFormData();
+
+    $query = $this->prepareReadQuery(null, 0, $includeRelations);
+    $query = $query->where($this->table . '.id', $id);
+
     $record = $this->recordRead($query);
+
     return $record;
   }
 

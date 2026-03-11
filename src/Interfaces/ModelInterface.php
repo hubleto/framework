@@ -48,6 +48,11 @@ interface ModelInterface
   //////////////////////////////////////////////////////////////////
   // Record-related methods
 
+  public function getMaxReadLevelForLoadTableData(): int;
+  public function getRelationsIncludedInLoadTableData(): array|null;
+  public function getMaxReadLevelForLoadFormData(): int;
+  public function getRelationsIncludedInLoadFormData(): array|null;
+
   public function diffRecords(array $record1, array $record2): array;
   public function getLookupSqlValue(string $tableAlias = ''): string;
   public function getRecordDetailUrl(array $record): string;

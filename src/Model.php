@@ -748,6 +748,32 @@ class Model extends Core implements Interfaces\ModelInterface
   }
 
   /**
+   * Returns maxReadLevel value used in loadFormData() method.
+   * By default is set to 0 to save bandwidth when loading data.
+   * Override this method in your model if you need to load more details.
+   *
+   * @return int
+   * 
+   */
+  public function getMaxReadLevelForLoadFormData(): int
+  {
+    return 1;
+  }
+
+  /**
+   * Returns list of relations to be included when loading form data.
+   * By default, empty array is returned, which means no relations are included.
+   * Override this method in your model if you need to specify particular relations.
+   *
+   * @return array
+   * 
+   */
+  public function getRelationsIncludedInLoadFormData(): array|null
+  {
+    return null;
+  }
+
+  /**
    * Used to encrypt passowrd to store it securely.
    *
    * @param string $original
