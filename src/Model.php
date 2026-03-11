@@ -549,7 +549,7 @@ class Model extends Core implements Interfaces\ModelInterface
 
     if (!empty($tag)) {
       $description->ui['moreActions']['columns'] = [
-        'title' => 'Columns',
+        'title' => $this->translate('Columns', [], 'hubleto-erp-loader:Model'),
         'type' => 'stateChange',
         'state' => 'showColumnConfigScreen',
         'value' => true,
