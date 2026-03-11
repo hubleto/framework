@@ -15,6 +15,7 @@ class Logger extends Core implements Interfaces\LoggerInterface {
   public bool $cliEchoEnabled = false;
   public string $logFolder = "";
   public bool $enabled = false;
+  public int $debugLevel = 0;
 
   private array $logCache = [];
  
@@ -27,6 +28,16 @@ class Logger extends Core implements Interfaces\LoggerInterface {
     $this->debugLevel = $this->config()->getAsInteger('debugLevel', self::DEBUG_LEVEL_NONE);
 
     $this->initInternalLogger('core');
+  }
+
+  public function setDebugLevel(int $level): void
+  {
+    $this->debugLevel = $level;
+  }
+
+  public function getDebugLevel(): int
+  {
+    return $this->debugLevel;
   }
 
   public function clearLogCache(): void

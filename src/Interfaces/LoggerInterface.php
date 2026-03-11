@@ -12,5 +12,9 @@ interface LoggerInterface extends CoreInterface
   public function info($message, array $context = [], $loggerName = 'core'): void;
   public function warning($message, array $context = [], $loggerName = 'core'): void;
   public function error($message, array $context = [], $loggerName = 'core'): void;
+  public function clearLogCache(): void;
+  public function getLogCache(): array;
+  public function setDebugLevel(int $level): void;
+  public function getDebugLevel(): int;
 
 }
