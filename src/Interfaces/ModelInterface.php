@@ -2,6 +2,8 @@
 
 namespace Hubleto\Framework\Interfaces;
 
+use Hubleto\Framework\Enums\InstalledMigrationEnum;
+
 interface ModelInterface
 {
 
@@ -19,8 +21,9 @@ interface ModelInterface
   //////////////////////////////////////////////////////////////////
   // SQL table manipulation
 
-  public function installTables();
-  public function installForeignKeys();
+  public function getPendingMigrations(InstalledMigrationEnum $configKey): array;
+  public function upgradeSchema();
+  public function upgradeForeignKeys();
   public function getFullTableSqlName();
 
   //////////////////////////////////////////////////////////////////

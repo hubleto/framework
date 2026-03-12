@@ -265,17 +265,17 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function getPendingMigrations(InstalledMigrationEnum $configKey): array
   {
-    $availableUpgrades = [];
+    $pendingMigrations = [];
     $latestInstalledMigration = $this->getLatestInstalledMigration($configKey);
     $latestMigration = $this->getLatestMigration();
 
     $migrations = $this->migrations();
 
     for ($v = $latestInstalledMigration + 1; $v <= $latestMigration; $v++) {
-      $availableUpgrades[] = $migrations[$v];
+      $pendingMigrations[] = $migrations[$v];
     }
     
-    return $availableUpgrades;
+    return $pendingMigrations;
   }
 
   /**
@@ -284,7 +284,7 @@ class Model extends Core implements Interfaces\ModelInterface
    * @return void
    * @throws DBException When an error occurred during the upgrade.
    */
-  public function installTables(): void
+  public function upgradeSchema(): void
   {
     $pendingMigrations = $this->getPendingMigrations(InstalledMigrationEnum::TABLES);
 
@@ -294,7 +294,7 @@ class Model extends Core implements Interfaces\ModelInterface
 
         foreach ($pendingMigrations as $migration) {
           if ($migration instanceof Migration) {
-            $migration->installTables();
+            $migration->upgradeSchema();
           }
         }
 
@@ -313,7 +313,7 @@ class Model extends Core implements Interfaces\ModelInterface
    * @return void
    * @throws DBException When an error occurred during the upgrade.
    */
-  public function installForeignKeys(): void
+  public function upgradeForeignKeys(): void
   {
     $pendingMigrations = $this->getPendingMigrations(InstalledMigrationEnum::FOREIGN_KEYS);
 
@@ -323,7 +323,7 @@ class Model extends Core implements Interfaces\ModelInterface
 
         foreach ($pendingMigrations as $migration) {
           if ($migration instanceof  Migration) {
-            $migration->installForeignKeys();
+            $migration->upgradeForeignKeys();
           }
         }
 

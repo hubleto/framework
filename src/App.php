@@ -240,14 +240,14 @@ class App extends Core implements Interfaces\AppInterface
   // }
 
   /**
-   * [Description for installTables]
+   * [Description for upgradeSchema]
    *
    * @param int $round
    * 
    * @return void
    * 
    */
-  public function installTables(int $round): void
+  public function upgradeSchema(int $round): void
   {
     if ($round == 1) {
       // to be overriden

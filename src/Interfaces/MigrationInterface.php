@@ -5,12 +5,12 @@ namespace Hubleto\Framework\Interfaces;
 interface MigrationInterface
 {
 
-  public function installTables(): void;
+  public function upgradeSchema(): void;
 
-  public function uninstallTables(): void;
+  public function downgradeSchema(): void;
 
-  public function installForeignKeys(): void;
+  public function upgradeForeignKeys(): void;
 
-  public function uninstallForeignKeys(): void;
+  public function downgradeForeignKeys(): void;
 
 }
