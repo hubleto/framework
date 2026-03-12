@@ -16,7 +16,7 @@ interface AppInterface
   public function init(): void;
   public function onBeforeRender(): void;
   public function getRootUrlSlug(): string;
-  public function installTables(int $round): void;
+  public function upgradeSchema(int $round): void;
   public function getAvailableControllerClasses(): array;
   public function getAvailableModelClasses(): array;
   public function installDefaultPermissions(): void;

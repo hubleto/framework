@@ -22,8 +22,8 @@ interface ModelInterface
   // SQL table manipulation
 
   public function getPendingMigrations(InstalledMigrationEnum $configKey): array;
-  public function installTables();
-  public function installForeignKeys();
+  public function upgradeSchema();
+  public function upgradeForeignKeys();
   public function getFullTableSqlName();
 
   //////////////////////////////////////////////////////////////////
