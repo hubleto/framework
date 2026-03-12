@@ -265,17 +265,17 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function getPendingMigrations(InstalledMigrationEnum $configKey): array
   {
-    $availableUpgrades = [];
+    $pendingMigrations = [];
     $latestInstalledMigration = $this->getLatestInstalledMigration($configKey);
     $latestMigration = $this->getLatestMigration();
 
     $migrations = $this->migrations();
 
     for ($v = $latestInstalledMigration + 1; $v <= $latestMigration; $v++) {
-      $availableUpgrades[] = $migrations[$v];
+      $pendingMigrations[] = $migrations[$v];
     }
     
-    return $availableUpgrades;
+    return $pendingMigrations;
   }
 
   /**
