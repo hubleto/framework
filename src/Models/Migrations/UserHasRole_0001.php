@@ -4,7 +4,7 @@ namespace Hubleto\Framework\Models\Migrations;
 
 use Hubleto\Framework\Migration;
 
-class UserHasRole_20260227_0001 extends Migration
+class UserHasRole_0001 extends Migration
 {
 
   public function upgradeSchema(): void
