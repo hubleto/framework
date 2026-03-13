@@ -12,24 +12,6 @@ class EventManager extends Core implements Interfaces\EventManagerInterface
 
   public function init(): void
   {
-    // foreach ($this->appManager()->getInstalledApps() as $appNamespace => $app) {
-    //   $hooks = @Helper::scanDirRecursively($app->srcFolder . '/Hooks');
-    //   // var_dump($appNamespace);var_dump($hooks);
-    //   foreach ($hooks as $hook) {
-    //     if (!\str_ends_with($hook, '.php')) continue;
-    //     $hookClass = '\\' . $appNamespace . '\\Hooks\\' . str_replace('/', '\\', $hook);
-    //     $hookClass = str_replace('.php', '', $hookClass);
-    //     $this->addHook($hookClass);
-    //   }
-    // }
-
-    // $hooks = @Helper::scanDirRecursively($this->env()->projectFolder . '/src/hooks');
-    // foreach ($hooks as $hook) {
-    //   if (!\str_ends_with($hook, '.php')) continue;
-    //   $hookClass = '\\HubletoProject\\Hook\\' . str_replace('/', '\\', $hook);
-    //   $hookClass = str_replace('.php', '', $hookClass);
-    //   $this->addHook($hookClass);
-    // }
   }
 
   public function log(string $msg): void

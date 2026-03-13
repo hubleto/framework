@@ -49,15 +49,16 @@ class Form implements \JsonSerializable
     if (!empty($this->ui['deleteButtonText'])) $ui['deleteButtonText'] = $this->ui['deleteButtonText'];
     if (!empty($this->ui['headerClassName'])) $ui['headerClassName'] = $this->ui['headerClassName'];
     if (!empty($this->ui['templateJson'])) $ui['templateJson'] = $this->ui['templateJson'];
-    if ($this->ui['showSaveButton']) $ui['showSaveButton'] = true;
-    if ($this->ui['showCopyButton']) $ui['showCopyButton'] = true;
-    if ($this->ui['showDeleteButton']) $ui['showDeleteButton'] = true;
+    if (!empty($this->ui['showSaveButton'])) $ui['showSaveButton'] = true;
+    if (!empty($this->ui['showCopyButton'])) $ui['showCopyButton'] = true;
+    if (!empty($this->ui['showDeleteButton'])) $ui['showDeleteButton'] = true;
+    if (!empty($this->ui['readonly'])) $ui['readonly'] = true;
 
     $permissions = [];
-    if (!empty($this->permissions['canCreate'])) $permissions['canCreate'] = $this->permissions['canCreate'];
-    if (!empty($this->permissions['canRead'])) $permissions['canRead'] = $this->permissions['canRead'];
-    if (!empty($this->permissions['canUpdate'])) $permissions['canUpdate'] = $this->permissions['canUpdate'];
-    if (!empty($this->permissions['canDelete'])) $permissions['canDelete'] = $this->permissions['canDelete'];
+    $permissions['canCreate'] = $this->permissions['canCreate'] ?? false;
+    $permissions['canRead'] = $this->permissions['canRead'] ?? false;
+    $permissions['canUpdate'] = $this->permissions['canUpdate'] ?? false;
+    $permissions['canDelete'] = $this->permissions['canDelete'] ?? false;
 
     $inputs = $this->inputs;
     $defaultValues = $this->defaultValues;
