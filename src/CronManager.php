@@ -13,6 +13,8 @@ class CronManager extends Core implements Interfaces\CronManagerInterface
 
   public function init(): void
   {
+    $this->logger()->setDebugLevel(Logger::DEBUG_LEVEL_INFO);
+
     $crons = @Helper::scanDirRecursively($this->env()->srcFolder . '/crons');
     foreach ($crons as $cron) {
       if (!\str_ends_with($cron, '.php')) continue;

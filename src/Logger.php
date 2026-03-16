@@ -15,7 +15,7 @@ class Logger extends Core implements Interfaces\LoggerInterface {
   public bool $cliEchoEnabled = false;
   public string $logFolder = "";
   public bool $enabled = false;
-  public int $debugLevel = 0;
+  public int $debugLevel = self::DEBUG_LEVEL_NONE;
 
   private array $logCache = [];
  
