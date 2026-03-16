@@ -153,8 +153,28 @@ class Table implements \JsonSerializable
    * @return [type]
    * 
    */
-  public function addFilter(string $filterName, array $filterConfig) {
+  public function addFilter(string $filterName, array $filterConfig): void
+  {
     $this->ui['filters'][$filterName] = $filterConfig;
+  }
+
+  /**
+   * [Description for setPermissions]
+   *
+   * @param bool|null $canCreate
+   * @param bool|null $canRead
+   * @param bool|null $canUpdate
+   * @param bool|null $canDelete
+   * 
+   * @return void
+   * 
+   */
+  public function setPermissions(bool|null $canCreate, bool|null $canRead, bool|null $canUpdate, bool|null $canDelete): void
+  {
+    if ($canCreate !== null) $this->permissions['canCreate'] = $canCreate;
+    if ($canCreate !== null) $this->permissions['canRead'] = $canRead;
+    if ($canUpdate !== null) $this->permissions['canUpdate'] = $canUpdate;
+    if ($canDelete !== null) $this->permissions['canDelete'] = $canDelete;
   }
 
 }
