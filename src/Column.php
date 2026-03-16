@@ -33,6 +33,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   protected array $predefinedValues = [];
   protected string $colorScale = '';
   protected string $cssClass = '';
+  protected string $tableCssClass = '';
   protected string $tableCellRenderer = '';
   protected string $lookupModel = '';
   protected string $reactComponent = '';
@@ -112,6 +113,9 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
 
   public function getCssClass(): string { return $this->cssClass; }
   public function setCssClass(string $cssClass): Column { $this->cssClass = $cssClass; return $this; }
+
+  public function getTableCssClass(): string { return $this->tableCssClass; }
+  public function setTableCssClass(string $tableCssClass): Column { $this->tableCssClass = $tableCssClass; return $this; }
 
   public function getFormat(): bool { return $this->format; }
   public function setFormat(bool $format = true): Column { $this->format = $format; return $this; }
@@ -214,6 +218,8 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
     if (isset($columnConfig['defaultValue'])) $this->setDefaultValue($columnConfig['defaultValue']);
     if (isset($columnConfig['examples'])) $this->setExamples($columnConfig['examples']);
     if (isset($columnConfig['enumValues'])) $this->setEnumValues($columnConfig['enumValues']);
+    if (isset($columnConfig['cssClass'])) $this->setCssClass($columnConfig['cssClass']);
+    if (isset($columnConfig['tableCssClass'])) $this->setTableCssClass($columnConfig['tableCssClass']);
     if (isset($columnConfig['enumCssClasses'])) $this->setEnumCssClasses($columnConfig['enumCssClasses']);
     if (isset($columnConfig['predefinedValues'])) $this->setPredefinedValues($columnConfig['predefinedValues']);
     if (isset($columnConfig['lookupModel'])) $this->setLookupModel($columnConfig['lookupModel']);
@@ -241,6 +247,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
       'placeholder' => $this->placeholder,
       'colorScale' => $this->colorScale,
       'cssClass' => $this->cssClass,
+      'tableCssClass' => $this->tableCssClass,
       'tableCellRenderer' => $this->tableCellRenderer,
       'reactComponent' => $this->reactComponent,
       'decimals' => $this->decimals,
