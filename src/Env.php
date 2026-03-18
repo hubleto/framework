@@ -19,6 +19,7 @@ class Env extends Core implements Interfaces\EnvInterface
 
   public string $uploadUrl = '';
   public string $assetsUrl = '';
+  public string $assetsCompiledUrl = '';
 
   public string $requestedUri = "";
 
@@ -40,6 +41,7 @@ class Env extends Core implements Interfaces\EnvInterface
 
     $this->uploadUrl = $this->config()->getAsString('uploadUrl');
     $this->assetsUrl = $this->config()->getAsString('assetsUrl');
+    $this->assetsCompiledUrl = $this->config()->getAsString('assetsCompiledUrl', $this->assetsUrl . '/compiled');
 
     if (php_sapi_name() !== 'cli') {
       if (!empty($_GET['route'])) {
