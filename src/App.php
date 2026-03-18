@@ -247,7 +247,7 @@ class App extends Core implements Interfaces\AppInterface
    * @return void
    * 
    */
-  public function upgradeSchema(int $round): void
+  public function installApp(int $round): void
   {
     if ($round == 1) {
       // to be overriden

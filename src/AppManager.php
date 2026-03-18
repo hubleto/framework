@@ -379,7 +379,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
       }
     }
 
-    $app->upgradeSchema($round);
+    $app->installApp($round);
 
     if ($round == 1) {
       $appConfig = array_merge($app::DEFAULT_INSTALLATION_CONFIG, $appConfig);
