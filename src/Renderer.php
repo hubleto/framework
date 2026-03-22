@@ -403,7 +403,7 @@ class Renderer extends Core implements Interfaces\RendererInterface
         $html = "
           <div class='hubleto exception emoji'>🥴</div>
           <div class='hubleto exception message'>
-            Oops! Something went wrong with the database.
+            ".$this->translate('Oops! Something went wrong with the database.', [], 'hubleto-erp-loader:Renderer')."
           </div>
           <div class='hubleto exception message'>
             {$errorMessage}
@@ -419,10 +419,10 @@ class Renderer extends Core implements Interfaces\RendererInterface
         if (in_array($errorNo, [1216, 1451])) {
           $model = $args[0];
           $errorMessage =
-            "{$model->shortName} cannot be deleted because other data is linked to it."
+            $this->translate('{{ modelName }} cannot be deleted because other data is linked to it.', ['modelName' => $model->shortName], 'hubleto-erp-loader:Renderer')
           ;
         } elseif (in_array($errorNo, [1062, 1217, 1452])) {
-          $errorMessage = "You are trying to save a record that is already existing.";
+          $errorMessage = $this->translate('You are trying to save a record that is already existing.', [], 'hubleto-erp-loader:Renderer');
         } else {
           $errorMessage = $dbError;
         }
@@ -459,12 +459,12 @@ class Renderer extends Core implements Interfaces\RendererInterface
         switch ($errorNo) {
           case 1216:
           case 1451:
-            $errorMessage = "You cannot delete record that is linked with another records. Delete the linked records first.";
+            $errorMessage = $this->translate('You cannot delete record that is linked with another records. Delete the linked records first.', [], 'hubleto-erp-loader:Renderer');
           break;
           case 1062:
           case 1217:
           case 1452:
-            $errorMessage = "You are trying to save a record that is already existing.";
+            $errorMessage = $this->translate('You are trying to save a record that is already existing.', [], 'hubleto-erp-loader:Renderer');
           break;
           default:
             $errorMessage = $dbError;
@@ -478,7 +478,7 @@ class Renderer extends Core implements Interfaces\RendererInterface
             <b>".join(", ", $invalidColumns)."</b>
           </div>
           <a class='btn btn-small btn-transparent' onclick='$(this).next(\"pre\").slideToggle();'>
-            <span class='text'>Show error details</span>
+            <span class='text'>".$this->translate('Show error details', [], 'hubleto-erp-loader:Renderer')."</span>
           </a>
           <pre style='font-size:9px;text-align:left;display:none;padding-top:1em'>{$errorDebugInfoHtml}</pre>
         ";
@@ -486,7 +486,7 @@ class Renderer extends Core implements Interfaces\RendererInterface
       default:
         $html = "
           <div class='hubleto exception message'>
-            Oops! Something went wrong.
+            ".$this->translate('Oops! Something went wrong.', [], 'hubleto-erp-loader:Renderer')."
           </div>
           <div class='hubleto exception message'>
             ".$exception->getMessage()."
