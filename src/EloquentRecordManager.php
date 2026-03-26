@@ -28,6 +28,11 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     return \Hubleto\Framework\Loader::getGlobalApp();
   }
 
+  public function translate(string $string, array $vars = []): string
+  {
+    return $this->loader()->translate($string, $vars, 'RecordManager');
+  }
+
   /**
    * [Description for prepareSelectsForReadQuery]
    *
@@ -645,7 +650,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     $permissions = $this->model->getPermissions($record);
     if (!$permissions[1]) {
       // cannot read
-      throw new NotEnoughPermissionsException("Cannot read record. Not enough permissions.");
+      throw new NotEnoughPermissionsException($this->translate("Cannot read record. Not enough permissions."));
     };
 
     if ($record != []) {
@@ -776,7 +781,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     $record = $this->recordRead($this->where('id', $id));
     $permissions = $this->model->getPermissions($record);
     if (!$permissions[3]) { // cannot delete
-      throw new Exceptions\NotEnoughPermissionsException("Cannot delete. Not enough permissions.");
+      throw new Exceptions\NotEnoughPermissionsException($this->translate("Cannot delete. Not enough permissions."));
     }
 
     $rowsDeleted = $this->where('id', $id)->delete();
@@ -814,7 +819,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       ($id < 0 && !$permissions[0]) // cannot create
       || ($id >= 0 && !$permissions[2]) // cannot update
     ) {
-      throw new \Hubleto\Framework\Exceptions\NotEnoughPermissionsException("Cannot save. Not enough permissions.");
+      throw new \Hubleto\Framework\Exceptions\NotEnoughPermissionsException($this->translate("Cannot save. Not enough permissions."));
     }
 
     $savedRecord = $record;
@@ -870,7 +875,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
 
     } catch (\Illuminate\Database\QueryException $e) {
       if ($e->getCode() == 23000) {
-        $errorMessage = "A field contains a value that already exists.";
+        $errorMessage = $this->translate("A field contains a value that already exists.");
 
         throw new Exceptions\DBDuplicateEntryException($errorMessage, $e->getCode(), $e);
       } else {
@@ -885,7 +890,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
         $invalidValue = $m[1];
         $invalidIndexName = $columns[$invalidIndex]->getTitle();
 
-        $errorMessage = "Value '{$invalidValue}' for {$invalidIndexName} already exists.";
+        $errorMessage = $this->translate("Value '{{ value }}' for {{ field }} already exists.", ['value' => $invalidValue, 'field' => $invalidIndexName]);
 
         throw new Exceptions\DBException($errorMessage, $e->getCode(), $e);
       } else {
@@ -916,11 +921,11 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
         $column->getRequired()
         && (!isset($record[$colName]) || $column->isEmpty($record[$colName]))
       ) {
-        $readableInvalidInputs[] = $this->model->shortName . "." . $column->getTitle() ." is required.";
+        $readableInvalidInputs[] = $this->translate("{{ field }} is required.", ['field' => $this->model->shortName . '.' . $column->getTitle()]);
 
         $invalidInputs[] = ['name' => $this->model->shortName . "." . $colName, 'id' => $record['id'] ?? -1];
       } else if (isset($record[$colName]) && !$column->validate($record[$colName])) {
-        $readableInvalidInputs[] = $this->model->shortName . "." . $column->getTitle() ." contains invalid value.";
+        $readableInvalidInputs[] = $this->translate("{{ field }} contains invalid value.", ['field' => $this->model->shortName . '.' . $column->getTitle()]);
 
         // todo
         $invalidInputs[] = ['name' => $this->model->shortName . "." . $colName, 'id' => $record['id'] ?? -1];
