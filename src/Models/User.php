@@ -110,7 +110,7 @@ class User extends Model {
   public function findUsersByLogin(string $login): array
   {
     return $this->record
-      ->where('email', trim($login))
+      ->where('login', trim($login))
       ->where('is_active', '<>', 0)
       ->get()
       ->makeVisible(['password'])

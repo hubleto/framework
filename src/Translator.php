@@ -147,32 +147,31 @@ class Translator implements Interfaces\TranslatorInterface
 
     $debugTranslations = $service->config()->getAsBool('debugTranslations');
 
-    if ($language == 'en' && !$debugTranslations) return $string;
-
     $translated = '';
+    if ($language != 'en' || $debugTranslations) {
+      try {
+        $this->loadDictionary($service, $language, $context);
 
-    try {
-      $this->loadDictionary($service, $language, $context);
-
-      if ($debugTranslations) {
-        $languages = $service->locale()->getAvailableLanguages();
-        foreach ($languages as $tmpLanguage => $tmpLanguageData) {
-          if ($tmpLanguage == 'en') continue;
-          $this->loadDictionary($service, $tmpLanguage, $context);
-          if (!isset($this->dictionary[$tmpLanguage][$context][$contextInner][$string])) {
-            $this->addToDictionary($service, $tmpLanguage, $context, $contextInner, $string);
+        if ($debugTranslations) {
+          $languages = $service->locale()->getAvailableLanguages();
+          foreach ($languages as $tmpLanguage => $tmpLanguageData) {
+            if ($tmpLanguage == 'en') continue;
+            $this->loadDictionary($service, $tmpLanguage, $context);
+            if (!isset($this->dictionary[$tmpLanguage][$context][$contextInner][$string])) {
+              $this->addToDictionary($service, $tmpLanguage, $context, $contextInner, $string);
+            }
           }
         }
-      }
 
-      if (isset($this->dictionary[$language][$context][$contextInner][$string])) {
-        $translated = (string) $this->dictionary[$language][$context][$contextInner][$string];
-        if ($translated == '' && $debugTranslations) $translated = '** ' . $string . ' **';
-      } else if ($debugTranslations) {
-        $translated = 't(' . $context . ':' . $contextInner . '; ' . $string . ')';
+        if (isset($this->dictionary[$language][$context][$contextInner][$string])) {
+          $translated = (string) $this->dictionary[$language][$context][$contextInner][$string];
+          if ($translated == '' && $debugTranslations) $translated = '** ' . $string . ' **';
+        } else if ($debugTranslations) {
+          $translated = 't(' . $context . ':' . $contextInner . '; ' . $string . ')';
+        }
+      } catch (\Throwable $e) {
+        $translated = $e->getMessage() . $e->getTraceAsString();
       }
-    } catch (\Throwable $e) {
-      $translated = $e->getMessage() . $e->getTraceAsString();
     }
 
     if (empty($translated)) $translated = $string;

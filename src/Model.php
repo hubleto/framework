@@ -543,13 +543,14 @@ class Model extends Core implements Interfaces\ModelInterface
     ];
 
     $description->ui['moreActions'] = [
-      'export-csv' => [ 'title' => $this->translate('Export to CSV', [], 'hubleto-erp-loader:Model'), 'type' => 'stateChange', 'state' => 'showExportCsvScreen', 'value' => true ],
-      'import-csv' => [ 'title' => $this->translate('Import from CSV', [], 'hubleto-erp-loader:Model'), 'type' => 'stateChange', 'state' => 'showImportCsvScreen', 'value' => true ],
+      'export-csv' => [ 'title' => $this->translate('Export to CSV', [], 'hubleto-erp-loader:Model'), 'icon' => 'fas fa-download', 'type' => 'stateChange', 'state' => 'showExportCsvScreen', 'value' => true ],
+      'import-csv' => [ 'title' => $this->translate('Import from CSV', [], 'hubleto-erp-loader:Model'), 'icon' => 'fas fa-upload', 'type' => 'stateChange', 'state' => 'showImportCsvScreen', 'value' => true ],
     ];
 
     if (!empty($tag)) {
       $description->ui['moreActions']['columns'] = [
         'title' => $this->translate('Columns', [], 'hubleto-erp-loader:Model'),
+        'icon' => 'fas fa-left-right',
         'type' => 'stateChange',
         'state' => 'showColumnConfigScreen',
         'value' => true,
