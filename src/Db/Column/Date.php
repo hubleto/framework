@@ -2,6 +2,8 @@
 
 namespace Hubleto\Framework\Db\Column;
 
+use DateTime;
+
 class Date extends \Hubleto\Framework\Column
 {
 
@@ -12,7 +14,9 @@ class Date extends \Hubleto\Framework\Column
 
   public function normalize(mixed $value): mixed
   {
-    return strtotime((string) $value) < 1000 ? null : $value;
+    $date = new DateTime((string) $value);
+    $dateFormated = $date->format("Y-m-d");
+    return $dateFormated;
   }
 
   public function sqlIndexString(string $table, string $columnName): string
