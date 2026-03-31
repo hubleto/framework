@@ -242,8 +242,17 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     $query = $this->addOrderByToQuery($query, $orderBy);
     $tableData = $this->recordReadMany($query, $itemsPerPage, $page);
 
+    $columns = $this->model->getColumns();
+
     foreach ($tableData['records'] as $key => $record) {
       $tableData['records'][$key] = $this->model->onAfterLoadRecord($record);
+      // foreach ($columns as $colName => $column) {
+      //   $colDefinition = $column->toArray();
+      //   if ($colDefinition['type'] == 'lookup') {
+      //     $lookupModel = $this->model->getModel($colDefinition['model']);
+      //     $tableData['records'][$key]['_LOOKUP_DETAIL_URL[' . $colName . ']'] = $lookupModel->getRecordDetailUrl($record);
+      //   }
+      // }
     }
 
     $tableData['records'] = $this->model->onAfterLoadRecords($tableData['records']);
