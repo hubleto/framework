@@ -288,23 +288,15 @@ class Model extends Core implements Interfaces\ModelInterface
   {
     $pendingMigrations = $this->getPendingMigrations(InstalledMigrationEnum::TABLES);
 
-    if (count($pendingMigrations) > 0) {
-      try {
-        $this->db()->startTransaction();
-
-        foreach ($pendingMigrations as $migration) {
-          if ($migration instanceof Migration) {
-            $migration->upgradeSchema();
-          }
-        }
-
-        $this->db()->commit();
-        $this->config()->save('models/' . str_replace("/", "-", $this->fullName) . '/' . InstalledMigrationEnum::TABLES->toString(), $this->getLatestMigration());
-      } catch (DBException $e) {
-        $this->db()->rollback();
-        throw new DBException($e->getMessage());
+    foreach ($pendingMigrations as $migration) {
+      if ($migration instanceof Migration) {
+        $migration->upgradeSchema();
       }
     }
+    $this->config()->save(
+      'models/' . str_replace("/", "-", $this->fullName) . '/' . InstalledMigrationEnum::TABLES->toString(),
+      $this->getLatestMigration()
+    );
   }
 
   /**
@@ -317,23 +309,16 @@ class Model extends Core implements Interfaces\ModelInterface
   {
     $pendingMigrations = $this->getPendingMigrations(InstalledMigrationEnum::FOREIGN_KEYS);
 
-    if (count($pendingMigrations) > 0) {
-      try {
-        $this->db()->startTransaction();
-
-        foreach ($pendingMigrations as $migration) {
-          if ($migration instanceof  Migration) {
-            $migration->upgradeForeignKeys();
-          }
-        }
-
-        $this->db()->commit();
-        $this->config()->save('models/' . str_replace("/", "-", $this->fullName) . '/' . InstalledMigrationEnum::FOREIGN_KEYS->toString(), $this->getLatestMigration());
-      } catch (DBException $e) {
-        $this->db()->rollback();
-        throw new DBException($e->getMessage());
+    foreach ($pendingMigrations as $migration) {
+      if ($migration instanceof Migration) {
+        $migration->upgradeForeignKeys();
       }
     }
+
+    $this->config()->save(
+      'models/' . str_replace("/", "-", $this->fullName) . '/' . InstalledMigrationEnum::FOREIGN_KEYS->toString(),
+      $this->getLatestMigration()
+    );
   }
 
   //////////////////////////////////////////////////////////////////
