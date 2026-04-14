@@ -397,8 +397,6 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
         $this->config()->set('apps/' . $appNameForConfig . "/" . $cPath, (string) $cValue);
         $this->config()->save('apps/' . $appNameForConfig . "/" . $cPath, (string) $cValue);
       }
-
-      $app->migrateTables();
     }
 
     if ($round == 3) {
