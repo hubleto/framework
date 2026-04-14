@@ -43,5 +43,6 @@ interface AppInterface
   public function collectExtendibles(string $extendibleName): array;
   public function addSearchSwitch(string $switch, string $name): void;
   public function canHandleSearchSwith(string $switch): bool;
-
+  public function migrateTables(): void;
+  public function migrateForeignKeys(): void;
 }

@@ -2,7 +2,9 @@
 
 namespace Hubleto\Framework;
 
+use Hubleto\Framework\Enums\InstalledMigrationEnum;
 use Hubleto\Framework\Interfaces\AppManagerInterface;
+use Hubleto\Framework\Interfaces\ModelInterface;
 
 /**
  * Encapsulation for Hubleto app.
@@ -700,6 +702,38 @@ class App extends Core implements Interfaces\AppInterface
     }
 
     return $items;
+  }
+
+  public function migrateTables(): void
+  {
+    $queue = $this->getAvailableModelClasses();
+
+    foreach ($queue as $mClass) {
+      $mObj = new $mClass;
+
+      if (!($mObj instanceof ModelInterface)) {
+        throw new \Exception("Class '{$mClass}' does not implement ModelInterface.");
+      }
+
+      $mObj->upgradeSchema();
+
+    }
+  }
+
+  public function migrateForeignKeys(): void
+  {
+    $queue = $this->getAvailableModelClasses();
+
+    foreach ($queue as $mClass) {
+      $mObj = new $mClass;
+
+      if (!($mObj instanceof ModelInterface)) {
+        throw new \Exception("Class '{$mClass}' does not implement ModelInterface.");
+      }
+
+      $mObj->upgradeForeignKeys();
+
+    }
   }
 
 }
