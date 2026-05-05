@@ -922,6 +922,8 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    */
   public function recordValidate(array $record, array $validateRelations = [], string $relation = ''): array
   {
+    $record = $this->model->onBeforeValidate($record);
+
     $readableInvalidInputs = [];
     $invalidInputs = [];
 
@@ -969,6 +971,8 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
         }
       }
     }
+
+    $record = $this->model->onAfterValidate($record);
 
     return $record;
   }

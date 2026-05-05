@@ -776,6 +776,30 @@ class Model extends Core implements Interfaces\ModelInterface
   // Callbacks
 
   /**
+   * onBeforeValidate
+   * @param array<string, mixed> $record
+   * @return array<string, mixed>
+   * @throws \Hubleto\Framework\Exceptions\RecordSaveException
+   */
+  public function onBeforeValidate(array $record): array
+  {
+    $this->eventManager()->fire('onBeforeValidate', [ $this, $record ]);
+    return $record;
+  }
+
+  /**
+   * onBeforeValidate
+   * @param array<string, mixed> $record
+   * @return array<string, mixed>
+   * @throws \Hubleto\Framework\Exceptions\RecordSaveException
+   */
+  public function onAfterValidate(array $record): array
+  {
+    $this->eventManager()->fire('onAfterValidate', [ $this, $record ]);
+    return $record;
+  }
+
+  /**
    * onBeforeCreate
    * @param array<string, mixed> $record
    * @return array<string, mixed>
