@@ -199,13 +199,13 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
    *
    * @param mixed $uid
    * 
-   * @return [type]
+   * @return array
    * 
    */
   public function recordReadByUid(mixed $uid): array
   {
     $id = (int) $uid;
-    $query = $this->where($this->table . '.id', $id);
+    $query = $this->prepareReadQuery()->where($this->table . '.id', $id);
     $item = $this->recordRead($query);
     return $item;
   }
