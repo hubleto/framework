@@ -14,6 +14,8 @@ class Date extends \Hubleto\Framework\Column
 
   public function normalize(mixed $value): mixed
   {
+    if ($value === null) return null;
+
     $date = new DateTime((string) $value);
     $dateFormated = $date->format("Y-m-d");
     return $dateFormated;
