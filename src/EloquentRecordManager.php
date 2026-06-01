@@ -770,6 +770,10 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
 
     $record = $this->model->onBeforeUpdate($record);
     $normalizedRecord = $this->recordNormalize($record);
+    if ($this->table == "invoices") {
+      var_dump($this->table);
+      var_dump($normalizedRecord);
+    }
     $this->find($recordId)->update($normalizedRecord);
     $record = $this->model->onAfterUpdate($originalRecord, $record);
     return $record;
