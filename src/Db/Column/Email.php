@@ -17,6 +17,7 @@ class Email extends Varchar
   public function normalize(mixed $value): mixed
   {
     $value = trim($value);
+    if ($value === '') return null;
     $value = strtolower($value);
     return parent::normalize($value);
   }
