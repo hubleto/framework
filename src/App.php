@@ -226,6 +226,17 @@ class App extends Core implements Interfaces\AppInterface
     return 0;
   }
 
+  /**
+   * [Description for getWelcomeScreenMessages]
+   *
+   * @return array
+   * 
+   */
+  public function getWelcomeScreenMessages(): array
+  {
+    return [];
+  }
+
   // /**
   //  * [Description for translate]
   //  *
