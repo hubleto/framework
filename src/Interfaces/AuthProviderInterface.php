@@ -6,6 +6,7 @@ interface AuthProviderInterface {
   public array $user { get; set; }
 
   public function init(): void;
+  public function createUserModel(): \Hubleto\Framework\Model;
   public function normalizeUserProfile(array $user): array;
   public function getUserFromSession(): array;
   public function updateUserInSession(array $user): void;
