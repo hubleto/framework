@@ -36,6 +36,8 @@ class Delete extends \Hubleto\Framework\Controllers\ApiController {
         $this->model->onBeforeDelete((int) $id);
         $rowsAffected = $this->model->record->recordDelete($id);
         $this->model->onAfterDelete((int) $id);
+      } catch (\Hubleto\Framework\Exceptions\RecordSaveException $e) {
+        throw $e;
       } catch (\Throwable $e) {
         $error = $e->getMessage();
         $errorHtml = $this->renderer()->renderExceptionHtml($e, [$this->model]);
