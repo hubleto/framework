@@ -847,7 +847,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
       }
 
       if ((bool) ($record['_toBeDeleted_'] ?? false)) {
-        $this->recordDelete((int) $savedRecord['id']);
+        if ((int) ($savedRecord['id'] ?? 0) > 0) {
+          $this->recordDelete((int) $savedRecord['id']);
+        }
         return [];
       } else if ($isCreate) {
         $savedRecord = $this->recordCreate($savedRecord);
@@ -958,13 +960,13 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
         switch ($relType) {
           case Model::HAS_MANY:
             foreach ($record[$relName] as $subKey => $subRecord) {
-              if (is_array($subRecord)) {
+              if (is_array($subRecord) && empty($subRecord['_toBeDeleted_'])) {
                 $subRecord = $relModel->record->recordValidate($subRecord, $validateRelations, $tmpRelation);
               }
             }
           break;
           case Model::HAS_ONE:
-            if (is_array($record[$relName])) {
+            if (is_array($record[$relName]) && empty($record[$relName]['_toBeDeleted_'])) {
               $subRecord = $relModel->record->recordValidate($record[$relName], $validateRelations, $tmpRelation);
             }
           break;
