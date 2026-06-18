@@ -16,6 +16,7 @@ interface ConfigManagerInterface extends CoreInterface
   public function getAsFloat(string $path, float $defaultValue = 0): float;
   public function getAsBool(string $path, bool $defaultValue = false): bool;
   public function getAsArray(string $path, array $defaultValue = []): array;
+  public function getAsJson(string $path, array $defaultValue = []): array;
   public function set(string $path, mixed $value): void;
   public function save(string $path, string $value): void;
   public function saveForUser(string $path, string $value): void;
