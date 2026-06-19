@@ -30,7 +30,7 @@ class Table implements \JsonSerializable
     'canDelete' => false,
   ];
 
-  /** @property array<\Hubleto\Framework\Column> */
+  /** @property array<string, \Hubleto\Framework\Column> */
   public array $columns = [];
 
   /** @property array<\Hubleto\Framework\Db\Input> */
@@ -117,7 +117,8 @@ class Table implements \JsonSerializable
   /**
    * [Description for showOnlyColumns]
    *
-   * @param array $columnNames
+   * @param string $colName
+   * @param mixed $column
    * 
    * @return void
    * 
@@ -150,7 +151,7 @@ class Table implements \JsonSerializable
    * @param string $filterName
    * @param array $filterConfig
    * 
-   * @return [type]
+   * @return void
    * 
    */
   public function addFilter(string $filterName, array $filterConfig): void
@@ -175,6 +176,20 @@ class Table implements \JsonSerializable
     if ($canCreate !== null) $this->permissions['canRead'] = $canRead;
     if ($canUpdate !== null) $this->permissions['canUpdate'] = $canUpdate;
     if ($canDelete !== null) $this->permissions['canDelete'] = $canDelete;
+  }
+
+  /**
+   * [Description for setOrderBy]
+   *
+   * @param string|array $field
+   * @param string|array $direction
+   * 
+   * @return void
+   * 
+   */
+  public function setOrderBy(string|array $field, string|array $direction): void
+  {
+    $this->ui['orderBy'] = ['field' => $field, 'direction' => $direction];
   }
 
 }
