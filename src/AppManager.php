@@ -34,6 +34,9 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
           if ($appConfig['enabled'] ?? false) {
             $this->enabledApps[$appNamespace] = $this->createAppInstance($appNamespace);
             $this->enabledApps[$appNamespace]->enabled = true;
+          } else {
+            $this->disabledApps[$appNamespace] = $this->createAppInstance($appNamespace);
+            $this->disabledApps[$appNamespace]->enabled = false;
           }
         } catch (\Throwable $e) {
           // do nothing, if app cannot be instantiated
