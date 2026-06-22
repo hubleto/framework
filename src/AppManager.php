@@ -31,9 +31,8 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
       $appClass = $appNamespace . '\\Loader';
       if (is_array($appConfig)) {
         try {
-          $this->enabledApps[$appNamespace] = $this->createAppInstance($appNamespace);
-
           if ($appConfig['enabled'] ?? false) {
+            $this->enabledApps[$appNamespace] = $this->createAppInstance($appNamespace);
             $this->enabledApps[$appNamespace]->enabled = true;
           }
         } catch (\Throwable $e) {
