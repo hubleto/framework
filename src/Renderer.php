@@ -420,13 +420,14 @@ class Renderer extends Core implements Interfaces\RendererInterface
           $model = $args[0];
           $errorMessage =
             $this->translate('{{ modelName }} cannot be deleted because other data is linked to it.', ['modelName' => $model->shortName], 'hubleto-erp-loader:Renderer')
+            . " [ERROR: {$dbError}]"
           ;
         } elseif (in_array($errorNo, [1062, 1217, 1452])) {
           $errorMessage = $this->translate('You are trying to save a record that is already existing.', [], 'hubleto-erp-loader:Renderer');
         } else {
           $errorMessage = $dbError;
         }
-        $html = $errorMessage;
+        $html = $errorMessage . ' [QUERY: ' . $dbQuery . ']';
       break;
       case 'Hubleto\Framework\Exceptions\DBDuplicateEntryException':
 
