@@ -405,6 +405,17 @@ class App extends Core implements Interfaces\AppInterface
   }
 
   /**
+   * [Description for renderPriorityNotifications]
+   *
+   * @return string
+   * 
+   */
+  public function renderPriorityNotifications(): string
+  {
+    return '';
+  }
+
+  /**
    * [Description for renderSecondSidebar]
    *
    * @return string
