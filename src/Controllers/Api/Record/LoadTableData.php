@@ -24,23 +24,37 @@ class LoadTableData extends \Hubleto\Framework\Controllers\ApiController {
   {
     $crudController = $this->router()->urlParamAsString('crudController');
 
+    $fulltextSearch = $this->router()->urlParamAsString('fulltextSearch');
+    $columnSearch = $this->router()->urlParamAsArray('columnSearch');
+    $orderBy = $this->router()->urlParamAsArray('orderBy');
+    $itemsPerPage = $this->router()->urlParamAsInteger('itemsPerPage', 15);
+    $page = $this->router()->urlParamAsInteger('page');
+    $dataView = $this->router()->urlParamAsString('dataView');
+
     try {
       if (!empty($crudController)) {
         /** @var CrudController */
         $crudControllerObj = $this->getService($crudController);
         if (is_subclass_of($crudControllerObj, CrudController::class)) {
-          return $crudControllerObj->loadTableData();
+          return $crudControllerObj->loadTableData(
+            $fulltextSearch,
+            $columnSearch,
+            $orderBy,
+            $itemsPerPage,
+            $page,
+            $dataView,
+          );
         } else {
           throw new \Exception('Invalid loader controller.');
         }
       } else {
         return $this->model->record->loadTableData(
-          $this->router()->urlParamAsString('fulltextSearch'),
-          $this->router()->urlParamAsArray('columnSearch'),
-          $this->router()->urlParamAsArray('orderBy'),
-          $this->router()->urlParamAsInteger('itemsPerPage', 15),
-          $this->router()->urlParamAsInteger('page'),
-          $this->router()->urlParamAsString('dataView'),
+          $fulltextSearch,
+          $columnSearch,
+          $orderBy,
+          $itemsPerPage,
+          $page,
+          $dataView,
         );
       }
     } catch (\Throwable $e) {
