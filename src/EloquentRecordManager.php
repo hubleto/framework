@@ -514,11 +514,11 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
                 // }
 
                 $tmpSearchValue = trim(str_replace(' ', '', str_replace(',', '.', $searchValue)));
-                preg_match('/(.*?)([\\d\\.]+)/', $tmpSearchValue, $m);
+                preg_match('/(.*?)([\\d\\.-]+)/', $tmpSearchValue, $m);
 
                 $operation = $m[1];
                 $value = $m[2];
-                
+
                 if (empty($operation)) $operation = '=';
 
                 if ($column->getType() == 'datetime' && strpos($value, ' ') === false) {
