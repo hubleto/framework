@@ -10,7 +10,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   const DEFAULT_VISIBLE = 3;
   const DEFAULT_HIDDEN = 4;
 
-  protected \Hubleto\Framework\Model $model;
+  protected \Hubleto\Framework\Model|null $model;
 
   protected array $indexes = [];
 
@@ -49,7 +49,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
 
   protected array $properties = [];
 
-  public function __construct(\Hubleto\Framework\Model $model, string $title)
+  public function __construct(\Hubleto\Framework\Model|null $model, string $title)
   {
     $this->model = $model;
     $this->title = $title;
