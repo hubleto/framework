@@ -82,6 +82,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   public function setTextAlign(string $textAlign): Column { $this->textAlign = $textAlign; return $this; }
 
   public function getSearchAlgorithm(): string { return $this->searchAlgorithm; }
+  public function setSearchAlgorithm(string $searchAlgorithm): Column { $this->searchAlgorithm = $searchAlgorithm; return $this; }
 
   public function getSqlDataType(): string { return $this->sqlDataType; }
   public function setSqlDataType(string $sqlDataType): Column { $this->sqlDataType = $sqlDataType; return $this; }
