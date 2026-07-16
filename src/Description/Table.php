@@ -20,6 +20,7 @@ class Table implements \JsonSerializable
     'showColumnSearch' => false,
     'showMoreActionsButton' => false,
     'showAddButton' => true,
+    'showInsertRow' => false,
   ];
 
   /** @property array{ canCreate: bool, canRead: bool, canUpdate: bool, canDelete: bool } */
