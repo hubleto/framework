@@ -54,7 +54,11 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
         $this->activatedApp = $app;
       }
 
-      $app->init();
+      try {
+        $app->init();
+      } catch (\Throwable $e) {
+        $this->logger()->error("App $app->namespace failed to init: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+      }
     });
 
   }
