@@ -2,10 +2,12 @@
 
 namespace Hubleto\Framework\Interfaces;
 
+use Hubleto\Framework\ConfigManager;
+
 interface ConfigManagerInterface extends CoreInterface
 {
 
-  public function forApp(string $appClass);
+  public function forApp(string $appClass): ConfigManager;
   public function forModel(string $modelClass);
   public function setPrefix(string $prefix);
   public function setConfig(array $configData);
