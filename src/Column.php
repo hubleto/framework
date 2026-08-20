@@ -25,7 +25,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   protected string $placeholder = '';
   protected string $unit = '';
   protected string $format = '';
-  protected string $description = '';
+  protected string $hint = '';
   protected mixed $defaultValue = null;
   protected array $examples = [];
   protected array $enumValues = [];
@@ -121,8 +121,8 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   public function getFormat(): bool { return $this->format; }
   public function setFormat(bool $format = true): Column { $this->format = $format; return $this; }
 
-  public function getDescription(): string { return $this->description; }
-  public function setDescription(string $description): Column { $this->description = $description; return $this; }
+  public function getHint(): string { return $this->hint; }
+  public function setHint(string $hint): Column { $this->hint = $hint; return $this; }
 
   public function getExamples(): array { return $this->examples; }
   public function setExamples(array $examples): Column { $this->examples = $examples; return $this; }
@@ -184,7 +184,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
     if (!empty($this->getPlaceholder())) $description->setPlaceholder($this->getPlaceholder());
     if (!empty($this->getReadonly())) $description->setReadonly($this->getReadonly());
     if (!empty($this->getRequired())) $description->setRequired($this->getRequired());
-    if (!empty($this->getDescription())) $description->setDescription($this->getDescription());
+    if (!empty($this->getHint())) $description->setHint($this->getHint());
     if (!empty($this->getUnit())) $description->setUnit($this->getUnit());
     if (!empty($this->getFormat())) $description->setFormat($this->getFormat());
     if (!empty($this->getLookupModel())) $description->setLookupModel($this->getLookupModel());
@@ -213,7 +213,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
     if (isset($columnConfig['readonly'])) $this->setReadonly($columnConfig['readonly']);
     if (isset($columnConfig['required'])) $this->setRequired($columnConfig['required']);
     if (isset($columnConfig['visibility'])) $this->setVisibility($columnConfig['visibility']);
-    if (isset($columnConfig['description'])) $this->setDescription($columnConfig['description']);
+    if (isset($columnConfig['description'])) $this->setHint($columnConfig['hint']);
     if (isset($columnConfig['unit'])) $this->setUnit($columnConfig['unit']);
     if (isset($columnConfig['format'])) $this->setFormat($columnConfig['format']);
     if (isset($columnConfig['defaultValue'])) $this->setDefaultValue($columnConfig['defaultValue']);
@@ -243,7 +243,7 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
       'visibility' => $this->visibility,
       'defaultValue' => $this->defaultValue,
       'unit' => $this->unit,
-      'description' => $this->description,
+      'hint' => $this->hint,
       'format' => $this->format,
       'placeholder' => $this->placeholder,
       'colorScale' => $this->colorScale,

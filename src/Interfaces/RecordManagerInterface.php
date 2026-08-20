@@ -31,7 +31,7 @@ interface RecordManagerInterface {
   public function recordCreate(array $record, $useProvidedRecordId = false): array;
   public function recordUpdate(array $record, array $originalRecord = []): array;
   public function recordDelete(int|string $id): int;
-  public function recordSave(array $record, int $idMasterRecord = 0): array;
+  public function recordSave(array $record, int $idMasterRecord = 0, array $saveRelations = [], string $relation = ''): array;
 
   public function loadFormData(mixed $uid): array;
   public function loadTableData(string $fulltextSearch = '', array $columnSearch = [], array $orderBy = [], int $itemsPerPage = 15, int $page = 0, string $dataView = ''): array;

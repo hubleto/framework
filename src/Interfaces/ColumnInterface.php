@@ -47,8 +47,8 @@ interface ColumnInterface
   public function getFormat(): bool;
   public function setFormat(bool $format = true): ColumnInterface;
 
-  public function getDescription(): string;
-  public function setDescription(string $description): ColumnInterface;
+  public function getHint(): string;
+  public function setHint(string $hint): ColumnInterface;
 
   public function getExamples(): array;
   public function setExamples(array $examples): ColumnInterface;

@@ -16,7 +16,7 @@ class Input implements \JsonSerializable
   protected string $icon = '';
   protected string $unit = '';
   protected string $format = '';
-  protected string $description = '';
+  protected string $hint = '';
   protected string $reactComponent = '';
   protected string $lookupModel = '';
   protected array $inputProps = [];
@@ -67,8 +67,8 @@ class Input implements \JsonSerializable
   public function getFormat(): bool { return $this->format; }
   public function setFormat(bool $format = true): Input { $this->format = $format; return $this; }
 
-  public function getDescription(): string { return $this->description; }
-  public function setDescription(string $description): Input { $this->description = $description; return $this; }
+  public function getHint(): string { return $this->hint; }
+  public function setHint(string $hint): Input { $this->hint = $hint; return $this; }
 
   public function getLookupModel(): string { return $this->lookupModel; }
   public function setLookupModel(string $lookupModel): Input { $this->lookupModel = $lookupModel; return $this; }
@@ -110,7 +110,7 @@ class Input implements \JsonSerializable
     if (!empty($this->placeholder)) $json['placeholder'] = $this->placeholder;
     if (!empty($this->unit)) $json['unit'] = $this->unit;
     if (!empty($this->format)) $json['format'] = $this->format;
-    if (!empty($this->description)) $json['description'] = $this->description;
+    if (!empty($this->hint)) $json['hint'] = $this->hint;
     if (!empty($this->lookupModel)) $json['model'] = $this->lookupModel;
     if (!empty($this->inputProps)) $json['inputProps'] = $this->inputProps;
     if (!empty($this->enumValues)) $json['enumValues'] = $this->enumValues;
