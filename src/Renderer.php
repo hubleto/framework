@@ -383,33 +383,12 @@ class Renderer extends Core implements Interfaces\RendererInterface
       $traceLog .= "{$item['file']}:{$item['line']}\n";
     }
 
-    $errorMessage = $exception->getMessage();
-    $errorHash = md5(date("YmdHis").$errorMessage);
-
-    $errorDebugInfoHtml =
-      "Error hash: {$errorHash}<br/>"
-      . "<br/>"
-      . "<div style='color:#888888'>"
-        . get_class($exception) . "<br/>"
-        . "Stack trace:<br/>"
-        . "<div class='trace-log'>{$traceLog}</div>"
-      . "</div>"
-    ;
-
-    $this->logger()->error("{$errorHash}\t{$errorMessage}");
+    $dbQuery = '';
+    $dbError = '';
 
     switch (get_class($exception)) {
       case 'Hubleto\Framework\Exceptions\DBException':
-        $html = "
-          <div class='hubleto exception emoji'>🥴</div>
-          <div class='hubleto exception message'>
-            ".$this->translate('Oops! Something went wrong with the database.', [], 'hubleto-erp-loader:Renderer')."
-          </div>
-          <div class='hubleto exception message'>
-            {$errorMessage}
-          </div>
-          {$errorDebugInfoHtml}
-        ";
+        $readableText = $exception->getMessage();
       break;
       case 'Illuminate\Database\QueryException':
         $dbQuery = $exception->getSql();
@@ -418,86 +397,112 @@ class Renderer extends Core implements Interfaces\RendererInterface
 
         if (in_array($errorNo, [1216, 1451])) {
           $model = $args[0];
-          $errorMessage =
-            $this->translate('{{ modelName }} cannot be deleted because other data is linked to it.', ['modelName' => $model->shortName], 'hubleto-erp-loader:Renderer')
-            . " [ERROR: {$dbError}]"
+          $readableText =
+            $this->translate('{{ modelName }} cannot be deleted, other data is linked to it.', ['modelName' => $model->shortName], 'hubleto-erp-loader:Renderer')
           ;
         } elseif (in_array($errorNo, [1062, 1217, 1452])) {
-          $errorMessage = $this->translate('You are trying to save a record that is already existing.', [], 'hubleto-erp-loader:Renderer');
+          $model = $args[0];
+          $readableText =
+            $this->translate('{{ modelName }} cannot be saved, duplicate data detected.', ['modelName' => $model->shortName], 'hubleto-erp-loader:Renderer')
+          ;
         } else {
-          $errorMessage = $dbError;
+          $readableText = $this->translate('Unknown database error occured.');
         }
-        $html = $errorMessage . ' [QUERY: ' . $dbQuery . ']';
       break;
-      case 'Hubleto\Framework\Exceptions\DBDuplicateEntryException':
+      // case 'Hubleto\Framework\Exceptions\DBDuplicateEntryException':
 
-        if (get_class($exception) == 'Illuminate\Database\QueryException') {
-          $dbQuery = $exception->getSql();
-          $dbError = $exception->errorInfo[2];
-          $errorNo = $exception->errorInfo[1];
-        } else {
-          list($dbError, $dbQuery, $initiatingModelName, $errorNo) = json_decode($exception->getMessage(), true);
-        }
+      //   if (get_class($exception) == 'Illuminate\Database\QueryException') {
+      //     $dbQuery = $exception->getSql();
+      //     $dbError = $exception->errorInfo[2];
+      //     $errorNo = $exception->errorInfo[1];
+      //   } else {
+      //     list($dbError, $dbQuery, $initiatingModelName, $errorNo) = json_decode($exception->getMessage(), true);
+      //   }
 
-        $invalidColumns = [];
+      //   $invalidColumns = [];
 
-        if (!empty($initiatingModelName)) {
-          $initiatingModel = $this->getModel($initiatingModelName);
-          $columns = $initiatingModel->getColumns();
-          $indexes = $initiatingModel->indexes();
+      //   if (!empty($initiatingModelName)) {
+      //     $initiatingModel = $this->getModel($initiatingModelName);
+      //     $columns = $initiatingModel->getColumns();
+      //     $indexes = $initiatingModel->indexes();
 
-          preg_match("/Duplicate entry '(.*?)' for key '(.*?)'/", $dbError, $m);
-          $invalidIndex = $m[2];
-          $invalidColumns = [];
-          foreach ($indexes[$invalidIndex]['columns'] as $columnName) {
-            $invalidColumns[] = $columns[$columnName]->getTitle();
-          }
-        } else {
-          preg_match("/Duplicate entry '(.*?)' for key '(.*?)'/", $dbError, $m);
-          if (!empty($m[2])) $invalidColumns = [$m[2]];
-        }
+      //     preg_match("/Duplicate entry '(.*?)' for key '(.*?)'/", $dbError, $m);
+      //     $invalidIndex = $m[2];
+      //     $invalidColumns = [];
+      //     foreach ($indexes[$invalidIndex]['columns'] as $columnName) {
+      //       $invalidColumns[] = $columns[$columnName]->getTitle();
+      //     }
+      //   } else {
+      //     preg_match("/Duplicate entry '(.*?)' for key '(.*?)'/", $dbError, $m);
+      //     if (!empty($m[2])) $invalidColumns = [$m[2]];
+      //   }
 
-        switch ($errorNo) {
-          case 1216:
-          case 1451:
-            $errorMessage = $this->translate('You cannot delete record that is linked with another records. Delete the linked records first.', [], 'hubleto-erp-loader:Renderer');
-          break;
-          case 1062:
-          case 1217:
-          case 1452:
-            $errorMessage = $this->translate('You are trying to save a record that is already existing.', [], 'hubleto-erp-loader:Renderer');
-          break;
-          default:
-            $errorMessage = $dbError;
-          break;
-        }
+      //   switch ($errorNo) {
+      //     case 1216:
+      //     case 1451:
+      //       $errorMessage = $this->translate('You cannot delete record that is linked with another records. Delete the linked records first.', [], 'hubleto-erp-loader:Renderer');
+      //     break;
+      //     case 1062:
+      //     case 1217:
+      //     case 1452:
+      //       $errorMessage = $this->translate('You are trying to save a record that is already existing.', [], 'hubleto-erp-loader:Renderer');
+      //     break;
+      //     default:
+      //       $errorMessage = $dbError;
+      //     break;
+      //   }
 
-        $html = "
-          <div class='hubleto exception message'>
-            {$errorMessage}<br/>
-            <br/>
-            <b>".join(", ", $invalidColumns)."</b>
-          </div>
-          <a class='btn btn-small btn-transparent' onclick='$(this).next(\"pre\").slideToggle();'>
-            <span class='text'>".$this->translate('Show error details', [], 'hubleto-erp-loader:Renderer')."</span>
-          </a>
-          <pre style='font-size:9px;text-align:left;display:none;padding-top:1em'>{$errorDebugInfoHtml}</pre>
-        ";
-      break;
+      //   $html = "
+      //     <div class='hubleto exception message'>
+      //       {$errorMessage}<br/>
+      //       <br/>
+      //       <b>".join(", ", $invalidColumns)."</b>
+      //     </div>
+      //     <a class='btn btn-small btn-transparent' onclick='$(this).next(\"pre\").slideToggle();'>
+      //       <span class='text'>".$this->translate('Show error details', [], 'hubleto-erp-loader:Renderer')."</span>
+      //     </a>
+      //     <pre style='font-size:9px;text-align:left;display:none;padding-top:1em'>{$errorDebugInfoHtml}</pre>
+      //   ";
+      // break;
       default:
-        $html = "
-          <div class='hubleto exception message'>
-            ".$this->translate('Oops! Something went wrong.', [], 'hubleto-erp-loader:Renderer')."
-          </div>
-          <div class='hubleto exception message'>
-            ".$exception->getMessage()."
-          </div>
-          {$errorDebugInfoHtml}
-        ";
+        $readableText = $exception->getMessage();
       break;
     }
 
-    return $html;//$this->renderHtmlWarning($html);
+    $errorHash = md5(date("YmdHis").$readableText);
+
+    $errorDebugInfoHtml =
+      "Error hash: {$errorHash}<br/>"
+      . "<br/>"
+      . "<div style='color:#888888'>"
+        . $dbError . "<br/>"
+        . $dbQuery . "<br/>"
+        . get_class($exception) . "<br/>"
+        . "Stack trace:<br/>"
+        . "<div class='trace-log'>{$traceLog}</div>"
+      . "</div>"
+    ;
+
+    $this->logger()->error("{$errorHash}\t{$readableText}");
+
+    // return "
+    //   <div class='hubleto exception emoji'>🥴</div>
+    //   <div class='hubleto exception message'>
+    //     ".$this->translate('Oops! Something went wrong.', [], 'hubleto-erp-loader:Renderer')."
+    //   </div>
+    //   <div class='hubleto exception message'>
+    //     ".$errorMessage."
+    //   </div>
+    //   {$errorDebugInfoHtml}
+    // ";
+    return json_encode([
+      "readableText" => $readableText,
+      "errorHash" => $errorHash,
+      "dbError" => $dbError,
+      "dbQuery" => $dbQuery,
+      "exceptionClass" => get_class($exception),
+      "traceLog" => $traceLog,
+    ]);
   }
 
   public function renderHtmlWarning(Exception $exception): string
