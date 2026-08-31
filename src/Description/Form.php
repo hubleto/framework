@@ -111,4 +111,18 @@ class Form implements \JsonSerializable
     }
   }
 
+  /**
+   * [Description for setDefaultValue]
+   *
+   * @param string $column
+   * @param mixed $value
+   * 
+   * @return void
+   * 
+   */
+  public function setDefaultValue(string $column, mixed $value): void
+  {
+    $this->defaultValues[$column] = $value;
+  }
+
 }
