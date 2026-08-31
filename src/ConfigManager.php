@@ -127,6 +127,8 @@ class ConfigManager extends Core implements Interfaces\ConfigManagerInterface
           insert into `config` set `path` = :path, `value` = :value
           on duplicate key update `path` = :path, `value` = :value
         ", ['path' => $path, 'value' => $value]);
+
+        $this->set($path, $value);
       }
     } catch (\Exception $e) {
     }
