@@ -46,6 +46,8 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   protected bool $creatable = false;
   protected string $searchAlgorithm = '';
   protected string $textAlign = 'left';
+  protected null|string $yesText = null;
+  protected null|string $noText = null;
 
   protected array $properties = [];
 
@@ -145,6 +147,12 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
   public function getDefaultValue(): mixed { return $this->defaultValue; }
   public function setDefaultValue(mixed $defaultValue): Column { $this->defaultValue = $defaultValue; return $this; }
 
+  public function getYesText(): null|string { return $this->yesText; }
+  public function setYesText(string $yesText): Column { $this->yesText = $yesText; return $this; }
+
+  public function getNoText(): null|string { return $this->noText; }
+  public function setNoText(string $noText): Column { $this->noText = $noText; return $this; }
+
   public function getTableCellRenderer(): string { return $this->tableCellRenderer; }
   public function setTableCellRenderer(string $tableCellRenderer): Column { $this->tableCellRenderer = $tableCellRenderer; return $this; }
 
@@ -190,6 +198,8 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
     if (!empty($this->getLookupModel())) $description->setLookupModel($this->getLookupModel());
     if (!empty($this->getEndpoint())) $description->setEndpoint($this->getEndpoint());
     if (!empty($this->getCreatable())) $description->setCreatable($this->getCreatable());
+    if (!empty($this->getYesText())) $description->setYesText($this->getYesText());
+    if (!empty($this->getNoText())) $description->setNoText($this->getNoText());
     if ($this->defaultValue !== null) $description->setDefaultValue($this->defaultValue);
     $description->setExamples($this->examples);
     $description->setDecimals($this->decimals);
@@ -217,6 +227,8 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
     if (isset($columnConfig['unit'])) $this->setUnit($columnConfig['unit']);
     if (isset($columnConfig['format'])) $this->setFormat($columnConfig['format']);
     if (isset($columnConfig['defaultValue'])) $this->setDefaultValue($columnConfig['defaultValue']);
+    if (isset($columnConfig['yesText'])) $this->setYesText($columnConfig['yestText']);
+    if (isset($columnConfig['noText'])) $this->setNoText($columnConfig['notText']);
     if (isset($columnConfig['examples'])) $this->setExamples($columnConfig['examples']);
     if (isset($columnConfig['enumValues'])) $this->setEnumValues($columnConfig['enumValues']);
     if (isset($columnConfig['cssClass'])) $this->setCssClass($columnConfig['cssClass']);
@@ -258,6 +270,8 @@ abstract class Column implements Interfaces\ColumnInterface, \JsonSerializable
       'endpoint' => $this->endpoint,
       'creatable' => $this->creatable,
       'textAlign' => $this->textAlign,
+      'yesText' => $this->yesText,
+      'noText' => $this->noText,
     ];
 
     if (count($this->enumValues) > 0) $column['enumValues'] = $this->enumValues;

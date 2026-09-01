@@ -27,6 +27,8 @@ class Input implements \JsonSerializable
   protected mixed $defaultValue = null;
   protected string $cssClass = '';
   protected string $endpoint = '';
+  protected null|string $yesText = null;
+  protected null|string $noText = null;
   protected bool $creatable = false;
 
   protected array $properties = [];
@@ -99,6 +101,12 @@ class Input implements \JsonSerializable
 
   public function getCreatable(): bool { return $this->creatable; }
   public function setCreatable(bool $creatable = true): Input { $this->creatable = $creatable; return $this; }
+
+  public function getYesText(): null|string { return $this->yesText; }
+  public function setYesText(string $yesText): Input { $this->yesText = $yesText; return $this; }
+
+  public function getNoText(): null|string { return $this->noText; }
+  public function setNoText(string $noText): Input { $this->noText = $noText; return $this; }
 
   public function jsonSerialize(): array
   {
