@@ -22,7 +22,7 @@ interface AppInterface
   public function installDefaultPermissions(): void;
   public function assignPermissionsToRoles(): void;
   public function generateDemoData(): void;
-  public function renderPriorityNotifications(): string;
+  public function renderAlerts(): string;
   public function renderSecondSidebar(): string;
   public function search(array $expressions): array;
   public function addSetting(AppInterface $app, array $setting): void;

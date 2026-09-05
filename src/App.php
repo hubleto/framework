@@ -405,12 +405,12 @@ class App extends Core implements Interfaces\AppInterface
   }
 
   /**
-   * [Description for renderPriorityNotifications]
+   * [Description for renderAlerts]
    *
    * @return string
    * 
    */
-  public function renderPriorityNotifications(): string
+  public function renderAlerts(): string
   {
     return '';
   }
