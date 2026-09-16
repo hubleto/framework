@@ -12,7 +12,7 @@ interface ConfigManagerInterface extends CoreInterface
   public function setPrefix(string $prefix);
   public function setConfig(array $configData);
   public function empty(string $path): bool;
-  public function get(string $path = '', $default = null): mixed;
+  public function get(string $path = '', $default = null, bool $useFullConfig = false): mixed;
   public function getAsString(string $path, string $defaultValue = ''): string;
   public function getAsInteger(string $path, int $defaultValue = 0): int;
   public function getAsFloat(string $path, float $defaultValue = 0): float;
