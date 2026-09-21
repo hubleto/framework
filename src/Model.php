@@ -136,7 +136,7 @@ class Model extends Core implements Interfaces\ModelInterface
   /**
    * Retrieves value of configuration parameter.
    *
-   * @return void
+   * @return string
    */
   public function configAsString(string $configName): string
   {
@@ -146,7 +146,7 @@ class Model extends Core implements Interfaces\ModelInterface
   /**
    * Retrieves value of configuration parameter.
    *
-   * @return void
+   * @return int
    */
   public function configAsInteger(string $configName): int
   {
@@ -156,7 +156,7 @@ class Model extends Core implements Interfaces\ModelInterface
   /**
    * Retrieves value of configuration parameter.
    *
-   * @return void
+   * @return array
    */
   public function configAsArray(string $configName): array
   {
@@ -169,7 +169,7 @@ class Model extends Core implements Interfaces\ModelInterface
   /**
    * Returns the value of the sqlEngine property, which is used to specify the SQL engine for the model's table.
    *
-   * @return array
+   * @return string
    *
    */
   public function getSqlEngine(): string
