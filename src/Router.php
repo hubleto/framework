@@ -197,12 +197,16 @@ class Router extends Core implements Interfaces\RouterInterface {
     else return $defaultValue;
   }
 
-  public function redirectTo(string $url, int $code = 302): void
+  public function redirectTo(string $route, int $code = 302): void
   {
     if (php_sapi_name() === 'cli') return;
 
-    header("Location: " . $this->env()->projectUrl . "/" . trim($url, "/"), true, $code);
-    exit;
+    $currentRoute = $this->extractRouteFromRequest();
+
+    if ($currentRoute != $route) {
+      header("Location: " . $this->env()->projectUrl . "/" . trim($route, "/"), true, $code);
+      exit;
+    }
   }
 
   public function getUrlParams(): array
