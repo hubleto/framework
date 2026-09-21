@@ -24,7 +24,7 @@ class ApiController extends \Hubleto\Framework\Controller
 
       return [
         'status' => 'error',
-        'code' => $e->getCode(),
+        'code' => (int) $e->getCode(),
         'message' => $e->getMessage(),
         'invalidInputs' => $e->invalidInputs,
       ];
@@ -33,7 +33,8 @@ class ApiController extends \Hubleto\Framework\Controller
 
       return [
         'status' => 'error',
-        'code' => $e->getCode(),
+        'code' => (int) $e->getCode(),
+        'trace' => $e->getTraceAsString(),
         'message' => $e->getMessage(),
       ];
     }

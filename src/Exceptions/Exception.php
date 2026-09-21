@@ -19,7 +19,7 @@ abstract class Exception extends \Exception
   {
     return [
       'status' => $this->status->toString(),
-      'code' => static::CODE,
+      'code' => (int) static::CODE,
       'message' => $this->getMessage(),
       'trace' => $this->getTraceAsString(),
       ...$this->getExtraParams(),

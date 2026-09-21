@@ -16,36 +16,45 @@ class Save extends \Hubleto\Framework\Controllers\ApiController {
 
   public function response(): array
   {
-    $record = $this->router()->urlParamAsArray('record');
-    $modelClass = $this->router()->urlParamAsString('model');
-    $saveRelations = $this->router()->urlParamAsArray('saveRelations');
-    $originalRecord = [];
+    try {
+      $record = $this->router()->urlParamAsArray('record');
+      $modelClass = $this->router()->urlParamAsString('model');
+      $saveRelations = $this->router()->urlParamAsArray('saveRelations');
+      $originalRecord = [];
 
-    $idRecord = (int) ($record['id'] ?? 0);
+      $idRecord = (int) ($record['id'] ?? 0);
 
-    if (empty($modelClass)) throw new \Exception("Master model is not specified.");
+      if (empty($modelClass)) throw new \Exception("Master model is not specified.");
 
-    $model = $this->getModel($modelClass);
+      $model = $this->getModel($modelClass);
 
-    if ($idRecord > 0) {
-      $originalRecord = $model->record->find($idRecord)->toArray();
-    } else {
-      $originalRecord = $record;
+      if ($idRecord > 0) {
+        $originalRecord = $model->record->find($idRecord)->toArray();
+      } else {
+        $originalRecord = $record;
+      }
+
+      if (!is_object($model)) throw new \Exception("Unable to create model {$model}.");
+
+      $savedRecord = $this->model->record->recordSave(
+        $record,
+        0, // $idMasterRecord
+        $saveRelations
+      );
+
+      return [
+        'status' => 'success',
+        'originalRecord' => $originalRecord,
+        'savedRecord' => $savedRecord,
+      ];
+    } catch (\Throwable $e) {
+      return [
+        'status' => 'error',
+        'code' => (int) $e->getCode(),
+        'message' => $e->getMessage(),
+        'trace' => $e->getTraceAsString(),
+      ];
     }
-
-    if (!is_object($model)) throw new \Exception("Unable to create model {$model}.");
-
-    $savedRecord = $this->model->record->recordSave(
-      $record,
-      0, // $idMasterRecord
-      $saveRelations
-    );
-
-    return [
-      'status' => 'success',
-      'originalRecord' => $originalRecord,
-      'savedRecord' => $savedRecord,
-    ];
   }
 
 }
