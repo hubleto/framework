@@ -875,14 +875,13 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
         }
       }
 
-    // } catch (\Illuminate\Database\QueryException $e) {
-    //   if ($e->getCode() == 23000) {
-    //     $errorMessage = $this->translate("A field contains a value that already exists.");
-
-    //     throw new Exceptions\DBDuplicateEntryException($errorMessage, (int) $e->getCode(), $e);
-    //   } else {
-    //     throw new Exceptions\DBException($e->getMessage(), (int) $e->getCode(), $e);
-    //   }
+    } catch (\Illuminate\Database\QueryException $e) {
+      if ($e->getCode() == 23000) {
+        $errorMessage = $this->translate("A field contains a value that already exists.");
+        throw new Exceptions\DBDuplicateEntryException($errorMessage, (int) $e->getCode(), $e);
+      } else {
+        throw $e;
+      }
     } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
       if ($e->errorInfo[1] == 1062) {
         $columns = $this->model->getColumns();
@@ -896,7 +895,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
 
         throw new Exceptions\DBException($errorMessage, (int) $e->getCode(), $e);
       } else {
-        throw new Exceptions\DBException($e->getMessage(), (int) $e->getCode(), $e);
+        throw $e;
       }
     }
 
