@@ -692,7 +692,7 @@ class Model extends Core implements Interfaces\ModelInterface
   /**
    * [Description for getRecordDetailUrl]
    *
-   * @param int $id
+   * @param array $record
    * 
    * @return string
    * 
