@@ -237,6 +237,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     $includeRelations = $this->model->getRelationsIncludedInLoadTableData();
 
     $query = $this->prepareReadQuery(null, 0, $includeRelations);
+    $query = $this->addUrlFiltersToQuery($query);
     $query = $this->addFulltextSearchToQuery($query, $fulltextSearch);
     $query = $this->addColumnSearchToQuery($query, $columnSearch);
     $query = $this->addOrderByToQuery($query, $orderBy);
@@ -277,6 +278,7 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     $includeRelations = $this->model->getRelationsIncludedInLoadTableData();
 
     $query = $this->prepareReadQuery(null, 0, $includeRelations);
+    $query = $this->addUrlFiltersToQuery($query);
     $query = $this->addFulltextSearchToQuery($query, $fulltextSearch);
     $query = $this->addOrderByToQuery($query, $orderBy);
     $data = $this->recordReadMany($query, 0, 0);
@@ -375,6 +377,19 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
     }
 
     return $data;
+  }
+
+  /**
+   * [Description for addUrlFiltersToQuery]
+   *
+   * @param mixed $query
+   * 
+   * @return mixed
+   * 
+   */
+  public function addUrlFiltersToQuery(mixed $query): mixed
+  {
+    return $query;
   }
 
   /**
