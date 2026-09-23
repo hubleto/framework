@@ -20,17 +20,16 @@ class File extends \Hubleto\Framework\Column
   public function normalize(mixed $value): mixed
   {
     if (is_string($value)) {
-      $valueParsed = @json_decode($value, true);
+      $fileName = $value;
+      $fileDataToSave = null;
     } else if (is_array($value)) {
-      $valueParsed = $value;
+      $fileName = $value['fileName'];
+      $fileDataToSave = preg_replace('/data:.*?,/', '', $value['fileData']);
+      $fileDataToSave = @base64_decode($fileDataToSave);
     } else {
-      $valueParsed = null;
+      throw new \Exception("Invalid format for file/image input.");
     }
-    if (!is_array($valueParsed) || empty($valueParsed['fileData']) || empty($valueParsed['fileName'])) throw new \Exception("Invalid format for file/image input.");
 
-    $fileName = $valueParsed['fileName'];
-    $fileData = preg_replace('/data:.*?,/', '', $valueParsed['fileData']);
-    $fileData = @base64_decode($fileData);
     $folderPath = $this->getFolderPath();
     $title = $this->getTitle();
     $renamePattern = $this->getRenamePattern();
@@ -92,7 +91,9 @@ class File extends \Hubleto\Framework\Column
       $verCnt++;
     }
 
-    \file_put_contents($destinationFile, $fileData);
+    if ($fileDataToSave !== null) {
+      \file_put_contents($destinationFile, $fileDataToSave);
+    }
 
     return "{$folderPath}/{$fileName}";
   }
