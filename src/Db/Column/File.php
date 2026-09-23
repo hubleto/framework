@@ -19,10 +19,17 @@ class File extends \Hubleto\Framework\Column
 
   public function normalize(mixed $value): mixed
   {
-    if (!is_array($value) || empty($value['fileData']) || empty($value['fileName'])) return $value;
+    if (is_string($value)) {
+      $valueParsed = @json_decode($value, true);
+    } else if (is_array($value)) {
+      $valueParsed = $value;
+    } else {
+      $valueParsed = null;
+    }
+    if (!is_array($valueParsed) || empty($valueParsed['fileData']) || empty($valueParsed['fileName'])) throw new \Exception("Invalid format for file/image input.");
 
-    $fileName = $value['fileName'];
-    $fileData = preg_replace('/data:.*?,/', '', $value['fileData']);
+    $fileName = $valueParsed['fileName'];
+    $fileData = preg_replace('/data:.*?,/', '', $valueParsed['fileData']);
     $fileData = @base64_decode($fileData);
     $folderPath = $this->getFolderPath();
     $title = $this->getTitle();
