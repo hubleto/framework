@@ -36,6 +36,7 @@ class ApiController extends \Hubleto\Framework\Controller
         'code' => (int) $e->getCode(),
         'trace' => $e->getTraceAsString(),
         'message' => $e->getMessage(),
+        'source' => 'api-controller',
       ];
     }
   }

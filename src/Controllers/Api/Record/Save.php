@@ -48,11 +48,13 @@ class Save extends \Hubleto\Framework\Controllers\ApiController {
         'savedRecord' => $savedRecord,
       ];
     } catch (\Throwable $e) {
+      http_response_code(400);
       return [
         'status' => 'error',
         'code' => (int) $e->getCode(),
         'message' => $e->getMessage(),
         'trace' => $e->getTraceAsString(),
+        'source' => 'record-save',
       ];
     }
   }
