@@ -55,7 +55,6 @@ class Loader extends Core
 
     try {
       $this->db()->init();
-      $this->sessionManager()->start(false);
 
       $this->config()->init();
       $this->router()->init();

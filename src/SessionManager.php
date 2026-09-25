@@ -45,7 +45,7 @@ class SessionManager extends Core implements Interfaces\SessionManagerInterface
 
       session_start($options);
 
-      define('_SESSION_ID', session_id());
+      // define('_SESSION_ID', session_id());
     }
   }
 
@@ -73,37 +73,51 @@ class SessionManager extends Core implements Interfaces\SessionManagerInterface
 
   public function set(string $path, mixed $value, string $key = '')
   {
+    $this->sessionManager()->start(false);
     if (empty($key)) $key = $this->salt;
     if (!isset($_SESSION[$key])) $_SESSION[$key] = [];
     $_SESSION[$key][$path] = $value;
+    $this->sessionManager()->stop(false);
   }
 
   public function get(string $path = '', string $key = ''): mixed
   {
+    $this->sessionManager()->start(false);
     if (empty($key)) $key = $this->salt;
-    if ($path == '') return $_SESSION[$key] ?? [];
-    else return $_SESSION[$key][$path] ?? null;
+    if ($path == '') $value = $_SESSION[$key] ?? [];
+    else $value = $_SESSION[$key][$path] ?? null;
+    $this->sessionManager()->stop();
+    return $value;
   }
 
   public function push(string $path, mixed $value): void
   {
+    $this->sessionManager()->start(false);
     if (!is_array($_SESSION[$this->salt][$path])) $_SESSION[$this->salt][$path] = [];
     $_SESSION[$this->salt][$path][] = $value;
+    $this->sessionManager()->stop();
   }
 
   public function isset(string $path): bool
   {
-    return isset($_SESSION[$this->salt][$path]);
+    $this->sessionManager()->start(false);
+    $isset = isset($_SESSION[$this->salt][$path]);
+    $this->sessionManager()->stop();
+    return $isset;
   }
 
   public function unset(string $path): void
   {
+    $this->sessionManager()->start(false);
     if ($this->isset($path)) unset($_SESSION[$this->salt][$path]);
+    $this->sessionManager()->stop();
   }
 
   public function clear(): void
   {
+    $this->sessionManager()->start(false);
     unset($_SESSION[$this->salt]);
+    $this->sessionManager()->stop();
   }
 
 }
