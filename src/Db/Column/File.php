@@ -19,7 +19,11 @@ class File extends \Hubleto\Framework\Column
 
   public function normalize(mixed $value): mixed
   {
-    if (is_string($value)) {
+    if ($value === null) {
+      return null;
+    } else if ($value === '') {
+      return '';
+    } else if (is_string($value)) {
       $fileName = $value;
       $fileDataToSave = null;
     } else if (is_array($value)) {
