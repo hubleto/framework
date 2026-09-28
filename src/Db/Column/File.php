@@ -81,19 +81,21 @@ class File extends \Hubleto\Framework\Column
 
     $fileNameNoVersion = $fileName;
 
-    $destinationFileNoVersion = "{$uploadFolder}/{$folderPath}/{$fileName}";
-    $destinationFile = $destinationFileNoVersion;
+    $destinationFile = "{$uploadFolder}/{$folderPath}/{$fileName}";
 
-    $verCnt = 1;
-    while (is_file($destinationFile)) {
-      $tmpParts = pathinfo($destinationFileNoVersion);
-      $destinationFile = $tmpParts['dirname'] . '/' . $tmpParts['filename'] . ' (' . $verCnt .').' . $tmpParts['extension'];
+    // $destinationFileNoVersion = "{$uploadFolder}/{$folderPath}/{$fileName}";
+    // $destinationFile = $destinationFileNoVersion;
 
-      $tmpParts = pathinfo($fileNameNoVersion);
-      $fileName = $tmpParts['filename'] . ' (' . $verCnt .').' . $tmpParts['extension'];
+    // $verCnt = 1;
+    // while (is_file($destinationFile)) {
+    //   $tmpParts = pathinfo($destinationFileNoVersion);
+    //   $destinationFile = $tmpParts['dirname'] . '/' . $tmpParts['filename'] . ' (' . $verCnt .').' . $tmpParts['extension'];
 
-      $verCnt++;
-    }
+    //   $tmpParts = pathinfo($fileNameNoVersion);
+    //   $fileName = $tmpParts['filename'] . ' (' . $verCnt .').' . $tmpParts['extension'];
+
+    //   $verCnt++;
+    // }
 
     if ($fileDataToSave !== null) {
       \file_put_contents($destinationFile, $fileDataToSave);
