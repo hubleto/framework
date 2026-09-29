@@ -1,0 +1,88 @@
+<?php
+
+namespace Hubleto\Framework\Controllers\Api\Table;
+
+use Hubleto\Framework\Controllers\CrudController;
+
+class DescribeAndLoad extends \Hubleto\Framework\Controllers\ApiController {
+  public \Hubleto\Framework\Model $model;
+
+  function __construct()
+  {
+    parent::__construct();
+
+    $model = $this->router()->urlParamAsString('model');
+
+    if (!empty($model)) {
+      $this->model = $this->getModel($model);
+    }
+  }
+
+  public function response(): array
+  {
+    $description = [];
+    $data = [];
+
+    $crudController = $this->router()->urlParamAsString('crudController');
+    $fulltextSearch = $this->router()->urlParamAsString('fulltextSearch');
+    $columnSearch = $this->router()->urlParamAsArray('columnSearch');
+    $orderBy = $this->router()->urlParamAsArray('orderBy');
+    $itemsPerPage = $this->router()->urlParamAsInteger('itemsPerPage', 15);
+    $page = $this->router()->urlParamAsInteger('page');
+    $dataView = $this->router()->urlParamAsString('dataView');
+
+    try {
+      if (!empty($crudController)) {
+        /** @var CrudController */
+        $crudControllerObj = $this->getService($crudController);
+        if (is_subclass_of($crudControllerObj, CrudController::class)) {
+          return $crudControllerObj->describeTable()->toArray();
+        } else {
+          throw new \Exception('Invalid loader controller.');
+        }
+      } else {
+        $description = $this->model->describeTable()->toArray();
+      }
+
+
+      if (!empty($crudController)) {
+
+        /** @var CrudController */
+        $crudControllerObj = $this->getService($crudController);
+        if (is_subclass_of($crudControllerObj, CrudController::class)) {
+          return $crudControllerObj->loadTableData(
+            $fulltextSearch,
+            $columnSearch,
+            $orderBy,
+            $itemsPerPage,
+            $page,
+            $dataView,
+          );
+        } else {
+          throw new \Exception('Invalid loader controller.');
+        }
+      } else {
+        $data = $this->model->record->loadTableData(
+          $fulltextSearch,
+          $columnSearch,
+          $orderBy,
+          $itemsPerPage,
+          $page,
+          $dataView,
+        );
+      }
+
+      return [
+        "description" => $description,
+        "data" => $data,
+      ];
+
+    } catch (\Throwable $e) {
+      var_dump($e->getMessage());
+      var_dump($e->getTraceAsString());exit;
+    }
+  }
+
+}
+
+

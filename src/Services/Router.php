@@ -22,6 +22,8 @@ class Router extends Core implements RouterInterface {
   {
 
     $this->get([
+      '/^api\/form-describe-and-load\/?$/' => \Hubleto\Framework\Controllers\Api\Form\DescribeAndLoad::class,
+      '/^api\/table-describe-and-load\/?$/' => \Hubleto\Framework\Controllers\Api\Table\DescribeAndLoad::class,
       '/^api\/form\/describe\/?$/' => \Hubleto\Framework\Controllers\Api\Form\Describe::class,
       '/^api\/table\/describe\/?$/' => \Hubleto\Framework\Controllers\Api\Table\Describe::class,
       '/^api\/record\/get\/?$/' => \Hubleto\Framework\Controllers\Api\Record\Get::class,
