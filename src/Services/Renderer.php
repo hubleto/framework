@@ -1,14 +1,23 @@
 <?php
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Services;
 
-use Hubleto\Framework\AuthProvider;
+use Hubleto\Framework\Core;
+use Hubleto\Framework\Helper;
+use Hubleto\Framework\Controller;
+use Hubleto\Framework\Interfaces\RendererInterface;
 use Hubleto\Framework\Exceptions\Exception;
+use Hubleto\Framework\Exceptions\GeneralException;
+use Hubleto\Framework\Exceptions\ControllerNotFound;
+use Hubleto\Framework\Exceptions\NotEnoughPermissionsException;
+use Hubleto\Framework\Controllers\NotFound;
+use Hubleto\Framework\Controllers\SignIn;
+use Hubleto\Framework\Controllers\Desktop;
 
 /**
  * Default view renderer for Hubleto project.
  */
-class Renderer extends Core implements Interfaces\RendererInterface
+class Renderer extends Core implements RendererInterface
 {
 
   public \Twig\Loader\FilesystemLoader $twigLoader;
@@ -175,7 +184,7 @@ class Renderer extends Core implements Interfaces\RendererInterface
 
       // Check if controller exists and if it can be used
       if (empty($controllerClassName)) {
-        $controllerClassName = Controllers\NotFound::class;
+        $controllerClassName = NotFound::class;
       };
       
       // Create the object for the controller
@@ -196,19 +205,19 @@ class Renderer extends Core implements Interfaces\RendererInterface
       if (php_sapi_name() === 'cli') {
         /** @disregard P1014 */
         if (!$controllerClassName::$cliSAPIEnabled) {
-          throw new Exceptions\GeneralException("Controller is not enabled in CLI interface.");
+          throw new GeneralException("Controller is not enabled in CLI interface.");
         }
       } else {
         /** @disregard P1014 */
         if (!$controllerClassName::$webSAPIEnabled) {
-          throw new Exceptions\GeneralException("Controller is not enabled in WEB interface.");
+          throw new GeneralException("Controller is not enabled in WEB interface.");
         }
       }
 
       if ($controllerObject->requiresAuthenticatedUser) {
         if (!$authProvider->isUserInSession()) {
           $this->logger()->info("User not authenticated, redirecting to sign-in controller.");
-          $controllerObject = $this->getController(Controllers\SignIn::class);
+          $controllerObject = $this->getController(SignIn::class);
           $permissionManager->setPermission($controllerObject->permission);
         }
       }
@@ -274,7 +283,7 @@ class Renderer extends Core implements Interfaces\RendererInterface
 
         // ... But in most cases it will be "encapsulated" in the desktop.
         } else {
-          $desktopControllerObject = $this->getController(Controllers\Desktop::class);
+          $desktopControllerObject = $this->getController(Desktop::class);
           $desktopControllerObject->prepareView();
 
           if (!empty($desktopControllerObject->getView())) {
@@ -299,12 +308,12 @@ class Renderer extends Core implements Interfaces\RendererInterface
 
       return $return;
 
-    } catch (Exceptions\ControllerNotFound $e) {
+    } catch (ControllerNotFound $e) {
       return $this->renderFatal($e, false);
-    } catch (Exceptions\NotEnoughPermissionsException $e) {
+    } catch (NotEnoughPermissionsException $e) {
       header('HTTP/1.1 401 Unauthorized', true, 401);
       return $this->renderFatal($e, false);
-    } catch (Exceptions\GeneralException $e) {
+    } catch (GeneralException $e) {
       header('HTTP/1.1 400 Bad Request', true, 400);
       return "Hubleto run failed: [".get_class($e)."] ".$e->getMessage();
     } catch (\ArgumentCountError $e) {

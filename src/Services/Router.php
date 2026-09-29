@@ -1,11 +1,15 @@
 <?php
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Services;
+
+use Hubleto\Framework\Interfaces\RouterInterface;
+use Hubleto\Framework\Helper;
+use Hubleto\Framework\Core;
 
 /**
  * Default router for Hubleto project.
  */
-class Router extends Core implements Interfaces\RouterInterface {
+class Router extends Core implements RouterInterface {
   const HTTP_GET = 'HTTP_GET';
 
   public $routing = [];

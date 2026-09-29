@@ -2,7 +2,7 @@
 
 namespace Hubleto\Framework\Interfaces;
 
-use Hubleto\Framework\ConfigManager;
+use Hubleto\Framework\Services\ConfigManager;
 
 interface ConfigManagerInterface extends CoreInterface
 {

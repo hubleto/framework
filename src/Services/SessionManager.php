@@ -1,11 +1,14 @@
 <?php
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Services;
+
+use Hubleto\Framework\Core;
+use Hubleto\Framework\Interfaces\SessionManagerInterface;
 
 /**
  * Default session manager for Hubleto project.
  */
-class SessionManager extends Core implements Interfaces\SessionManagerInterface
+class SessionManager extends Core implements SessionManagerInterface
 {
 
   private string $salt = '';

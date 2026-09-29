@@ -1,11 +1,14 @@
 <?php
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Services;
+
+use Hubleto\Framework\Interfaces\EnvInterface;
+use Hubleto\Framework\Core;
 
 /**
  * Storage for environment-specific configuration.
  */
-class Env extends Core implements Interfaces\EnvInterface
+class Env extends Core implements EnvInterface
 {
 
   public string $projectFolder = '';

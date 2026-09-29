@@ -87,12 +87,12 @@ class Core implements Interfaces\CoreInterface
   /**
    * Shortcut for the env service.
    *
-   * @return Env
+   * @return Interfaces\EnvInterface
    * 
    */
   public function env(): Interfaces\EnvInterface
   {
-    return $this->getService(Env::class);
+    return $this->getService(Services\Env::class);
   }
 
   /**
@@ -103,18 +103,18 @@ class Core implements Interfaces\CoreInterface
    */
   public function authProvider(): Interfaces\AuthProviderInterface
   {
-    return $this->getService(AuthProvider::class);
+    return $this->getService(Services\AuthProvider::class);
   }
 
   /**
    * Shortcut for the database service.
    *
-   * @return Db
+   * @return Interfaces\DbInterface
    * 
    */
   public function db(): Interfaces\DbInterface
   {
-    return $this->getService(Db::class);
+    return $this->getService(Services\Db::class);
   }
 
   /**
@@ -125,62 +125,62 @@ class Core implements Interfaces\CoreInterface
    */
   public function appManager(): Interfaces\AppManagerInterface
   {
-    return $this->getService(AppManager::class);
+    return $this->getService(Services\AppManager::class);
   }
 
   /**
    * Shortcut for the router service.
    *
-   * @return Router
+   * @return Interfaces\Router
    * 
    */
   public function router(): Interfaces\RouterInterface
   {
-    return $this->getService(Router::class);
+    return $this->getService(Services\Router::class);
   }
 
   /**
    * Shortcut for the event manager service.
    *
-   * @return EventManagerInterface
+   * @return Interfaces\EventManagerInterface
    * 
    */
   public function eventManager(): Interfaces\EventManagerInterface
   {
-    return $this->getService(EventManager::class);
+    return $this->getService(Services\EventManager::class);
   }
 
   /**
    * Shortcut for the session manager service.
    *
-   * @return SessionManager
+   * @return Interfaces\SessionManagerInterface
    * 
    */
   public function sessionManager(): Interfaces\SessionManagerInterface
   {
-    return $this->getService(SessionManager::class);
+    return $this->getService(Services\SessionManager::class);
   }
 
   /**
    * Shortcut for the permissions manager service.
    *
-   * @return PermissionsManager
+   * @return Interfaces\PermissionsManagerInterface
    * 
    */
   public function permissionsManager(): Interfaces\PermissionsManagerInterface
   {
-    return $this->getService(PermissionsManager::class);
+    return $this->getService(Services\PermissionsManager::class);
   }
 
   /**
    * Shortcut for the cron manager service.
    *
-   * @return CronManager
+   * @return Interfaces\CronManagerInterface
    * 
    */
   public function cronManager(): Interfaces\CronManagerInterface
   {
-    return $this->getService(CronManager::class);
+    return $this->getService(Services\CronManager::class);
   }
 
   /**
@@ -191,7 +191,7 @@ class Core implements Interfaces\CoreInterface
    */
   public function config(): Interfaces\ConfigManagerInterface
   {
-    return $this->getService(ConfigManager::class);
+    return $this->getService(Services\ConfigManager::class);
   }
 
   /**
@@ -202,7 +202,7 @@ class Core implements Interfaces\CoreInterface
    */
   public function terminal(): Interfaces\TerminalInterface
   {
-    return $this->getService(Terminal::class);
+    return $this->getService(Services\Terminal::class);
   }
 
   /**
@@ -213,7 +213,7 @@ class Core implements Interfaces\CoreInterface
    */
   public function logger(): Interfaces\LoggerInterface
   {
-    return $this->getService(Logger::class);
+    return $this->getService(Services\Logger::class);
   }
 
   /**
@@ -224,7 +224,7 @@ class Core implements Interfaces\CoreInterface
    */
   public function locale(): Interfaces\LocaleInterface
   {
-    return $this->getService(Locale::class);
+    return $this->getService(Services\Locale::class);
   }
 
   /**
@@ -235,7 +235,7 @@ class Core implements Interfaces\CoreInterface
    */
   public function renderer(): Interfaces\RendererInterface
   {
-    return $this->getService(Renderer::class);
+    return $this->getService(Services\Renderer::class);
   }
 
   /**
@@ -246,7 +246,7 @@ class Core implements Interfaces\CoreInterface
    */
   public function translator(): Interfaces\TranslatorInterface
   {
-    return $this->getService(Translator::class);
+    return $this->getService(Services\Translator::class);
   }
 
   /**

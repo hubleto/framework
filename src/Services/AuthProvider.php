@@ -1,11 +1,16 @@
 <?php
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Services;
+
+use Hubleto\Framework\Core;
+use Hubleto\Framework\Interfaces\AuthProviderInterface;
+use Hubleto\Framework\Model;
+use Hubleto\Framework\Models\User;
 
 /**
  * Default implementation of authentication provider.
  */
-class AuthProvider extends Core implements Interfaces\AuthProviderInterface
+class AuthProvider extends Core implements AuthProviderInterface
 {
 
   public $loginAttribute = 'login';
@@ -130,7 +135,7 @@ class AuthProvider extends Core implements Interfaces\AuthProviderInterface
    */
   public function createUserModel(): Model
   {
-    return $this->getModel(Models\User::class);
+    return $this->getModel(User::class);
   }
 
   /**

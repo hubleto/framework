@@ -1,11 +1,14 @@
 <?php
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Services;
+
+use Hubleto\Framework\Interfaces\LocaleInterface;
+use Hubleto\Framework\Core;
 
 /**
  * Methods to support locale in Hubleto project.
  */
-class Locale extends Core implements Interfaces\LocaleInterface
+class Locale extends Core implements LocaleInterface
 {
 
   private array $locale = [];

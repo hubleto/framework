@@ -1,11 +1,15 @@
 <?php
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Services;
+
+use Hubleto\Framework\Core;
+use Hubleto\Framework\Interfaces\TranslatorInterface;
+use Hubleto\Framework\Interfaces\CoreInterface;
 
 /**
  * Default translator for Hubleto project.
  */
-class Translator implements Interfaces\TranslatorInterface
+class Translator implements TranslatorInterface
 {
 
   public Core $service;
@@ -20,7 +24,7 @@ class Translator implements Interfaces\TranslatorInterface
    * @return string
    * 
    */
-  public function getDictionaryFilename(Interfaces\CoreInterface $core, string $language, string $context): string
+  public function getDictionaryFilename(CoreInterface $core, string $language, string $context): string
   {
     $dictionaryFile = '';
 
@@ -36,14 +40,14 @@ class Translator implements Interfaces\TranslatorInterface
   /**
    * [Description for addToDictionary]
    *
-   * @param Interfaces\CoreInterface $service
+   * @param CoreInterface $service
    * @param string $language
    * @param string $string
    * 
    * @return void
    * 
    */
-  public function addToDictionary(Interfaces\CoreInterface $core, string $language, string $context, string $contextInner, string $string): void
+  public function addToDictionary(CoreInterface $core, string $language, string $context, string $contextInner, string $string): void
   {
 
     $debugTranslations = $core->config()->getAsBool('debugTranslations');
@@ -68,13 +72,13 @@ class Translator implements Interfaces\TranslatorInterface
   /**
    * [Description for loadDictionary]
    *
-   * @param Interfaces\CoreInterface $service
+   * @param CoreInterface $service
    * @param string $language
    * 
    * @return void
    * 
    */
-  public function loadDictionary(Interfaces\CoreInterface $core, string $language, string $context): void
+  public function loadDictionary(CoreInterface $core, string $language, string $context): void
   {
     if ($language == 'en') return;
     if (!empty($this->dictionary[$language][$context])) return;
@@ -88,13 +92,13 @@ class Translator implements Interfaces\TranslatorInterface
   /**
    * [Description for loadFullDictionary]
    *
-   * @param Interfaces\CoreInterface $core
+   * @param CoreInterface $core
    * @param string $language
    * 
    * @return array
    * 
    */
-  public function loadFullDictionary(Interfaces\CoreInterface $core, string $language): array
+  public function loadFullDictionary(CoreInterface $core, string $language): array
   {
     $dictionary = [];
 
@@ -120,14 +124,14 @@ class Translator implements Interfaces\TranslatorInterface
   /**
    * [Description for translate]
    *
-   * @param Interfaces\CoreInterface $service
+   * @param CoreInterface $service
    * @param string $string
    * @param array $vars
    * 
    * @return string
    * 
    */
-  public function translate(Interfaces\CoreInterface $service, string $string, array $vars = [], string $context = ''): string
+  public function translate(CoreInterface $service, string $string, array $vars = [], string $context = ''): string
   {
   
     $language = $service->authProvider()->getUserLanguage();

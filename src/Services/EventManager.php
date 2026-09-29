@@ -1,13 +1,17 @@
 <?php declare(strict_types=1);
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Services;
+
+use Hubleto\Framework\Interfaces\EventManagerInterface;
+use Hubleto\Framework\Interfaces\EventListenerInterface;
+use Hubleto\Framework\Core;
 
 /**
  * Default manager for event listeners in the Hubleto project.
  */
-class EventManager extends Core implements Interfaces\EventManagerInterface
+class EventManager extends Core implements EventManagerInterface
 {
-  /** @var array<\Hubleto\Framework\Event> */
+  /** @var array<EventListenerInterface> */
   protected array $listeners = [];
 
   public function init(): void
@@ -19,7 +23,7 @@ class EventManager extends Core implements Interfaces\EventManagerInterface
     $this->logger()->info($msg);
   }
 
-  public function addEventListener(string $event, Interfaces\EventListenerInterface $listener): void
+  public function addEventListener(string $event, EventListenerInterface $listener): void
   {
     if (!isset($this->listeners[$event])) $this->listeners[$event] = [];
     $this->listeners[$event][] = $listener;

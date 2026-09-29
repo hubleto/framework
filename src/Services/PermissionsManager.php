@@ -1,12 +1,17 @@
 <?php
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Services;
+
+use Hubleto\Framework\Core;
+use Hubleto\Framework\Interfaces\PermissionsManagerInterface;
+use Hubleto\Framework\Model;
+use Hubleto\Framework\Exceptions\NotEnoughPermissionsException;
 
 /**
  * Default manager for permissions before executing any controller.
  * *Note: Do not confuse with CRUD permissions implemented in model's getPermissions() method.*
  */
-class PermissionsManager extends Core implements Interfaces\PermissionsManagerInterface
+class PermissionsManager extends Core implements PermissionsManagerInterface
 {
 
   protected bool $grantAllPermissions = false;
@@ -161,7 +166,7 @@ class PermissionsManager extends Core implements Interfaces\PermissionsManagerIn
   public function check(string $permission): void
   {
     if (!$this->granted($permission) && !$this->granted(str_replace('\\', '/', $permission))) {
-      throw new Exceptions\NotEnoughPermissionsException("Not enough permissions ({$permission}).");
+      throw new NotEnoughPermissionsException("Not enough permissions ({$permission}).");
     }
   }
 

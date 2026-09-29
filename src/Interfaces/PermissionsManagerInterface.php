@@ -8,6 +8,7 @@ interface PermissionsManagerInterface
   public function init(): void;
   public function createUserRoleModel(): null|\Hubleto\Framework\Model;
   public function DANGEROUS__grantAllPermissions(): void;
+  public function checkPermission(): void;
   public function revokeGrantAllPermissions(): void;
   public function loadAdministratorRoles(): array;
   public function loadAdministratorTypes(): array;

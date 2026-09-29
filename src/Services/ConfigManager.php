@@ -1,11 +1,14 @@
 <?php
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Services;
+
+use Hubleto\Framework\Interfaces\ConfigManagerInterface;
+use Hubleto\Framework\Core;
 
 /**
  * Configuration management for the Hubleto project.
  */
-class ConfigManager extends Core implements Interfaces\ConfigManagerInterface
+class ConfigManager extends Core implements ConfigManagerInterface
 {
   protected array $configData = [];
   protected array $configDataFull = [];
@@ -21,7 +24,7 @@ class ConfigManager extends Core implements Interfaces\ConfigManagerInterface
    */
   public function forModel(string $modelClass): ConfigManager
   {
-    /** @var Interfaces\ConfigManagerInterface */
+    /** @var ConfigManagerInterface */
     $new = new (get_class($this));
     $new->setConfig($this->configData);
     $new->setPrefix('models/' . $modelClass . '/');
@@ -38,7 +41,7 @@ class ConfigManager extends Core implements Interfaces\ConfigManagerInterface
    */
   public function forApp(string $appClass): ConfigManager
   {
-    /** @var Interfaces\ConfigManagerInterface */
+    /** @var ConfigManagerInterface */
     $new = new (get_class($this));
     $new->setConfig($this->configData);
     $new->setPrefix('apps/' . str_replace('\\Loader', '', $appClass) . '/');

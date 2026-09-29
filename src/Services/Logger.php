@@ -1,13 +1,15 @@
 <?php
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Services;
 
 use Monolog\Handler\RotatingFileHandler;
+use Hubleto\Framework\Interfaces\LoggerInterface;
+use Hubleto\Framework\Core;
 
 /**
  * Default implementation of logger in Hubleto project.
  */
-class Logger extends Core implements Interfaces\LoggerInterface {
+class Logger extends Core implements LoggerInterface {
 
 
   public array $loggers = [];

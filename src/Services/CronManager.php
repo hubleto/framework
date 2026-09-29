@@ -1,14 +1,17 @@
 <?php declare(strict_types=1);
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Services;
+
+use Hubleto\Framework\Interfaces\CronManagerInterface;
+use Hubleto\Framework\Core;
+use Hubleto\Framework\Helper;
 
 /**
  * Default manager for scheduled jobs (cron) in Hubleto project.
  */
-class CronManager extends Core implements Interfaces\CronManagerInterface
+class CronManager extends Core implements CronManagerInterface
 {
 
-  /** @var array<\Hubleto\Erp\Cron> */
   protected array $enabledCrons = [];
 
   public function init(): void

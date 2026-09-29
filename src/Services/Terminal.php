@@ -1,8 +1,10 @@
 <?php
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Services;
 
-class Terminal implements Interfaces\TerminalInterface
+use Hubleto\Framework\Interfaces\TerminalInterface;
+
+class Terminal implements TerminalInterface
 {
 
   public mixed $output = null;

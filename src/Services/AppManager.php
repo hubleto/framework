@@ -1,18 +1,22 @@
 <?php declare(strict_types=1);
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Services;
+
+use Hubleto\Framework\Interfaces\AppManagerInterface;
+use Hubleto\Framework\Interfaces\AppInterface;
+use Hubleto\Framework\Core;
 
 /**
  * Default manager of Hubleto apps used in the Hubleto project.
  */
-class AppManager extends Core implements Interfaces\AppManagerInterface
+class AppManager extends Core implements AppManagerInterface
 {
-  public Interfaces\AppInterface $activatedApp;
+  public AppInterface $activatedApp;
 
-  /** @var array<Interfaces\AppInterface> */
+  /** @var array<AppInterface> */
   public array $enabledApps = [];
 
-  /** @var array<Interfaces\AppInterface> */
+  /** @var array<AppInterface> */
   public array $disabledApps = [];
 
   /** @var array<string> */
@@ -247,17 +251,17 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
    *
    * @param string $appNamespace
    * 
-   * @return Interfaces\AppInterface
+   * @return AppInterface
    * 
    */
-  public function createAppInstance(string $appNamespace): Interfaces\AppInterface
+  public function createAppInstance(string $appNamespace): AppInterface
   {
     if (!str_ends_with($appNamespace, '\Loader')) $appNamespace = $appNamespace . '\Loader';
     return $this->getService($appNamespace);
   }
 
   /**
-  * @return array<Interfaces\AppInterface>
+  * @return array<AppInterface>
   */
   public function getEnabledApps(): array
   {
@@ -265,7 +269,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
   }
 
   /**
-  * @return array<Interfaces\AppInterface>
+  * @return array<AppInterface>
   */
   public function getDisabledApps(): array
   {
@@ -273,7 +277,7 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
   }
 
   /**
-  * @return array<Interfaces\AppInterface>
+  * @return array<AppInterface>
   */
   public function getInstalledApps(): array
   {
@@ -283,10 +287,10 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
   /**
    * [Description for getActivatedApp]
    *
-   * @return null|Interfaces\AppInterface
+   * @return null|AppInterface
    * 
    */
-  public function getActivatedApp(): null|Interfaces\AppInterface
+  public function getActivatedApp(): null|AppInterface
   {
     $apps = $this->getEnabledApps();
     foreach ($apps as $app) {
@@ -302,10 +306,10 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
    *
    * @param string $appNamespace
    * 
-   * @return null|Interfaces\AppInterface
+   * @return null|AppInterface
    * 
    */
-  public function getApp(string $appNamespace): null|Interfaces\AppInterface
+  public function getApp(string $appNamespace): null|AppInterface
   {
     $appNamespace = str_replace('/', '\\', $appNamespace);
     $appNamespace = str_replace('\\Loader', '', $appNamespace);
@@ -317,10 +321,10 @@ class AppManager extends Core implements Interfaces\AppManagerInterface
    *
    * @param string $appShortName
    * 
-   * @return null|Interfaces\AppInterface
+   * @return null|AppInterface
    * 
    */
-  public function getCommunityApp(string $appShortName): null|Interfaces\AppInterface
+  public function getCommunityApp(string $appShortName): null|AppInterface
   {
     return $this->getApp('Hubleto\\App\\Community\\' . $appShortName . '\\Loader');
   }

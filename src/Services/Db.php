@@ -1,11 +1,14 @@
 <?php
 
-namespace Hubleto\Framework;
+namespace Hubleto\Framework\Services;
+
+use Hubleto\Framework\Interfaces\DbInterface;
+use Hubleto\Framework\Core;
 
 /**
  * Database abstraction layer.
  */
-class Db extends Core implements Interfaces\DbInterface
+class Db extends Core implements DbInterface
 {
   public ?\PDO $connection = null;
   public bool $isConnected = false;
