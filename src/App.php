@@ -343,7 +343,9 @@ class App extends Core implements Interfaces\AppInterface
         $cClass = str_replace('.php', '', $cClass);
         if (class_exists($cClass)) {
           $cObj = $this->getService($cClass);
-          $permissions[] = $cObj->permission;
+          if (isset($cObj->permission)) {
+            $permissions[] = $cObj->permission;
+          }
         }
       }
     }

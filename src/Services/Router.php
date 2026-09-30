@@ -36,11 +36,23 @@ class Router extends Core implements RouterInterface {
     ]);
   }
 
+  /**
+   * [Description for init]
+   *
+   * @return void
+   * 
+   */
   public function init(): void
   {
     $this->setRouteVars($this->extractParamsFromRequest());
   }
 
+  /**
+   * [Description for extractParamsFromRequest]
+   *
+   * @return array
+   * 
+   */
   public function extractParamsFromRequest(): array
   {
     $route = '';
@@ -63,6 +75,12 @@ class Router extends Core implements RouterInterface {
     return $params;
   }
 
+  /**
+   * [Description for extractRouteFromRequest]
+   *
+   * @return string
+   * 
+   */
   public function extractRouteFromRequest(): string
   {
     $route = '';
@@ -76,17 +94,47 @@ class Router extends Core implements RouterInterface {
     return $route;
   }
 
+  /**
+   * [Description for isAjax]
+   *
+   * @return bool
+   * 
+   */
   public function isAjax(): bool
   {
     return isset($_REQUEST['__IS_AJAX__']) && $_REQUEST['__IS_AJAX__'] == "1";
   }
 
-  // configure routes for HTTP GET
+  /**
+   * [Description for get]
+   *
+   * @param array $routes
+   * 
+   * @return void
+   * 
+   */
   public function get(array $routes)
   {
     $this->routesHttpGet = array_merge($this->routesHttpGet, $routes);
   }
 
+  public function crud(string $urlSlug, string $controllerClass): void
+  {
+    $urlSlugSanitized = str_replace('/', '\/', $urlSlug);
+    $this->get([
+      '/^' . $urlSlugSanitized . '(\/(?<recordId>\d+))?\/?$/' => $controllerClass,
+      '/^' . $urlSlugSanitized . '\/add\/?$/' => ['controller' => $controllerClass, 'vars' => ['recordId' => -1]],
+    ]);
+  }
+
+  /**
+   * [Description for getRoutes]
+   *
+   * @param string $method
+   * 
+   * @return array
+   * 
+   */
   public function getRoutes(string $method): array
   {
     return match ($method) {
@@ -95,17 +143,39 @@ class Router extends Core implements RouterInterface {
     };
   }
 
+  /**
+   * [Description for getRoute]
+   *
+   * @return string
+   * 
+   */
   public function getRoute(): string
   {
     return $this->route;
   }
 
+  /**
+   * [Description for setRoute]
+   *
+   * @param string $route
+   * 
+   * @return void
+   * 
+   */
   public function setRoute(string $route): void
   {
     $this->route = $route;
   }
 
-  /** array<string, array<string, string>> */
+  /**
+   * [Description for parseRoute]
+   *
+   * @param string $method
+   * @param string $route
+   * 
+   * @return array
+   * 
+   */
   public function parseRoute(string $method, string $route): array
   {
     $routeData = [
@@ -157,36 +227,90 @@ class Router extends Core implements RouterInterface {
     return $routeData;
   }
 
+  /**
+   * [Description for setRouteVars]
+   *
+   * @param array $routeVars
+   * 
+   * @return void
+   * 
+   */
   public function setRouteVars(array $routeVars): void
   {
     $this->routeVars = array_merge($this->routeVars, $routeVars);
   }
 
+  /**
+   * [Description for getRouteVars]
+   *
+   * @return array
+   * 
+   */
   public function getRouteVars(): array
   {
     return $this->routeVars;
   }
 
+  /**
+   * [Description for getRouteVar]
+   *
+   * @param string|int $varIndex
+   * 
+   * @return string
+   * 
+   */
   public function getRouteVar(string|int $varIndex): string
   {
     return $this->routeVars[$varIndex] ?? '';
   }
 
+  /**
+   * [Description for routeVarAsString]
+   *
+   * @param string|int $varIndex
+   * 
+   * @return string
+   * 
+   */
   public function routeVarAsString(string|int $varIndex): string
   {
     return (string) ($this->routeVars[$varIndex] ?? '');
   }
 
+  /**
+   * [Description for routeVarAsInteger]
+   *
+   * @param string|int $varIndex
+   * 
+   * @return int
+   * 
+   */
   public function routeVarAsInteger(string|int $varIndex): int
   {
     return (int) ($this->routeVars[$varIndex] ?? 0);
   }
 
+  /**
+   * [Description for routeVarAsFloat]
+   *
+   * @param string|int $varIndex
+   * 
+   * @return float
+   * 
+   */
   public function routeVarAsFloat(string|int $varIndex): float
   {
     return (float) ($this->routeVars[$varIndex] ?? 0);
   }
 
+  /**
+   * [Description for routeVarAsBool]
+   *
+   * @param string|int $varIndex
+   * 
+   * @return bool
+   * 
+   */
   public function routeVarAsBool(string|int $varIndex): bool
   {
     if (isset($this->routeVars[$varIndex])) {
@@ -197,6 +321,15 @@ class Router extends Core implements RouterInterface {
     }
   }
 
+  /**
+   * [Description for getUploadedFile]
+   *
+   * @param string $paramName
+   * @param array|null $defaultValue
+   * 
+   * @return null|array
+   * 
+   */
   public function getUploadedFile(string $paramName, ?array $defaultValue = null): null|array
   {
     if (isset($_FILES[$paramName])) return $_FILES[$paramName];
@@ -215,49 +348,124 @@ class Router extends Core implements RouterInterface {
     }
   }
 
+  /**
+   * [Description for getUrlParams]
+   *
+   * @return array
+   * 
+   */
   public function getUrlParams(): array
   {
     return $this->routeVars;
   }
 
+  /**
+   * [Description for isUrlParam]
+   *
+   * @param string $paramName
+   * 
+   * @return bool
+   * 
+   */
   public function isUrlParam(string $paramName): bool
   {
     return isset($this->routeVars[$paramName]);
   }
 
+  /**
+   * [Description for urlParamNotEmpty]
+   *
+   * @param string $paramName
+   * 
+   * @return bool
+   * 
+   */
   public function urlParamNotEmpty(string $paramName): bool
   {
     return $this->isUrlParam($paramName) && !empty($this->routeVars[$paramName]);
   }
 
+  /**
+   * [Description for setUrlParam]
+   *
+   * @param string $paramName
+   * @param string $newValue
+   * 
+   * @return void
+   * 
+   */
   public function setUrlParam(string $paramName, string $newValue): void
   {
     $this->routeVars[$paramName] = $newValue;
   }
 
+  /**
+   * [Description for removeUrlParam]
+   *
+   * @param string $paramName
+   * 
+   * @return void
+   * 
+   */
   public function removeUrlParam(string $paramName): void
   {
     if (isset($this->routeVars[$paramName])) unset($this->routeVars[$paramName]);
   }
 
+  /**
+   * [Description for urlParamAsString]
+   *
+   * @param string $paramName
+   * @param string $defaultValue
+   * 
+   * @return string
+   * 
+   */
   public function urlParamAsString(string $paramName, string $defaultValue = ''): string
   {
     if (isset($this->routeVars[$paramName])) return (string) $this->routeVars[$paramName];
     else return $defaultValue;
   }
 
+  /**
+   * [Description for urlParamAsInteger]
+   *
+   * @param string $paramName
+   * @param int $defaultValue
+   * 
+   * @return int
+   * 
+   */
   public function urlParamAsInteger(string $paramName, int $defaultValue = 0): int
   {
     if (isset($this->routeVars[$paramName])) return (int) $this->routeVars[$paramName];
     else return $defaultValue;
   }
 
+  /**
+   * [Description for urlParamAsFloat]
+   *
+   * @param string $paramName
+   * @param float $defaultValue
+   * 
+   * @return float
+   * 
+   */
   public function urlParamAsFloat(string $paramName, float $defaultValue = 0): float
   {
     if (isset($this->routeVars[$paramName])) return (float) $this->routeVars[$paramName];
     else return $defaultValue;
   }
 
+  /**
+   * [Description for urlParamAsBool]
+   *
+   * @param string $paramName
+   * @param bool $defaultValue
+   * 
+   * @return bool
+   * 
+   */
   public function urlParamAsBool(string $paramName, bool $defaultValue = false): bool
   {
     if (isset($this->routeVars[$paramName])) {
@@ -267,8 +475,14 @@ class Router extends Core implements RouterInterface {
   }
 
   /**
-  * @return array<string, string>
-  */
+   * [Description for urlParamAsArray]
+   *
+   * @param string $paramName
+   * @param array $defaultValue
+   * 
+   * @return array
+   * 
+   */
   public function urlParamAsArray(string $paramName, array $defaultValue = []): array
   {
     if (isset($this->routeVars[$paramName])) return (array) $this->routeVars[$paramName];
