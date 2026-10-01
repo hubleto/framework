@@ -18,7 +18,7 @@ class User extends Model {
   ];
 
   public string $urlBase = "users";
-  public ?string $lookupSqlValue = "{%TABLE%}.login";
+  public ?string $lookupSqlValue = "[TABLE].login";
   public string $recordManagerClass = RecordManagers\User::class;
 
   public ?array $junctions = [

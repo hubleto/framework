@@ -16,7 +16,7 @@ use Hubleto\Framework\Model;
 class Token extends Model {
 
   public string $table = "tokens";
-  public ?string $lookupSqlValue = "{%TABLE%}.token";
+  public ?string $lookupSqlValue = "[TABLE].token";
   public $tokenTypes = [];
   public string $recordManagerClass = RecordManagers\Token::class;
 

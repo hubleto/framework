@@ -71,7 +71,9 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
 
     $selects[] = $level . ' as _LEVEL';
     $selects[] = $this->maxReadLevel . ' as _LEVEL_MAX';
-    $selects[] = '(' . str_replace('{%TABLE%}', $this->model->table, $this->model->getLookupSqlValue()) . ') as _LOOKUP';
+
+    $lookupSqlValue = $this->model->getLookupSqlValue();
+    $selects[] = '(' . str_replace('{%TABLE%}', $this->model->table, str_replace('[TABLE]', $this->model->table, $lookupSqlValue)) . ') as _LOOKUP';
 
     // LOOKUPS and RELATIONSHIPS
     foreach ($this->model->getColumns() as $columnName => $column) {
@@ -333,7 +335,10 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
 
     $selectRaw = [];
     $selectRaw[] = $this->table . '.*';
-    $selectRaw[] = '(' . str_replace('{%TABLE%}', $this->table, $this->model->getLookupSqlValue()) . ') as _LOOKUP';
+
+    $lookupSqlValue = $this->model->getLookupSqlValue();
+    $selectRaw[] = '(' . str_replace('{%TABLE%}', $this->table, str_replace('[TABLE]', $this->table, $lookupSqlValue)) . ') as _LOOKUP';
+
     $selectRaw[] = '"" as _LOOKUP_CLASS';
 
     if ($this->model->hasColumn('color')) {
@@ -372,7 +377,8 @@ class EloquentRecordManager extends \Illuminate\Database\Eloquent\Model implemen
 
       $lookupUrlDetail = $this->model->getRecordDetailUrl($value);
       if (!empty($lookupUrlDetail)) {
-        $data[$key]['_URL_DETAIL'] = str_replace('{%ID%}', $value['id'], $lookupUrlDetail);
+        $id = $value['id'];
+        $data[$key]['_URL_DETAIL'] = str_replace('{%ID%}', $id, str_replace('[ID]', $id, $lookupUrlDetail));
       }
     }
 

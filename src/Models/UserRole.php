@@ -16,7 +16,7 @@ class UserRole extends \Hubleto\Framework\Model {
 
   public string $recordManagerClass = RecordManagers\UserRole::class;
   public string $table = 'user_roles';
-  public ?string $lookupSqlValue = "{%TABLE%}.name";
+  public ?string $lookupSqlValue = "[TABLE].name";
 
   public function describeColumns(): array
   {

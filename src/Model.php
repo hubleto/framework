@@ -655,10 +655,10 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function getLookupSqlValue(string $tableAlias = ''): string
   {
-    $value = $this->lookupSqlValue ?? "concat('{$this->fullName}, id = ', {%TABLE%}.id)";
+    $value = $this->lookupSqlValue ?? "concat('{$this->fullName}, id = ', [TABLE].id)";
 
     return ($tableAlias !== ''
-      ? str_replace('{%TABLE%}', "`{$tableAlias}`", $value)
+      ? str_replace('{%TABLE%}', "`{$tableAlias}`", str_replace('[TABLE]', "`{$tableAlias}`", $value))
       : $value
     );
   }
@@ -701,7 +701,8 @@ class Model extends Core implements Interfaces\ModelInterface
   {
     $urlDetail = $this->lookupUrlDetail ?? '';
     if (!empty($urlDetail)) {
-      return str_replace('{%ID%}', (string) ($record['id'] ?? 0), $urlDetail);
+      $id = (string) ($record['id'] ?? 0);
+      return str_replace('{%ID%}', $id, str_replace('[ID]', $id, $urlDetail));
     } else {
       return '';
     }
