@@ -34,7 +34,7 @@ class Renderer extends Core implements RendererInterface
       'debug' => true,
     ));
 
-    $this->twigLoader->addPath(realpath(__DIR__ . '/../views'), 'framework');
+    $this->twigLoader->addPath(realpath(__DIR__ . '/../../views'), 'framework');
 
     try {
       $this->twigLoader->addPath($this->env()->projectFolder . '/views', 'app');
