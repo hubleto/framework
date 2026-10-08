@@ -20,7 +20,7 @@ interface RouterInterface {
   public function routeVarAsInteger(string|int $varIndex): int;
   public function routeVarAsFloat(string|int $varIndex): float;
   public function routeVarAsBool(string|int $varIndex): bool;
-  public function redirectTo(string $url, int $code = 302): void;
+  public function redirectTo(string $url, int $code = 302, bool $ignoreLoops = false): void;
   public function getUrlParams(): array;
   public function isUrlParam(string $paramName): bool;
   public function urlParamNotEmpty(string $paramName): bool;

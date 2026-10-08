@@ -77,7 +77,7 @@ class ConfigManager extends Core implements ConfigManagerInterface
    *
    * @param array $configData
    * 
-   * @return [type]
+   * @return void
    * 
    */
   public function setConfig(array $configData)
@@ -226,7 +226,7 @@ class ConfigManager extends Core implements ConfigManagerInterface
    */
   public function set(string $path, mixed $value): void
   {
-    $path_array = explode('/', $path);
+    $path_array = explode('/', (empty($this->prefix) ? '' : $this->prefix . '/') . $path);
 
     $cfg = &$this->configData;
     foreach ($path_array as $path_level => $path_slice) {
@@ -253,11 +253,12 @@ class ConfigManager extends Core implements ConfigManagerInterface
   public function save(string $path, string $value): void
   {
     try {
-      if (!empty($path)) {
+      $pathWithPrefix = (empty($this->prefix) ? '' : $this->prefix . '/') . $path;
+      if (!empty($pathWithPrefix)) {
         $this->db()->execute("
           insert into `config` set `path` = :path, `value` = :value
           on duplicate key update `path` = :path, `value` = :value
-        ", ['path' => $path, 'value' => $value]);
+        ", ['path' => $pathWithPrefix, 'value' => $value]);
 
         $this->set($path, $value);
       }
@@ -290,8 +291,9 @@ class ConfigManager extends Core implements ConfigManagerInterface
   public function delete($path): void
   {
     try {
-      if (!empty($path)) {
-        $this->db()->execute("delete from `config` where `path` = :path", ['path' => $path]);
+      $pathWithPrefix = (empty($this->prefix) ? '' : $this->prefix . '/') . $path;
+      if (!empty($pathWithPrefix)) {
+        $this->db()->execute("delete from `config` where `path` = :path", ['path' => $pathWithPrefix]);
       }
     } catch (\Exception $e) {
       if ($e->getCode() == '42S02') { // Base table not found

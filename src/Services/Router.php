@@ -336,13 +336,14 @@ class Router extends Core implements RouterInterface {
     else return $defaultValue;
   }
 
-  public function redirectTo(string $route, int $code = 302): void
+  public function redirectTo(string $route, int $code = 302, bool $ignoreLoops = false): void
   {
+
     if (php_sapi_name() === 'cli') return;
 
     $currentRoute = $this->extractRouteFromRequest();
 
-    if ($currentRoute != $route) {
+    if ($ignoreLoops || $currentRoute != $route) {
       header("Location: " . $this->env()->projectUrl . "/" . trim($route, "/"), true, $code);
       exit;
     }
