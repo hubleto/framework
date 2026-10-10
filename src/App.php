@@ -352,10 +352,17 @@ class App extends Core implements Interfaces\AppInterface
 
     $mPermission = $this->getModel(\Hubleto\App\Community\Settings\Models\Permission::class);
 
-    foreach ($permissions as $permission) {
-      $mPermission->record->recordCreate([
-        "permission" => $permission
-      ]);
+    $install = function () use ($permissions, $mPermission): void {
+      foreach ($permissions as $permission) {
+        $mPermission->record->recordCreate(["permission" => $permission]);
+      }
+    };
+    if ($this->db() instanceof \Hubleto\Framework\Services\Db && $this->db()->isFreshInstallation()) {
+      $install();
+    } elseif (method_exists($mPermission->record, 'getConnection')) {
+      $mPermission->record->getConnection()->transaction($install);
+    } else {
+      $install();
     }
   }
 
@@ -375,14 +382,21 @@ class App extends Core implements Interfaces\AppInterface
     $mRolePermission = $this->permissionsManager()->createRolePermissionModel();
 
     $userRoles = $mUserRole->record->get()->toArray();
-    foreach ($userRoles as $role) {
-      $mRolePermission->grantPermissionByString($role['id'], 'Hubleto/Framework/Controllers/Api/Table/Describe');
-      $mRolePermission->grantPermissionByString($role['id'], 'Hubleto/Framework/Controllers/Api/Form/Describe');
-      $mRolePermission->grantPermissionByString($role['id'], 'Hubleto/Framework/Controllers/Api/Record/Get');
-      $mRolePermission->grantPermissionByString($role['id'], 'Hubleto/Framework/Controllers/Api/Record/Delete');
-      $mRolePermission->grantPermissionByString($role['id'], 'Hubleto/Framework/Controllers/Api/Record/GetList');
-      $mRolePermission->grantPermissionByString($role['id'], 'Hubleto/Framework/Controllers/Api/Record/Lookup');
-      $mRolePermission->grantPermissionByString($role['id'], 'Hubleto/Framework/Controllers/Api/Record/Save');
+    $permissions = [
+      'Hubleto/Framework/Controllers/Api/Table/Describe',
+      'Hubleto/Framework/Controllers/Api/Form/Describe',
+      'Hubleto/Framework/Controllers/Api/Record/Get',
+      'Hubleto/Framework/Controllers/Api/Record/Delete',
+      'Hubleto/Framework/Controllers/Api/Record/GetList',
+      'Hubleto/Framework/Controllers/Api/Record/Lookup',
+      'Hubleto/Framework/Controllers/Api/Record/Save',
+    ];
+    if (method_exists($mRolePermission, 'grantPermissionsByString')) {
+      $mRolePermission->grantPermissionsByString(array_column($userRoles, 'id'), $permissions);
+    } else {
+      foreach ($userRoles as $role) {
+        foreach ($permissions as $permission) $mRolePermission->grantPermissionByString($role['id'], $permission);
+      }
     }
 
     // $controllerClasses = $this->getAvailableControllerClasses();
