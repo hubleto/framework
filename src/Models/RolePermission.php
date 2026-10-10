@@ -9,4 +9,11 @@ class RolePermission extends \Hubleto\Framework\Model
   public function grantPermissionByString(int $idRole, string $permission): void
   {
   }
+  public function grantPermissionsByString(array $idRoles, array $permissions): void
+  {
+    foreach ($idRoles as $idRole) {
+      foreach ($permissions as $permission) $this->grantPermissionByString((int) $idRole, $permission);
+    }
+  }
+
 }

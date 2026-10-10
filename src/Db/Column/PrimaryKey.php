@@ -9,4 +9,10 @@ class PrimaryKey extends Integer
   protected bool $readonly = true;
   protected string $searchAlgorithm = 'none';
 
+  public function sqlIndexString(string $table, string $columnName): string
+  {
+    // The PRIMARY KEY already provides this index.
+    return '';
+  }
+
 }

@@ -288,10 +288,16 @@ class Model extends Core implements Interfaces\ModelInterface
   {
     $pendingMigrations = $this->getPendingMigrations(InstalledMigrationEnum::TABLES);
 
-    foreach ($pendingMigrations as $migration) {
-      if ($migration instanceof Migration) {
-        $migration->upgradeSchema();
+    $upgrade = function () use ($pendingMigrations): void {
+      foreach ($pendingMigrations as $migration) {
+        if ($migration instanceof Migration) $migration->upgradeSchema();
       }
+    };
+    $db = $this->db();
+    if ($db instanceof \Hubleto\Framework\Services\Db) {
+      $db->runMigrationBatch('schema', $upgrade);
+    } else {
+      $upgrade();
     }
     $this->config()->save(
       'models/' . str_replace("/", "-", $this->fullName) . '/' . InstalledMigrationEnum::TABLES->toString(),
@@ -309,10 +315,16 @@ class Model extends Core implements Interfaces\ModelInterface
   {
     $pendingMigrations = $this->getPendingMigrations(InstalledMigrationEnum::FOREIGN_KEYS);
 
-    foreach ($pendingMigrations as $migration) {
-      if ($migration instanceof Migration) {
-        $migration->upgradeForeignKeys();
+    $upgrade = function () use ($pendingMigrations): void {
+      foreach ($pendingMigrations as $migration) {
+        if ($migration instanceof Migration) $migration->upgradeForeignKeys();
       }
+    };
+    $db = $this->db();
+    if ($db instanceof \Hubleto\Framework\Services\Db) {
+      $db->runMigrationBatch('foreignKeys', $upgrade);
+    } else {
+      $upgrade();
     }
 
     $this->config()->save(
