@@ -18,7 +18,7 @@ class Db extends Core implements DbInterface
   /**
    * [Description for init]
    *
-   * @return [type]
+   * @return void
    * 
    */
   public function init()
@@ -52,7 +52,7 @@ class Db extends Core implements DbInterface
   /**
    * [Description for connect]
    *
-   * @return [type]
+   * @return void
    * 
    */
   public function connect() {
@@ -88,13 +88,13 @@ class Db extends Core implements DbInterface
   /**
    * [Description for debugQuery]
    *
-   * @param mixed $query
+   * @param string $query
    * @param array $data
    * 
-   * @return [type]
+   * @return void
    * 
    */
-  public function debugQuery($query, $data = []) {
+  public function debugQuery(string $query, array $data = []) {
     $stmt = $this->connection->prepare($query);
     $stmt->execute($data);
     ob_start();
@@ -124,10 +124,10 @@ class Db extends Core implements DbInterface
    * @param string $query
    * @param array $data
    * 
-   * @return [type]
+   * @return array
    * 
    */
-  public function fetchAll(string $query, array $data = [])
+  public function fetchAll(string $query, array $data = []): array
   {
     try {
       $stmt = $this->connection->prepare($query);
@@ -144,7 +144,7 @@ class Db extends Core implements DbInterface
    * @param string $query
    * @param array $data
    * 
-   * @return [type]
+   * @return void
    * 
    */
   public function fetchFirst(string $query, array $data = [])
