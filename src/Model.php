@@ -842,6 +842,12 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function onAfterCreate(array $savedRecord): array
   {
+    // invalidate lookup cache
+    $this->config()->save('cache/lookup/' . $this->fullName, json_encode([
+      'expiry' => 0,
+      'data' => []
+    ]));
+
     $this->eventManager()->fire('onModelAfterCreate', [ $this, $savedRecord ]);
     return $savedRecord;
   }
@@ -854,6 +860,12 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function onAfterUpdate(array $originalRecord, array $savedRecord): array
   {
+    // invalidate lookup cache
+    $this->config()->save('cache/lookup/' . $this->fullName, json_encode([
+      'expiry' => 0,
+      'data' => []
+    ]));
+
     $this->eventManager()->fire('onModelAfterUpdate', [ $this, $originalRecord, $savedRecord ]);
     return $savedRecord;
   }
