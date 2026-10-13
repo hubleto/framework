@@ -40,8 +40,6 @@ class Lookup extends \Hubleto\Framework\Controllers\ApiController {
         $data = $this->model->record->prepareLookupData($dataRaw);
       }
 
-      $data = \Hubleto\Framework\Helper::keyBy('id', $data);
-
       $this->config()->save('cache/lookup/' . $this->modelClass, json_encode([
         'expiry' => time() + 60*5,
         'data' => $data
