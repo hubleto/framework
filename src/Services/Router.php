@@ -424,8 +424,15 @@ class Router extends Core implements RouterInterface {
    */
   public function urlParamAsString(string $paramName, string $defaultValue = ''): string
   {
-    if (isset($this->routeVars[$paramName])) return (string) $this->routeVars[$paramName];
-    else return $defaultValue;
+    if (isset($this->routeVars[$paramName])) {
+      if (is_array($this->routeVars[$paramName])) {
+        return $defaultValue;
+      } else {
+        return (string) $this->routeVars[$paramName];
+      }
+    } else {
+      return $defaultValue;
+    }
   }
 
   /**
