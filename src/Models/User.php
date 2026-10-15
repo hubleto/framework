@@ -89,12 +89,12 @@ class User extends Model {
   /**
    * [Description for isUserActive]
    *
-   * @param mixed $user
+   * @param array $user
    * 
    * @return bool
    * 
    */
-  public function isUserActive($user): bool
+  public function isUserActive(array $user): bool
   {
     return $user['is_active'] == 1;
   }
@@ -176,13 +176,13 @@ class User extends Model {
    * @param mixed $uidUser
    * @param string $password
    * 
-   * @return array
+   * @return void
    * 
    */
-  public function updatePassword(mixed $uidUser, string $password): array
+  public function updatePassword(mixed $uidUser, string $password): void
   {
     $idUser = (int) $uidUser;
-    return $this->record
+    $this->record
       ->where('id', $idUser)
       ->update(
         ["password" => $this->encryptPassword($password)]

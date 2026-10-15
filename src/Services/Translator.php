@@ -72,7 +72,7 @@ class Translator implements TranslatorInterface
   /**
    * [Description for loadDictionary]
    *
-   * @param CoreInterface $service
+   * @param CoreInterface $core
    * @param string $language
    * 
    * @return void
