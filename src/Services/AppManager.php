@@ -412,7 +412,7 @@ class AppManager extends Core implements AppManagerInterface
     if ($round == 3) {
       $app->installDefaultPermissions();
       $app->assignPermissionsToRoles();
-      $app->migrateForeignKeys();
+      $app->installForeignKeys();
     }
 
     return true;
