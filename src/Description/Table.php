@@ -16,6 +16,7 @@ class Table implements \JsonSerializable
     'showFilter' => true,
     'showSidebarFilter' => true,
     'showHeaderTitle' => true,
+    'showReloadButton' => true,
     'showFulltextSearch' => false,
     'showColumnSearch' => false,
     'showMoreActionsButton' => false,
