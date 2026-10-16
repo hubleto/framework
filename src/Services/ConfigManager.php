@@ -319,13 +319,19 @@ class ConfigManager extends Core implements ConfigManagerInterface
 
       foreach ($cfgs as $cfg) {
         $tmp = &$this->configData;
-        foreach (explode("/", $cfg['path']) as $tmp_path) {
-          if (!isset($tmp[$tmp_path])) {
-            $tmp[$tmp_path] = [];
+        $pathParts = explode("/", $cfg['path']);
+        foreach ($pathParts as $partKey => $pathPart) {
+          if (!isset($tmp[$pathPart])) {
+            if ($partKey == count($pathParts) - 1) {
+              $tmp[$pathPart] = null;
+            } else {
+              $tmp[$pathPart] = [];
+            }
           }
-          $tmp = &$tmp[$tmp_path];
+          $tmp = &$tmp[$pathPart];
         }
-        $tmp = $cfg['value'];
+
+        if ($tmp === null) $tmp = $cfg['value'];
       }
     } catch (\Throwable $e) {
       // do nothing
