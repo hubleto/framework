@@ -15,9 +15,6 @@ interface RendererInterface
   public function renderSuccess($return): string;
   public function renderWarning(Exception $exception, $isHtml = true): string;
   public function renderFatal(Exception $exception, $isHtml = true): string;
-  public function renderHtmlFatal(Exception $exception): string;
-  public function renderExceptionHtml($exception, array $args = []): string;
-  public function renderHtmlWarning(Exception $exception): string;
   public function onBeforeRender(): void;
   public function onAfterRender(): void;
 

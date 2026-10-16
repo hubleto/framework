@@ -30,27 +30,34 @@ class Delete extends \Hubleto\Framework\Controllers\ApiController {
 
     if ($ok) {
 
-      $error = '';
-      $errorHtml = '';
       try {
         $this->model->onBeforeDelete((int) $id);
         $rowsAffected = $this->model->record->recordDelete($id);
         $this->model->onAfterDelete((int) $id);
-      } catch (\Hubleto\Framework\Exceptions\RecordSaveException $e) {
-        throw $e;
-      } catch (\Throwable $e) {
-        $error = $e->getMessage();
-        $errorHtml = $this->renderer()->renderExceptionHtml($e, [$this->model]);
-        throw new \Exception($errorHtml);
+      } catch (\Illuminate\Database\QueryException $e) {
+        $dbQuery = $e->getSql();
+        $dbError = $e->errorInfo[2];
+        $errorNo = $e->errorInfo[1];
+
+        if (in_array($errorNo, [1216, 1451])) {
+          $message =
+            $this->translate('{{ modelName }} cannot be deleted, other data is linked to it.', ['modelName' => $this->model->shortName], 'hubleto-erp-loader:Renderer')
+          ;
+        } elseif (in_array($errorNo, [1062, 1217, 1452])) {
+          $message =
+            $this->translate('{{ modelName }} cannot be saved, duplicate data detected.', ['modelName' => $this->model->shortName], 'hubleto-erp-loader:Renderer')
+          ;
+        } else {
+          $message = $this->translate('Unknown database error occured.');
+        }
+
+        throw new \Exception($message);
       }
 
       $return = [
         'id' => $id,
         'status' => ($rowsAffected > 0),
       ];
-
-      // if ($error) $return['error'] = $error;
-      // if ($errorHtml) $return['errorHtml'] = $errorHtml;
 
       return $return;
     } else {
