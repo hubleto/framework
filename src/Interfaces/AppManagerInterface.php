@@ -26,4 +26,8 @@ interface AppManagerInterface
   public function enableApp(string $appNamespace): void;
   public function canAppDangerouslyInjectDesktopHtmlContent(string $appNamespace): bool;
 
+  public function hasEnterpriseAppsEnabled(): bool;
+  public function hasExternalAppsEnabled(): bool;
+  public function hasCustomAppsEnabled(): bool;
+
 }

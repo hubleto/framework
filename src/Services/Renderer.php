@@ -31,7 +31,7 @@ class Renderer extends Core implements RendererInterface
     $this->twigLoader = new \Twig\Loader\FilesystemLoader();
     $this->twig = new \Twig\Environment($this->twigLoader, array(
       'cache' => false,
-      'debug' => true,
+      'debug' => false,
     ));
 
     $this->twigLoader->addPath(realpath(__DIR__ . '/../../views'), 'framework');

@@ -16,6 +16,7 @@ class Env extends Core implements EnvInterface
 
   public string $secureFolder = '';
   public string $uploadFolder = '';
+  public string $tmpFolder = '';
 
   public string $srcFolder = '';
   public string $releaseFolder = '.';
@@ -42,6 +43,9 @@ class Env extends Core implements EnvInterface
 
     $this->uploadFolder = $this->config()->getAsString('uploadFolder');
     if (empty($this->uploadFolder)) $this->secureFolder = $this->projectFolder . '/upload';
+
+    $this->tmpFolder = $this->config()->getAsString('tmpFolder');
+    if (empty($this->tmpFolder)) $this->tmpFolder = $this->projectFolder . '/tmp';
 
     $this->uploadUrl = $this->config()->getAsString('uploadUrl');
     $this->assetsUrl = $this->config()->getAsString('assetsUrl');

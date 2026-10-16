@@ -428,6 +428,31 @@ class AppManager extends Core implements AppManagerInterface
     $this->config()->save('apps/' . $this->getAppNamespaceForConfig($appNamespace) . '/enabled', '1');
   }
 
+  public function hasEnterpriseAppsEnabled(): bool
+  {
+    foreach ($this->getEnabledApps() as $app) {
+      if ($app->manifest['appType'] == 'enterprise') return true;
+    }
+    return false;
+  }
+
+  public function hasExternalAppsEnabled(): bool
+  {
+    foreach ($this->getEnabledApps() as $app) {
+      if ($app->manifest['appType'] == 'external') return true;
+    }
+    return false;
+  }
+
+  public function hasCustomAppsEnabled(): bool
+  {
+    foreach ($this->getEnabledApps() as $app) {
+      if ($app->manifest['appType'] == 'custom') return true;
+    }
+    return false;
+  }
+
+
   public function canAppDangerouslyInjectDesktopHtmlContent(string $appNamespace): bool
   {
     $safeApps = [
