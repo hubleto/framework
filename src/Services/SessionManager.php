@@ -12,6 +12,7 @@ class SessionManager extends Core implements SessionManagerInterface
 {
 
   private string $salt = '';
+  private bool $cookieSent = false;
 
   public function __construct()
   {
@@ -46,7 +47,10 @@ class SessionManager extends Core implements SessionManagerInterface
         $options['gc_maxlifetime'] = 2592000; // 30 days (1 month)
       }
 
+      if ($this->cookieSent) $options['use_cookies'] = 0;
+
       session_start($options);
+      $this->cookieSent = true;
 
       // define('_SESSION_ID', session_id());
     }
