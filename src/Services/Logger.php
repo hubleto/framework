@@ -2,6 +2,7 @@
 
 namespace Hubleto\Framework\Services;
 
+use Monolog\Logger as LoggerService;
 use Monolog\Handler\RotatingFileHandler;
 use Hubleto\Framework\Interfaces\LoggerInterface;
 use Hubleto\Framework\Core;
@@ -13,6 +14,8 @@ class Logger extends Core implements LoggerInterface {
 
 
   public array $loggers = [];
+
+  public string $activeLogger = 'core';
 
   public bool $cliEchoEnabled = false;
   public string $logFolder = "";
@@ -29,7 +32,27 @@ class Logger extends Core implements LoggerInterface {
     $this->enabled = !empty($this->logFolder) && is_dir($this->logFolder);
     $this->debugLevel = $this->config()->getAsInteger('debugLevel', self::DEBUG_LEVEL_NONE);
 
-    $this->initInternalLogger('core');
+    $this->addLogger('core');
+    $this->addLogger('cron');
+
+    $this->setActiveLogger('core');
+  }
+
+  public function setActiveLogger(string $loggerName): void
+  {
+    if (!isset($this->loggers[$loggerName])) throw new \Exception('Logger ' . $loggerName . ' is not initialized.');
+    $this->activeLogger = $loggerName;
+  }
+
+  /**
+   * [Description for getActiveLoggerService]
+   *
+   * @return LoggerService
+   * 
+   */
+  public function getActiveLoggerService(): LoggerService
+  {
+    return $this->loggers[$this->activeLogger];
   }
 
   public function setDebugLevel(int $level): void
@@ -52,57 +75,28 @@ class Logger extends Core implements LoggerInterface {
     return $this->logCache;
   }
 
-  /**
-   * [Description for initInternalLogger]
-   *
-   * @param string $loggerName
-   * 
-   * @return void
-   * 
-   */
-  public function initInternalLogger(string $loggerName = ""): void
+  public function addLogger(string $loggerName): void
   {
-    if (!class_exists("\\Monolog\\Logger")) return;
+    $this->loggers[$loggerName] = new LoggerService($loggerName);
 
-    // inicializacia loggerov
-    $this->loggers[$loggerName] = new \Monolog\Logger($loggerName);
-
-    $debugStreamHandler = new RotatingFileHandler("{$this->logFolder}/{$loggerName}-debug.log", 1000, \Monolog\Logger::DEBUG);
-    $debugStreamHandler->setFilenameFormat('{date}/{filename}', 'Y/m/d');
-
-    $infoStreamHandler = new RotatingFileHandler("{$this->logFolder}/{$loggerName}-info.log", 1000, \Monolog\Logger::INFO);
-    $infoStreamHandler->setFilenameFormat('{date}/{filename}', 'Y/m/d');
-
-    $warningStreamHandler = new RotatingFileHandler("{$this->logFolder}/{$loggerName}-warning.log", 1000, \Monolog\Logger::WARNING);
-    $warningStreamHandler->setFilenameFormat('{date}/{filename}', 'Y/m/d');
-
-    $errorStreamHandler = new RotatingFileHandler("{$this->logFolder}/{$loggerName}-error.log", 1000, \Monolog\Logger::ERROR);
-    $errorStreamHandler->setFilenameFormat('{date}/{filename}', 'Y/m/d');
-
+    $debugStreamHandler = new RotatingFileHandler("{$this->logFolder}/debug.log", 1000, LoggerService::DEBUG);
+    $debugStreamHandler->setFilenameFormat($loggerName . '/{date}/{filename}', 'Y/m/d');
     $this->loggers[$loggerName]->pushHandler($debugStreamHandler);
+
+    $infoStreamHandler = new RotatingFileHandler("{$this->logFolder}/info.log", 1000, LoggerService::INFO);
+    $infoStreamHandler->setFilenameFormat($loggerName . '/{date}/{filename}', 'Y/m/d');
     $this->loggers[$loggerName]->pushHandler($infoStreamHandler);
+
+    $warningStreamHandler = new RotatingFileHandler("{$this->logFolder}/warning.log", 1000, LoggerService::WARNING);
+    $warningStreamHandler->setFilenameFormat($loggerName . '/{date}/{filename}', 'Y/m/d');
     $this->loggers[$loggerName]->pushHandler($warningStreamHandler);
+
+    $errorStreamHandler = new RotatingFileHandler("{$this->logFolder}/error.log", 1000, LoggerService::ERROR);
+    $errorStreamHandler->setFilenameFormat($loggerName . '/{date}/{filename}', 'Y/m/d');
     $this->loggers[$loggerName]->pushHandler($errorStreamHandler);
 
   }
   
-  /**
-   * [Description for getInternalLogger]
-   *
-   * @param mixed $loggerName
-   * 
-   * @return object
-   * 
-   */
-  public function getInternalLogger($loggerName): object
-  {
-    if (!isset($this->loggers[$loggerName])) {
-      $this->initInternalLogger($loggerName);
-    }
-
-    return $this->loggers[$loggerName];
-  }
-
   /**
    * [Description for cliEcho]
    *
@@ -113,10 +107,10 @@ class Logger extends Core implements LoggerInterface {
    * @return void
    * 
    */
-  public function cliEcho($message, $loggerName, $severity): void
+  public function cliEcho(string $message, string $severity): void
   {
     if ($this->cliEchoEnabled && php_sapi_name() === 'cli') {
-      echo date("Y-m-d H:i:s")." {$loggerName}.{$severity} {$message}\n";
+      echo date("Y-m-d H:i:s")." {$this->activeLogger}.{$severity} {$message}\n";
     }
   }
 
@@ -125,17 +119,16 @@ class Logger extends Core implements LoggerInterface {
    *
    * @param mixed $message
    * @param array $context
-   * @param string $loggerName
    * 
    * @return void
    * 
    */
-  public function debug($message, array $context = [], $loggerName = 'core'): void
+  public function debug(string $message, array $context = []): void
   {
     if (!$this->enabled) return;
     if ($this->debugLevel < self::DEBUG_LEVEL_DEBUG) return;
-    $this->getInternalLogger($loggerName)->debug($message, $context);
-    $this->cliEcho($message, $loggerName, 'DEBUG');
+    $this->getActiveLoggerService()->debug($message, $context);
+    $this->cliEcho($message, 'DEBUG');
   }
   
   /**
@@ -143,18 +136,17 @@ class Logger extends Core implements LoggerInterface {
    *
    * @param mixed $message
    * @param array $context
-   * @param string $loggerName
    * 
    * @return void
    * 
    */
-  public function info($message, array $context = [], $loggerName = 'core'): void
+  public function info(string $message, array $context = []): void
   {
     if (!$this->enabled) return;
     if ($this->debugLevel < self::DEBUG_LEVEL_INFO) return;
     $this->logCache[] = '[INFO] ' . $message;
-    $this->getInternalLogger($loggerName)->info($message, $context);
-    $this->cliEcho($message, $loggerName, 'INFO');
+    $this->getActiveLoggerService()->info($message, $context);
+    $this->cliEcho($message, 'INFO');
   }
   
   /**
@@ -162,18 +154,17 @@ class Logger extends Core implements LoggerInterface {
    *
    * @param mixed $message
    * @param array $context
-   * @param string $loggerName
    * 
    * @return void
    * 
    */
-  public function warning($message, array $context = [], $loggerName = 'core'): void
+  public function warning(string $message, array $context = []): void
   {
     if (!$this->enabled) return;
     if ($this->debugLevel < self::DEBUG_LEVEL_WARNING) return;
     $this->logCache[] = '[WARNING] ' . $message;
-    $this->getInternalLogger($loggerName)->warning($message, $context);
-    $this->cliEcho($message, $loggerName, 'WARNING');
+    $this->getActiveLoggerService()->warning($message, $context);
+    $this->cliEcho($message, 'WARNING');
   }
   
   /**
@@ -181,18 +172,17 @@ class Logger extends Core implements LoggerInterface {
    *
    * @param mixed $message
    * @param array $context
-   * @param string $loggerName
    * 
    * @return void
    * 
    */
-  public function error($message, array $context = [], $loggerName = 'core'): void
+  public function error(string $message, array $context = []): void
   {
     if (!$this->enabled) return;
     if ($this->debugLevel < self::DEBUG_LEVEL_ERROR) return;
     $this->logCache[] = '[ERROR] ' . $message;
-    $this->getInternalLogger($loggerName)->error($message, $context);
-    $this->cliEcho($message, $loggerName, 'ERROR');
+    $this->getActiveLoggerService()->error($message, $context);
+    $this->cliEcho($message, 'ERROR');
   }
 
 }

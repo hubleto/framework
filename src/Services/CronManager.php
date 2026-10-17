@@ -2,6 +2,7 @@
 
 namespace Hubleto\Framework\Services;
 
+use Hubleto\Erp\Cron;
 use Hubleto\Framework\Interfaces\CronManagerInterface;
 use Hubleto\Framework\Core;
 use Hubleto\Framework\Helper;
@@ -16,7 +17,10 @@ class CronManager extends Core implements CronManagerInterface
 
   public function init(): void
   {
+    $this->logger()->setActiveLogger('cron');
     $this->logger()->setDebugLevel(Logger::DEBUG_LEVEL_INFO);
+
+    $this->logger()->info('Initializing cron manager.');
 
     $crons = @Helper::scanDirRecursively($this->env()->srcFolder . '/crons');
     foreach ($crons as $cron) {
@@ -35,11 +39,6 @@ class CronManager extends Core implements CronManagerInterface
     }
   }
 
-  public function log(string $msg): void
-  {
-    $this->logger()->info($msg);
-  }
-
   public function addCron(string $cronClass): void
   {
     if (is_subclass_of($cronClass, \Hubleto\Erp\Cron::class)) {
@@ -52,76 +51,89 @@ class CronManager extends Core implements CronManagerInterface
     return $this->enabledCrons;
   }
 
+  public function runCron(Cron $cron): void
+  {
+    $this->logger()->info('Starting cron `' . get_class($cron) . '`.');
+    try {
+      $cron->run();
+    } catch (\Throwable $e) {
+      $this->logger()->info('Cron `' . get_class($cron) . '` failed.');
+      $this->logger()->info('EXCEPTION: ' . $e->getMessage());
+    }
+  }
+
   public function run(): void
   {
-    foreach ($this->getCrons() as $cronClass => $cron) {
-      $schedule = explode(' ', $cron->schedulingPattern);
+    $cronToRun = $_SERVER['argv'][1] ?? '';
 
-      $minNow = (int) date('i');
-      $hourNow = (int) date('H');
-      $dayNow = (int) date('d');
-      $monthNow = (int) date('m');
-      $dowNow = (int) (date('N') - 1);
+    $crons = $this->getCrons();
 
-      $minSchedule = trim($schedule[0]);
-      $hourSchedule = trim($schedule[1]);
-      $daySchedule = trim($schedule[2]);
-      $monthSchedule = trim($schedule[3]);
-      $dowSchedule = trim($schedule[4]);
+    if (!empty($cronToRun) && isset($crons[$cronToRun])) {
+      $this->runCron($crons[$cronToRun]);
+    } else {
+      foreach ($crons as $cron) {
+        $schedule = explode(' ', $cron->schedulingPattern);
 
-      $minMatch = false;
-      $hourMatch = false;
-      $dayMatch = false;
-      $monthMatch = false;
-      $dowMatch = false;
+        $minNow = (int) date('i');
+        $hourNow = (int) date('H');
+        $dayNow = (int) date('d');
+        $monthNow = (int) date('m');
+        $dowNow = (int) (date('N') - 1);
 
-      if ($minSchedule == '*') {
-        $minMatch = true;
-      } elseif (str_starts_with($minSchedule, '*/')) {
-        $minMatch = $minNow % ((int) str_replace('*/', '', $minSchedule)) == 0;
-      } else {
-        $minMatch = $minNow == (int) $minSchedule;
-      }
+        $minSchedule = trim($schedule[0]);
+        $hourSchedule = trim($schedule[1]);
+        $daySchedule = trim($schedule[2]);
+        $monthSchedule = trim($schedule[3]);
+        $dowSchedule = trim($schedule[4]);
 
-      if ($hourSchedule == '*') {
-        $hourMatch = true;
-      } elseif (str_starts_with($hourSchedule, '*/')) {
-        $hourMatch = $hourNow % ((int) str_replace('*/', '', $hourSchedule)) == 0;
-      } else {
-        $hourMatch = $hourNow == (int) $hourSchedule;
-      }
+        $minMatch = false;
+        $hourMatch = false;
+        $dayMatch = false;
+        $monthMatch = false;
+        $dowMatch = false;
 
-      if ($daySchedule == '*') {
-        $dayMatch = true;
-      } elseif (str_starts_with($daySchedule, '*/')) {
-        $dayMatch = $dayNow % ((int) str_replace('*/', '', $daySchedule)) == 0;
-      } else {
-        $dayMatch = $dayNow == (int) $daySchedule;
-      }
+        if ($minSchedule == '*') {
+          $minMatch = true;
+        } elseif (str_starts_with($minSchedule, '*/')) {
+          $minMatch = $minNow % ((int) str_replace('*/', '', $minSchedule)) == 0;
+        } else {
+          $minMatch = $minNow == (int) $minSchedule;
+        }
 
-      if ($monthSchedule == '*') {
-        $monthMatch = true;
-      } elseif (str_starts_with($monthSchedule, '*/')) {
-        $monthMatch = $monthNow % ((int) str_replace('*/', '', $monthSchedule)) == 0;
-      } else {
-        $monthMatch = $monthNow == (int) $monthSchedule;
-      }
+        if ($hourSchedule == '*') {
+          $hourMatch = true;
+        } elseif (str_starts_with($hourSchedule, '*/')) {
+          $hourMatch = $hourNow % ((int) str_replace('*/', '', $hourSchedule)) == 0;
+        } else {
+          $hourMatch = $hourNow == (int) $hourSchedule;
+        }
 
-      if ($dowSchedule == '*') {
-        $dowMatch = true;
-      } elseif (str_starts_with($dowSchedule, '*/')) {
-        $dowMatch = $dowNow % ((int) str_replace('*/', '', $dowSchedule)) == 0;
-      } else {
-        $dowMatch = $dowNow == (int) $dowSchedule;
-      }
+        if ($daySchedule == '*') {
+          $dayMatch = true;
+        } elseif (str_starts_with($daySchedule, '*/')) {
+          $dayMatch = $dayNow % ((int) str_replace('*/', '', $daySchedule)) == 0;
+        } else {
+          $dayMatch = $dayNow == (int) $daySchedule;
+        }
 
-      if ($minMatch && $hourMatch && $dayMatch && $monthMatch && $dowMatch) {
-        $this->log('Starting `' . $cronClass . '`.');
-        try {
-          $cron->run();
-        } catch (\Throwable $e) {
-          $this->log('Cron `' . $cronClass . '` failed.');
-          $this->log('EXCEPTION: ' . $e->getMessage());
+        if ($monthSchedule == '*') {
+          $monthMatch = true;
+        } elseif (str_starts_with($monthSchedule, '*/')) {
+          $monthMatch = $monthNow % ((int) str_replace('*/', '', $monthSchedule)) == 0;
+        } else {
+          $monthMatch = $monthNow == (int) $monthSchedule;
+        }
+
+        if ($dowSchedule == '*') {
+          $dowMatch = true;
+        } elseif (str_starts_with($dowSchedule, '*/')) {
+          $dowMatch = $dowNow % ((int) str_replace('*/', '', $dowSchedule)) == 0;
+        } else {
+          $dowMatch = $dowNow == (int) $dowSchedule;
+        }
+
+        if ($minMatch && $hourMatch && $dayMatch && $monthMatch && $dowMatch) {
+          $this->runCron($cron);
         }
       }
     }
