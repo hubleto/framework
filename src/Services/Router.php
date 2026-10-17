@@ -343,7 +343,7 @@ class Router extends Core implements RouterInterface {
 
     $currentRoute = $this->extractRouteFromRequest();
 
-    $this->logger()->info('Redirecting to: ' . $route . ', code ' . $code);
+    $this->logger()->info('User ' . $this->authProvider()->getUserId() . ', redirecting to: ' . $route . ', code ' . $code);
 
     if ($ignoreLoops || $currentRoute != $route) {
       header("Location: " . $this->env()->projectUrl . "/" . trim($route, "/"), true, $code);
