@@ -27,5 +27,7 @@ interface AuthProviderInterface {
   public function getUserEmail(): string;
   public function setUserLanguage(string $language): void;
   public function getUserLanguage(): string;
+  public function authenticateRememberedUser(): bool;
+  public function initiateRememberMe(): void;
 
 }

@@ -105,7 +105,7 @@ class AuthProvider extends Core implements AuthProviderInterface
    *
    * @param array $user
    * 
-   * @return [type]
+   * @return void
    * 
    */
   public function signIn(array $user)
@@ -117,7 +117,7 @@ class AuthProvider extends Core implements AuthProviderInterface
   /**
    * [Description for signOut]
    *
-   * @return [type]
+   * @return void
    * 
    */
   public function signOut()
@@ -297,6 +297,28 @@ class AuthProvider extends Core implements AuthProviderInterface
     $user = $this->getUser();
     $user['language'] = $language;
     $this->updateUserInSession($user);
+  }
+
+
+  /**
+   * [Description for initiateRememberMe]
+   *
+   * @return void
+   * 
+   */
+  public function initiateRememberMe(): void {
+    // to be overriden
+  }
+
+  /**
+   * [Description for authenticateRememberedUser]
+   *
+   * @return bool
+   * 
+   */
+  public function authenticateRememberedUser(): bool {
+    // to be overriden
+    return false;
   }
 
 }
