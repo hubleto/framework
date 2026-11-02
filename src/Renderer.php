@@ -331,6 +331,9 @@ class Renderer extends Core implements Interfaces\RendererInterface
     } catch (\Exception $e) {
       header('HTTP/1.1 500 Internal Server Error', true, 500);
       return "Unhandled exception: [".get_class($e)."] ".$e->getMessage();
+    } catch (\Throwable $e) {
+      $showStackTrace = $this->config()->getAsBool('showStackTrace', false);
+      return $e->getMessage() . ($showStackTrace ? "\n\n" . $e->getTraceAsString() : '');
     }
   }
 
