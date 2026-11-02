@@ -17,8 +17,7 @@ class Image extends \Hubleto\Framework\Db\Column\File
 
   public function normalize(mixed $value): mixed
   {
-
-    if ($value['fileData']) {
+    if (is_array($value) && !empty($value['fileData'])) {
       $fileContent = base64_decode(preg_replace('/data:.*?,/', '', $value['fileData']));
       $imageType = (new \finfo(FILEINFO_MIME_TYPE))->buffer($fileContent);
 
