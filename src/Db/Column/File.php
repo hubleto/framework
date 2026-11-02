@@ -19,20 +19,27 @@ class File extends \Hubleto\Framework\Column
 
   public function normalize(mixed $value): mixed
   {
+    $changed = false;
+
     if ($value === null) {
       return null;
     } else if ($value === '') {
       return '';
     } else if (is_string($value)) {
+      $changed = false;
       $fileName = $value;
       $fileDataToSave = null;
     } else if (is_array($value)) {
-      $fileName = $value['fileName'];
-      $fileDataToSave = preg_replace('/data:.*?,/', '', $value['fileData']);
+      $changed = (bool) ($value['changed'] ?? false);
+      $fileName = (string) ($value['fileName'] ?? '');
+      $fileData = (string) ($value['fileData'] ?? '');
+      $fileDataToSave = preg_replace('/data:.*?,/', '', $fileData);
       $fileDataToSave = @base64_decode($fileDataToSave);
     } else {
       throw new \Exception("Invalid format for file/image input.");
     }
+
+    if (!$changed) return $fileName;
 
     $folderPath = $this->getFolderPath();
     $title = $this->getTitle();
@@ -79,28 +86,13 @@ class File extends \Hubleto\Framework\Column
       mkdir("{$uploadFolder}/{$folderPath}", 0775, TRUE);
     }
 
-    $fileNameNoVersion = $fileName;
-
     $destinationFile = "{$uploadFolder}/{$folderPath}/{$fileName}";
-
-    // $destinationFileNoVersion = "{$uploadFolder}/{$folderPath}/{$fileName}";
-    // $destinationFile = $destinationFileNoVersion;
-
-    // $verCnt = 1;
-    // while (is_file($destinationFile)) {
-    //   $tmpParts = pathinfo($destinationFileNoVersion);
-    //   $destinationFile = $tmpParts['dirname'] . '/' . $tmpParts['filename'] . ' (' . $verCnt .').' . $tmpParts['extension'];
-
-    //   $tmpParts = pathinfo($fileNameNoVersion);
-    //   $fileName = $tmpParts['filename'] . ' (' . $verCnt .').' . $tmpParts['extension'];
-
-    //   $verCnt++;
-    // }
 
     if ($fileDataToSave !== null) {
       \file_put_contents($destinationFile, $fileDataToSave);
     }
 
     return "{$folderPath}/{$fileName}";
+
   }
 }
