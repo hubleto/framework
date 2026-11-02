@@ -392,12 +392,12 @@ class Router extends Core implements RouterInterface {
    * [Description for setUrlParam]
    *
    * @param string $paramName
-   * @param string $newValue
+   * @param mixed $newValue
    * 
    * @return void
    * 
    */
-  public function setUrlParam(string $paramName, string $newValue): void
+  public function setUrlParam(string $paramName, mixed $newValue): void
   {
     $this->routeVars[$paramName] = $newValue;
   }
