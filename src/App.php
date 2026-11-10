@@ -718,7 +718,7 @@ class App extends Core implements Interfaces\AppInterface
         $extendible = $this->getService($app->namespace . '\\Extendibles\\' . $extendibleName);
         $extendible->app = $app;
         if ($extendible instanceof Extendible) {
-          $items = array_merge($items, $extendible->getItems());
+          $items = [...$items, ...$extendible->getItems()];
         }
       } catch (\Throwable $e) {
         // do nothing

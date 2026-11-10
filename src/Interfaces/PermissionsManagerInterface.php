@@ -2,12 +2,15 @@
 
 namespace Hubleto\Framework\Interfaces;
 
+use Hubleto\Framework\Model;
+
 interface PermissionsManagerInterface
 {
 
   public function init(): void;
-  public function createUserRoleModel(): null|\Hubleto\Framework\Model;
+  public function createUserRoleModel(): null|Model;
   public function DANGEROUS__grantAllPermissions(): void;
+  public function createRolePermissionModel(): Model;
   public function checkPermission(): void;
   public function revokeGrantAllPermissions(): void;
   public function loadAdministratorRoles(): array;

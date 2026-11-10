@@ -175,7 +175,7 @@ class Table implements \JsonSerializable
   public function setPermissions(bool|null $canCreate, bool|null $canRead, bool|null $canUpdate, bool|null $canDelete): void
   {
     if ($canCreate !== null) $this->permissions['canCreate'] = $canCreate;
-    if ($canCreate !== null) $this->permissions['canRead'] = $canRead;
+    if ($canRead !== null) $this->permissions['canRead'] = $canRead;
     if ($canUpdate !== null) $this->permissions['canUpdate'] = $canUpdate;
     if ($canDelete !== null) $this->permissions['canDelete'] = $canDelete;
   }
