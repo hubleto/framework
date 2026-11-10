@@ -126,8 +126,11 @@ class App extends Core implements Interfaces\AppInterface
     $this->translationContext = strtolower(str_replace('\\', '-', $this->fullName));
     $this->translationContextInner = 'manifest';
 
-    $tmp = str_replace('\\Loader', '', $this->fullName);
-    $this->shortName = substr($tmp, strrpos($tmp, '\\') + 1);
+    $this->shortName = $this->fullName;
+    $this->shortName = str_replace('Hubleto\\App\\', '', str_replace('\\Loader', '', $this->shortName));
+    $this->shortName = substr($this->shortName, strpos($this->shortName, '\\'));
+    $this->shortName = str_replace('/', '', $this->shortName);
+    $this->shortName = str_replace('\\', '', $this->shortName);
 
     $this->viewNamespace = $this->namespace;
     $this->viewNamespace = str_replace('\\', ':', $this->viewNamespace);
