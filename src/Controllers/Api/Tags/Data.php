@@ -9,6 +9,8 @@ use Illuminate\Database\QueryException;
  */
 class Data extends \Hubleto\Framework\Controller
 {
+
+  public bool $permittedForAllUsers = true;
   public bool $hideDefaultDesktop = true;
 
   function __construct()

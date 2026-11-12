@@ -7,6 +7,8 @@ namespace Hubleto\Framework\Controllers\Components\Inputs\FileUpload;
  */
 class Delete extends \Hubleto\Framework\Controller
 {
+
+  public bool $permittedForAllUsers = true;
   public bool $hideDefaultDesktop = TRUE;
 
   public function renderJson(): array {

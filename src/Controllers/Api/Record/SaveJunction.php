@@ -7,6 +7,8 @@ use Exception;
 class SaveJunction extends \Hubleto\Framework\Controllers\ApiController
 {
 
+  public bool $permittedForAllUsers = true;
+
   public function renderJson(): array
   {
     try {

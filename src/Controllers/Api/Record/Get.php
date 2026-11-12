@@ -5,6 +5,7 @@ namespace Hubleto\Framework\Controllers\Api\Record;
 class Get extends \Hubleto\Framework\Controllers\ApiController {
 
   public \Hubleto\Framework\Interfaces\ModelInterface $model;
+  public bool $permittedForAllUsers = true;
 
   function __construct()
   {

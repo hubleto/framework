@@ -4,8 +4,11 @@ namespace Hubleto\Framework\Controllers\Api\Table;
 
 use Hubleto\Framework\Controllers\CrudController;
 
-class Describe extends \Hubleto\Framework\Controllers\ApiController {
+class Describe extends \Hubleto\Framework\Controllers\ApiController
+{
+
   public \Hubleto\Framework\Model $model;
+  public bool $permittedForAllUsers = true;
 
   function __construct()
   {

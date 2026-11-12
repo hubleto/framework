@@ -7,6 +7,7 @@ use Hubleto\Framework\Controllers\CrudController;
 class LoadTableData extends \Hubleto\Framework\Controllers\ApiController {
 
   public \Hubleto\Framework\Interfaces\ModelInterface $model;
+  public bool $permittedForAllUsers = true;
 
   function __construct()
   {

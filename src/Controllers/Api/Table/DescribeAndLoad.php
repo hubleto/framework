@@ -6,6 +6,7 @@ use Hubleto\Framework\Controllers\CrudController;
 
 class DescribeAndLoad extends \Hubleto\Framework\Controllers\ApiController {
   public \Hubleto\Framework\Model $model;
+  public bool $permittedForAllUsers = true;
 
   function __construct()
   {

@@ -4,6 +4,7 @@ namespace Hubleto\Framework\Controllers\Api\Record;
 
 class Lookup extends \Hubleto\Framework\Controllers\ApiController {
   public bool $hideDefaultDesktop = true;
+  public bool $permittedForAllUsers = true;
 
   public string $modelClass = '';
   public \Hubleto\Framework\Model $model;

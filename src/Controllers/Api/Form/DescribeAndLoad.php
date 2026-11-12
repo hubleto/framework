@@ -4,6 +4,7 @@ namespace Hubleto\Framework\Controllers\Api\Form;
 
 class DescribeAndLoad extends \Hubleto\Framework\Controllers\ApiController {
   public \Hubleto\Framework\Model $model;
+  public bool $permittedForAllUsers = true;
 
   function __construct()
   {
