@@ -22,13 +22,27 @@ class Lookup extends \Hubleto\Framework\Controllers\ApiController {
   {
     $search = $this->router()->urlParamAsString('search');
 
+    // One cache per model, the same key the model clears when a record is saved or deleted.
+    $cacheKey = 'cache/lookup/' . $this->model->fullName;
+
+    // A search is never cached, it would fill the cache with an answer for every typed text.
+    $useCache = empty($search);
+
+    // The answer depends on the user (read scope) and on the other parameters (form record, filters of the app),
+    // so each combination is cached separately.
+    $cacheParams = $this->router()->getUrlParams();
+    unset($cacheParams['model']);
+    $cacheParams['idUser'] = $this->authProvider()->getUserId();
+    $cacheParamsHash = md5((string) json_encode($cacheParams));
+
     $dataFromCache = false;
     $data = [];
 
-    if (empty($search)) {
-      $cache = $this->config()->getAsJson('cache/lookup/' . $this->modelClass);
-      if (is_array($cache) && isset($cache['expiry']) && $cache['expiry'] > time()) {
-        $data = $cache['data'];
+    if ($useCache) {
+      $cachedAnswers = $this->config()->getAsJson($cacheKey);
+      $cachedAnswer = $cachedAnswers[$cacheParamsHash] ?? null;
+      if ($this->isCachedAnswerValid($cachedAnswer)) {
+        $data = $cachedAnswer['data'];
         $dataFromCache = true;
       }
     }
@@ -41,15 +55,32 @@ class Lookup extends \Hubleto\Framework\Controllers\ApiController {
         $data = $this->model->record->prepareLookupData($dataRaw);
       }
 
-      if (empty($search)) {
-        $this->config()->save('cache/lookup/' . $this->modelClass, json_encode([
+      if ($useCache) {
+        // Expired answers of other parameters are dropped, so the cache does not grow.
+        $validAnswers = [];
+        foreach ($this->config()->getAsJson($cacheKey) as $paramsHash => $cachedAnswer) {
+          if ($this->isCachedAnswerValid($cachedAnswer)) {
+            $validAnswers[$paramsHash] = $cachedAnswer;
+          }
+        }
+
+        $validAnswers[$cacheParamsHash] = [
           'expiry' => time() + 60*5,
           'data' => $data
-        ]));
+        ];
+        $this->config()->save($cacheKey, json_encode($validAnswers));
       }
     }
 
     return $data;
+  }
+
+  // A cleared cache of the model is stored as {"expiry":0,"data":[]}, so its items are not valid answers.
+  private function isCachedAnswerValid(mixed $cachedAnswer): bool
+  {
+    if (!is_array($cachedAnswer)) return false;
+    if (!isset($cachedAnswer['expiry'], $cachedAnswer['data'])) return false;
+    return $cachedAnswer['expiry'] > time();
   }
 
 }

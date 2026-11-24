@@ -877,6 +877,12 @@ class Model extends Core implements Interfaces\ModelInterface
    */
   public function onAfterDelete(int $id): int
   {
+    // invalidate lookup cache
+    $this->config()->save('cache/lookup/' . $this->fullName, json_encode([
+      'expiry' => 0,
+      'data' => []
+    ]));
+
     $this->eventManager()->fire('onModelAfterDelete', [ $this, $id ]);
     return $id;
   }
