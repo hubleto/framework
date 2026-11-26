@@ -15,6 +15,11 @@ class Translator implements TranslatorInterface
   public Core $service;
   public array $dictionary = [];
 
+  /** @var array<string, string> [translation context of an app => its Lang folder] */
+  private array $appLangFolders = [];
+  /** Number of installed apps when $appLangFolders was built, -1 = not built yet. */
+  private int $appCountOfLangFolders = -1;
+
   /**
    * [Description for getDictionaryFilename]
    *
@@ -32,9 +37,41 @@ class Translator implements TranslatorInterface
       $file = $context;
       $file = strtolower(strtr($file, '\\/', '--'));
       $dictionaryFile = $core->env()->srcFolder . "/../lang/{$language}/{$file}.json";
+
+      // External and custom apps have their dictionaries in their own Lang folder.
+      $appLangFolder = $this->getAppLangFolders($core)[$file] ?? '';
+      if ($appLangFolder != '') {
+        $dictionaryFile = $appLangFolder . "/{$language}.json";
+      }
     }
 
     return $dictionaryFile;
+  }
+
+  /**
+   * Lang folders of the installed external and custom apps, e.g. <app>/Lang/sk.json.
+   * Apps of hubleto/erp have their dictionaries in hubleto/erp/lang.
+   *
+   * @return array<string, string> [translation context of the app => its Lang folder]
+   */
+  private function getAppLangFolders(CoreInterface $core): array
+  {
+    // The list is kept for the request, the translator asks for it for every context.
+    // During the installation apps are added one by one, so it is built again when their count changes.
+    $installedApps = $core->appManager()->getInstalledApps();
+    if (count($installedApps) == $this->appCountOfLangFolders) return $this->appLangFolders;
+
+    $this->appLangFolders = [];
+    foreach ($installedApps as $app) {
+      $isExternalApp = str_starts_with($app->namespace, 'Hubleto\\App\\External\\');
+      $isCustomApp = str_starts_with($app->namespace, 'Hubleto\\App\\Custom\\');
+      if ($isExternalApp || $isCustomApp) {
+        $this->appLangFolders[$app->translationContext] = $app->srcFolder . '/Lang';
+      }
+    }
+    $this->appCountOfLangFolders = count($installedApps);
+
+    return $this->appLangFolders;
   }
 
   /**
@@ -115,6 +152,14 @@ class Translator implements TranslatorInterface
             //
           }
         }
+      }
+
+      // External and custom apps have their dictionaries in their own Lang folder.
+      foreach ($this->getAppLangFolders($core) as $appContext => $appLangFolder) {
+        $appDictionaryFile = $appLangFolder . "/{$language}.json";
+        if (!is_file($appDictionaryFile)) continue;
+
+        $dictionary[$appContext] = json_decode((string) file_get_contents($appDictionaryFile), true);
       }
     }
 
